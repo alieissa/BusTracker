@@ -51,11 +51,6 @@ angular
         controller: 'RouteCtrl',
         controllerAs: 'route'
       })
-      .when('/route/:routename', {
-        templateUrl: 'views/route.html',
-        controller: 'RouteCtrl',
-        controllerAs: 'route'
-      })
       .otherwise({
         redirectTo: '/'
       });
