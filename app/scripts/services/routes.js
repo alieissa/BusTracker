@@ -12,16 +12,27 @@
 angular.module('busTrackerApp')
   .factory('routes', function ($firebaseArray, $firebaseObject) {
 
-    var Routes = {};
-
     var routesRef = firebase.database().ref('/routes');
 
-    Routes.getAll = function () {
+    var Routes = {
+      getAll: getAll,
+      getStops: getStops
+    };
+
+    return Routes;
+
+    function getAll() {
       return $firebaseArray(routesRef);
     }
 
-    Routes.getStops = function (routeName) {
+    function getStops(routeName) {
       return $firebaseArray(routesRef.child(routeName).child('stops'));
     }
-    return Routes;
+    // Routes.getAll = function () {
+    // }
+    //
+    // Routes.getStops = function (routeName) {
+    //
+    // }
+
   });
