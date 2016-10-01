@@ -28,11 +28,4 @@ angular.module('busTrackerApp')
     function getStops(routeName) {
       return $firebaseArray(routesRef.child(routeName).child('stops'));
     }
-    // Routes.getAll = function () {
-    // }
-    //
-    // Routes.getStops = function (routeName) {
-    //
-    // }
-
   });

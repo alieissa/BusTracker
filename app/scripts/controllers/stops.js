@@ -7,11 +7,14 @@
  * # StopsCtrl
  * Controller of the busTrackerApp
  */
-angular.module('busTrackerApp')
-  .controller('StopsCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+angular
+  .module('busTrackerApp')
+  .controller('StopsCtrl', StopsCtrl);
+
+StopsCtrl.$inject = ['stopsList'];
+
+function StopsCtrl(stopsList) {
+    var vm = this;
+
+    vm.stopsList = stopsList;
+  }

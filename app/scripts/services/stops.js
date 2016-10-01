@@ -8,16 +8,30 @@
  * Factory in the busTrackerApp.
  */
 angular.module('busTrackerApp')
-  .factory('stops', function () {
-    // Service logic
-    // ...
+  .factory('stops', function ($firebaseArray, $firebaseObject, $http) {
 
-    var meaningOfLife = 42;
+    var stopsRef = firebase.database().ref('/stops');
 
-    // Public API here
-    return {
-      someMethod: function () {
-        return meaningOfLife;
-      }
-    };
+    var Stops = {
+      getAll: getAll,
+      getNextTrips: getNextTrips
+    }
+
+    return Stops;
+
+    function getAll() {
+      return $firebaseArray(stopsRef)
+    }
+
+    function getNextTrips(stopNo) {
+      var params = {
+        stopNo: stopNo,
+        appID: config.APP_ID,
+        apiKey: config.API_KEY,
+        format: "json" };
+
+      return $http.get("https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes", {"params" : params})
+      
+    }
+
   });
