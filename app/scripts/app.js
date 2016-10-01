@@ -31,25 +31,35 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
-      .when('/stops', {
-        templateUrl: 'views/stops.html',
-        controller: 'StopsCtrl',
-        controllerAs: 'stops'
-      })
       .when('/routes', {
         templateUrl: 'views/routes.html',
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
           routesList: function(routes) {
-            return routes.getAll().$loaded()
+            return routes.getAll().$loaded();
           }
         }
       })
-      .when('/route/:routename', {
+      .when('/routes/:routename', {
         templateUrl: 'views/route.html',
         controller: 'RouteCtrl',
         controllerAs: 'route'
+      })
+      .when('/stops', {
+        templateUrl: 'views/stops.html',
+        controller: 'StopsCtrl',
+        controllerAs: 'stops',
+        resolve: {
+          stopsList: function(stops) {
+            return stops.getAll().$loaded();
+          }
+        }
+      })
+      .when('/stops/:stopNo', {
+        templateUrl: 'views/stop.html',
+        controller: 'StopCtrl',
+        controllerAs: 'stop'
       })
       .otherwise({
         redirectTo: '/'
