@@ -19,7 +19,7 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function ($routeProvider) {
+  .config(function (FIREBASECONFIG, $routeProvider, $firebaseRefProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -63,5 +63,13 @@ angular
       })
       .otherwise({
         redirectTo: '/'
+      });
+
+      firebase.initializeApp(FIREBASECONFIG);
+
+      $firebaseRefProvider.registerUrl({
+        default: FIREBASECONFIG.databaseURL,
+        routes: FIREBASECONFIG.databaseURL + '/routes',
+        stops: FIREBASECONFIG.databaseURL + '/stops'
       });
   });
