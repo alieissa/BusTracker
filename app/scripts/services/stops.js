@@ -9,9 +9,7 @@
  */
 angular
   .module('busTrackerApp')
-  .factory('stops', function ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
-
-    // var stopsRef = firebase.database().ref('/stops');
+  .factory('stops', function ($firebaseArray, $firebaseObject, $firebaseRef, $http, OCCONFIG) {
 
     var Stops = {
       getAll: getAll,
@@ -21,19 +19,25 @@ angular
     return Stops;
 
     function getAll() {
-      // return $firebaseArray(stopsRef)
-      return $firebaseArray($firebaseRef.stops)
+      return $firebaseArray($firebaseRef.stops);
     }
 
     function getNextTrips(stopNo) {
+
+      var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
       var params = {
         stopNo: stopNo,
-        appID: config.APP_ID,
-        apiKey: config.API_KEY,
-        format: "json" };
+        appID: OCCONFIG.APP_ID,
+        apiKey: OCCONFIG.API_KEY,
+        format: "json"
+      };
 
-      return $http.get("https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes", {"params" : params})
+      return $http.post(url, params)
+        .then(getNextTripsComplete);
 
+      function getNextTripsComplete(response) {
+        return response.data.GetRouteSummaryForStopResult;
+      }
     }
 
   });
