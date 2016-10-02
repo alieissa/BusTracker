@@ -10,7 +10,7 @@
 
 
 angular.module('busTrackerApp')
-  .factory('routes', function ($firebaseArray, $firebaseObject) {
+  .factory('routes', function ($firebaseArray, $firebaseObject, $firebaseRef) {
 
     var routesRef = firebase.database().ref('/routes');
 
@@ -22,10 +22,12 @@ angular.module('busTrackerApp')
     return Routes;
 
     function getAll() {
-      return $firebaseArray(routesRef);
+      return $firebaseArray($firebaseRef.routes);
+      // return $firebaseArray(routesRef);
     }
 
     function getStops(routeName) {
-      return $firebaseArray(routesRef.child(routeName).child('stops'));
+      return $firebaseArray($firebaseRef.routes.child(routeName).child('stops'));
+      // return $firebaseArray(routesRef.child(routeName).child('stops'));
     }
   });

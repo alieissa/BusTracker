@@ -7,10 +7,11 @@
  * # stops
  * Factory in the busTrackerApp.
  */
-angular.module('busTrackerApp')
-  .factory('stops', function ($firebaseArray, $firebaseObject, $http) {
+angular
+  .module('busTrackerApp')
+  .factory('stops', function ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
 
-    var stopsRef = firebase.database().ref('/stops');
+    // var stopsRef = firebase.database().ref('/stops');
 
     var Stops = {
       getAll: getAll,
@@ -20,7 +21,8 @@ angular.module('busTrackerApp')
     return Stops;
 
     function getAll() {
-      return $firebaseArray(stopsRef)
+      // return $firebaseArray(stopsRef)
+      return $firebaseArray($firebaseRef.stops)
     }
 
     function getNextTrips(stopNo) {
@@ -31,7 +33,7 @@ angular.module('busTrackerApp')
         format: "json" };
 
       return $http.get("https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes", {"params" : params})
-      
+
     }
 
   });
