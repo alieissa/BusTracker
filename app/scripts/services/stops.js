@@ -24,15 +24,13 @@ angular
 
     function getNextTrips(stopNo) {
 
+      // Content-Type must be x-www-form-urlencoded. Tried with JSON
+      // but OC Transpo returns error (weird)
+      var headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
       var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
-      var params = {
-        stopNo: stopNo,
-        appID: OCCONFIG.APP_ID,
-        apiKey: OCCONFIG.API_KEY,
-        format: "json"
-      };
+      var data = "appID=" + OCCONFIG.APP_ID + "&apiKey=" + OCCONFIG.API_KEY + "&stopNo=" + stopNo + "&format=json";
 
-      return $http.post(url, params)
+      return $http.post(url, data, headers)
         .then(getNextTripsComplete);
 
       function getNextTripsComplete(response) {
