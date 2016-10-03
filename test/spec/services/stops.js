@@ -1,5 +1,10 @@
 'use strict';
 
+var stopNo = 7659;
+var header = { headers: {  "Content-Type": "application/x-www-form-urlencoded" }};
+var data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&format=json";
+var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
+
 describe('Service: stops', function () {
 
   // load the service's module
@@ -19,23 +24,39 @@ describe('Service: stops', function () {
     expect(stops.getNextTrips).toBeDefined();
   });
 
-  it('should return upcoming trips for bus stop via XHR', inject(function($httpBackend) {
-    var stopNo = 7659;
-    var data = {
-      stopNo: stopNo,
-      appID: OC_CONFIG_MOCK.APP_ID,
-      apiKey: OC_CONFIG_MOCK.API_KEY,
-      format: "json"
-    }
+  describe(".getNextTrips() XHR call", function() {
+    var $httpBackend;
 
-    var nextRouteTrips = stops.getNextTrips(stopNo);
-    $httpBackend.whenPOST("https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes", data).respond(OC_CALL_RES_MOCK);
-    $httpBackend.flush();
+    beforeEach(inject(function(_$httpBackend_) {
+      $httpBackend = _$httpBackend_;
+    }));
 
-    nextRouteTrips.then(function(_nextRouteTrips_) {
-      expect(_nextRouteTrips_).toBe(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult);
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
     });
 
-    // expect(nextRouteTrips).toEqual(OC_CALL_RES_MOCK);
-  }));
+    it("XHR should have correct headers for CORS call",function() {
+      var nextRouteTrips = stops.getNextTrips(stopNo);
+
+      $httpBackend.expectPOST(url, undefined, function(headers) {
+         return headers['Content-Type'] === header.headers['Content-Type'];
+       }).respond(201, '');
+
+        $httpBackend.flush();
+    });
+
+    it('should return upcoming trips for bus stop via XHR', function() {
+      var nextRouteTrips = stops.getNextTrips(stopNo);
+
+      $httpBackend.whenPOST(url, data).respond(OC_CALL_RES_MOCK);
+      $httpBackend.flush();
+
+      nextRouteTrips.then(function(routeTrips) {
+        expect(routeTrips).toEqual(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult);
+      });
+
+    });
+
+  });
 });
