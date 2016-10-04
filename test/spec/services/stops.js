@@ -20,11 +20,8 @@ describe('Service: stops', function () {
     expect(stops.getAll).toBeDefined();
   });
 
-  it("should have .getNextTrips() defined", function() {
-    expect(stops.getNextTrips).toBeDefined();
-  });
 
-  describe(".getNextTrips() XHR call", function() {
+  describe(".getRouteSummary()", function() {
     var $httpBackend;
 
     beforeEach(inject(function(_$httpBackend_) {
@@ -36,8 +33,12 @@ describe('Service: stops', function () {
         $httpBackend.verifyNoOutstandingRequest();
     });
 
+    it("should have getRouteSummary() defined", function() {
+      expect(stops.getRouteSummary).toBeDefined();
+    });
+
     it("XHR should have correct headers for CORS call",function() {
-      var nextRouteTrips = stops.getNextTrips(stopNo);
+      var nextRouteTrips = stops.getRouteSummary(stopNo);
 
       $httpBackend.expectPOST(url, undefined, function(headers) {
          return headers['Content-Type'] === header.headers['Content-Type'];
@@ -47,7 +48,7 @@ describe('Service: stops', function () {
     });
 
     it('should return upcoming trips for bus stop via XHR', function() {
-      var nextRouteTrips = stops.getNextTrips(stopNo);
+      var nextRouteTrips = stops.getRouteSummary(stopNo);
 
       $httpBackend.whenPOST(url, data).respond(OC_CALL_RES_MOCK);
       $httpBackend.flush();

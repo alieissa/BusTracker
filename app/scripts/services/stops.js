@@ -13,7 +13,7 @@ angular
 
     var Stops = {
       getAll: getAll,
-      getNextTrips: getNextTrips
+      getRouteSummary: getRouteSummary
     }
 
     return Stops;
@@ -22,7 +22,7 @@ angular
       return $firebaseArray($firebaseRef.stops);
     }
 
-    function getNextTrips(stopNo) {
+    function getRouteSummary(stopNo) {
 
       // Content-Type must be x-www-form-urlencoded. Tried with JSON
       // but OC Transpo returns error (weird)
@@ -31,9 +31,9 @@ angular
       var data = "appID=" + OCCONFIG.APP_ID + "&apiKey=" + OCCONFIG.API_KEY + "&stopNo=" + stopNo + "&format=json";
 
       return $http.post(url, data, headers)
-        .then(getNextTripsComplete);
+        .then(getRouteSummaryComplete);
 
-      function getNextTripsComplete(response) {
+      function getRouteSummaryComplete(response) {
         return response.data.GetRouteSummaryForStopResult;
       }
     }
