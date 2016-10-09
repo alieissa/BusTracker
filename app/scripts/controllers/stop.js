@@ -22,7 +22,7 @@ function StopCtrl($routeParams, stops) {
 
   function activate() {
     return getRouteSummary().then(function(routeData) {
-      console.log(routeData);
+      // console.log(routeData);
     });
   }
 
