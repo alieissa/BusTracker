@@ -1,27 +1,34 @@
 'use strict';
 
-describe('Controller: StopCtrl', function () {
+var routeParams = {};
+var StopCtrl;
+var stops;
+var mockStops;
+var stopNo = 7659;
 
+describe('Controller: Stop', function () {
   // load the controller's module
   beforeEach(module('busTrackerApp'));
 
-  var StopCtrl;
-  var scope;
-  var routeParams = {};
-  var stops;
-  var stopNo = 7659;
+  // Initialize the controller
+  beforeEach(inject(function ($controller, $q, _stops_) {
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _stops_) {
+    mockStops = {
+      getRouteSummary: function(stopNo) {
+        // resolve with data
+        return $q.when(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult);
+      }
+    };
 
     stops = _stops_;
     routeParams.stopNo = stopNo;
 
     StopCtrl = $controller('StopCtrl', {
-      $routeParams: routeParams
+      $routeParams: routeParams,
+      stops: mockStops
     });
-  }));
 
+  }));
 
   it("should have routes var defined", function() {
     expect(StopCtrl.routes).toBeDefined();
@@ -31,10 +38,15 @@ describe('Controller: StopCtrl', function () {
     expect(StopCtrl.stopNo).toEqual(routeParams.stopNo);
   });
 
-  it("should call stops.getRouteSummary", function() {
-    spyOn(stops, "getRouteSummary");
-    expect(stops.getRouteSummary).toHaveBeenCalled();
-  });
+  it("should set routes to stop routes", inject(function($rootScope) {
 
-  it("should set routes to routes from stops.getRouteSummary", function() {});
+    // In order for angular to trigger the chained method it has to trigger digest cycle
+    // how to do that with out scope not sure.
+
+    StopCtrl.$scope = $rootScope.$new();
+    StopCtrl.$scope.$digest();
+
+    expect(StopCtrl.routes).toEqual(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult.Routes.Route);
+
+  }));
 });
