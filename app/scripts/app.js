@@ -54,6 +54,11 @@ angular
         controller: 'RouteCtrl',
         controllerAs: 'route'
       })
+      .when('/routes/:routeNo/:stopNo', {
+        templateUrl: 'views/routestops.html',
+        controller: 'RoutestopsCtrl',
+        controllerAs: 'routeStops'
+      })
       .when('/stops', {
         templateUrl: 'views/stops.html',
         controller: 'StopsCtrl',

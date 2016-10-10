@@ -14,5 +14,7 @@ angular
 RoutesCtrl.$inject = ['$scope', 'routesList']
 
 function RoutesCtrl($scope, routesList) {
-  $scope.routesList = routesList;
+  var vm = this;
+  vm.routesList = [];
+  vm.routesList = routesList;
 }

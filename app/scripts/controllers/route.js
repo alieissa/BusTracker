@@ -7,8 +7,11 @@
  * # RouteCtrl
  * Controller of the busTrackerApp
  */
-angular.module('busTrackerApp')
+angular
+  .module('busTrackerApp')
   .controller('RouteCtrl', function ($scope, routes, $routeParams) {
-    $scope.routeName = $routeParams.routename;
-    $scope.stops = routes.getStops($routeParams.routename);
+    var vm = this;
+
+    vm.routeName = $routeParams.routename;
+    vm.stops = routes.getStops($routeParams.routename);
   });

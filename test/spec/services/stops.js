@@ -38,6 +38,7 @@ describe('Service: stops', function () {
     });
 
     it("XHR should have correct headers for CORS call",function() {
+      var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
       var nextRouteTrips = stops.getRouteSummary(stopNo);
 
       $httpBackend.expectPOST(url, undefined, function(headers) {
@@ -48,6 +49,8 @@ describe('Service: stops', function () {
     });
 
     it('should return upcoming trips for bus stop via XHR', function() {
+      var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
+      var data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&format=json";
       var nextRouteTrips = stops.getRouteSummary(stopNo);
 
       $httpBackend.whenPOST(url, data).respond(OC_CALL_RES_MOCK);
@@ -56,8 +59,17 @@ describe('Service: stops', function () {
       nextRouteTrips.then(function(routeTrips) {
         expect(routeTrips).toEqual(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult);
       });
-
     });
 
+    it('should set no trips scheduled error message', function() {
+      var nextRouteTrips = stops.getRouteSummary(4000);
+      var data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + 4000 + "&format=json";
+      $httpBackend.whenPOST(url, data).respond(OC_CALL_RES_EMPTY_MOCK);
+      $httpBackend.flush();
+
+      nextRouteTrips.catch(function(routeTrips) {
+        // expect(routeTrips).toEqual("No trips scheduled for this stop now");
+      });
+    });
   });
 });
