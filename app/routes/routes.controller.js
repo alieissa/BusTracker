@@ -8,7 +8,7 @@
  * Controller of the busTrackerApp
  */
 angular
-  .module('busTrackerApp')
+  .module('routesMod')
   .controller('RoutesCtrl', RoutesCtrl);
 
 RoutesCtrl.$inject = ['$scope', 'routesList']
