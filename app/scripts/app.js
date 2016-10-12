@@ -23,7 +23,9 @@ angular
     'ngAnimate',
     'ngCookies',
     'ngResource',
-    'ngRoute',
+    // 'ngRoute',
+    'routesMod',
+    'stopsMod',
     'ngSanitize',
     'ngTouch'
   ])
@@ -34,46 +36,9 @@ angular
         // controller: 'MainCtrl',
         // controllerAs: 'main'
       })
-      .when('/routes', {
-        templateUrl: 'views/routes.html',
-        controller: 'RoutesCtrl',
-        controllerAs: 'routes',
-        resolve: {
-          routesList: function(routes) {
-            return routes.getAll().$loaded();
-          }
-        }
-      })
-      .when('/routes/:routename', {
-        templateUrl: 'views/route.html',
-        controller: 'RouteCtrl',
-        controllerAs: 'route'
-      })
-      .when('/routes/:routeNo/:stopNo', {
-        templateUrl: 'views/routestops.html',
-        controller: 'RoutestopsCtrl',
-        controllerAs: 'routeStops'
-      })
-      .when('/stops', {
-        templateUrl: 'views/stops.html',
-        controller: 'StopsCtrl',
-        controllerAs: 'stops',
-        resolve: {
-          stopsList: function(stops) {
-            return stops.getAll().$loaded();
-          }
-        }
-      })
-      .when('/stops/:stopNo', {
-        templateUrl: 'views/stop.html',
-        controller: 'StopCtrl',
-        controllerAs: 'stop'
-      })
       .otherwise({
         redirectTo: '/'
       });
-
-
 
       $firebaseRefProvider.registerUrl({
         default: FIREBASECONFIG.databaseURL,
