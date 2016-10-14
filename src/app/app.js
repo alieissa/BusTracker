@@ -8,6 +8,7 @@
  *
  * Main module of the application.
  */
+import {routesMod} from './routes/routes.module.js';
 
 firebase.initializeApp({
    apiKey: "AIzaSyAsfPArCOskSBxDgZSXawQo0QNyakC5PPc",
