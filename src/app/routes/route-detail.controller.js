@@ -9,10 +9,13 @@
  */
 angular
   .module('busTrackerApp')
-  .controller('RouteCtrl', function (routes, $routeParams) {
-    var vm = this;
+  .controller('RouteCtrl', RouteCtrl);
 
-    vm.routeName = $routeParams.routename;
-    vm.routeNo = vm.routeName.split(' ')[0]; //smelly
-    vm.stops = routes.getStops($routeParams.routename);
-  });
+RouteCtrl.$inject = ['routes', '$routeParams'];
+function RouteCtrl (routes, $routeParams) {
+  var vm = this;
+
+  vm.routeName = $routeParams.routename;
+  vm.routeNo = vm.routeName.split(' ')[0]; //smelly
+  vm.stops = routes.getStops($routeParams.routename);
+}

@@ -15,6 +15,7 @@ StopCtrl.$inject = ['$routeParams', 'stops'];
 
 function StopCtrl($routeParams, stops) {
   var vm = this;
+
   vm.routes = [];
   vm.stopNo = $routeParams.stopNo;
 
