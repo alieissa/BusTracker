@@ -3,10 +3,11 @@ var express = require('express');
 var app = express();
 
 app.use('/bower_components', express.static(__dirname + '/bower_components/'));
-app.use('/', express.static(__dirname + '/app/'))
+app.use('/build', express.static(__dirname + '/build/'));
+app.use('/', express.static(__dirname + '/src/app/'))
 
 app.get('/', function(req, res, err) {
-  res.sendFile(__dirname + '/app/index.html');
+  res.sendFile(__dirname + '/src/app/index.html');
 });
 
 app.listen(3000, function() {

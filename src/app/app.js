@@ -9,14 +9,9 @@
  * Main module of the application.
  */
 import {routesMod} from './routes/routes.module.js';
-
-firebase.initializeApp({
-   apiKey: "AIzaSyAsfPArCOskSBxDgZSXawQo0QNyakC5PPc",
-   authDomain: "octranspo-a9250.firebaseapp.com",
-   databaseURL: "https://octranspo-a9250.firebaseio.com",
-   storageBucket: "octranspo-a9250.appspot.com",
-   messagingSenderId: "180165321438"
- });
+import {stopsMod} from './stops/stops.module.js';
+import {firebaseInit} from '../config/database.js';
+import {FIREBASECONFIG} from '../config/fb.js';
 
 angular
   .module('busTrackerApp', [
@@ -24,13 +19,12 @@ angular
     'ngAnimate',
     'ngCookies',
     'ngResource',
-    // 'ngRoute',
     'routesMod',
     'stopsMod',
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function (FIREBASECONFIG, $routeProvider, $firebaseRefProvider) {
+  .config(function ($routeProvider, $firebaseRefProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -40,6 +34,8 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+
+      firebaseInit();
 
       $firebaseRefProvider.registerUrl({
         default: FIREBASECONFIG.databaseURL,
