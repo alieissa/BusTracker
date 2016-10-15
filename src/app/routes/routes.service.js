@@ -8,9 +8,11 @@
  * Factory in the busTrackerApp.
  */
 
-routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http', 'OCCONFIG'];
+import {OCCINFIG} from '../../config/oc.js';
 
-export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http, OCCONFIG) {
+routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
+
+export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
 
   var Routes = {
     getAll: getAll,
