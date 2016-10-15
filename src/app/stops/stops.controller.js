@@ -7,9 +7,9 @@
  * # StopsCtrl
  * Controller of the busTrackerApp
  */
-angular
-  .module('busTrackerApp')
-  .controller('StopsCtrl', StopsCtrl);
+// angular
+//   .module('busTrackerApp')
+//   .controller('StopsCtrl', StopsCtrl);
 
 StopsCtrl.$inject = ['stopsList'];
 
@@ -18,3 +18,5 @@ function StopsCtrl(stopsList) {
 
     vm.stopsList = stopsList;
   }
+
+export {StopsCtrl}

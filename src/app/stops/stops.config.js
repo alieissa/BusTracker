@@ -1,6 +1,7 @@
-angular
-  .module('stopsMod')
-  .config(stopsConfig)
+// angular
+//   .module('stopsMod')
+//   .config(stopsConfig)
+stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function stopsConfig($routeProvider, $firebaseRefProvider) {
   $routeProvider
@@ -20,3 +21,5 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
       controllerAs: 'stop'
     });
 }
+
+export {stopsConfig}
