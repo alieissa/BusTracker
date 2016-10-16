@@ -1,7 +1,14 @@
 import {FIREBASECONFIG} from './fb.js';
 
 function firebaseInit() {
-  firebase.initializeApp(FIREBASECONFIG);
+  try {
+    firebase.app()
+  }
+  catch(error) {
+    console.log('App does not exist. Creating app');
+    firebase.initializeApp(FIREBASECONFIG);
+  }
+
 }
 
 export {firebaseInit}

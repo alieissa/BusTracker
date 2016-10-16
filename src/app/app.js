@@ -24,22 +24,29 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function ($routeProvider, $firebaseRefProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        // controller: 'MainCtrl',
-        // controllerAs: 'main'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
+  .config(config)
+  .controller('MainCtrl', MainCtrl);
 
-      firebaseInit();
+function config($routeProvider, $firebaseRefProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'views/main.html',
+      controller: 'MainCtrl',
+      controllerAs: 'main'
+    })
+    .otherwise({
+      redirectTo: '/'
+    });
 
-      $firebaseRefProvider.registerUrl({
-        default: FIREBASECONFIG.databaseURL,
-        routes: FIREBASECONFIG.databaseURL + '/routes',
-        stops: FIREBASECONFIG.databaseURL + '/stops'
-      });
-  });
+    firebaseInit();
+    //
+    $firebaseRefProvider.registerUrl({
+      default: FIREBASECONFIG.databaseURL,
+      routes: FIREBASECONFIG.databaseURL + '/routes',
+      stops: FIREBASECONFIG.databaseURL + '/stops'
+    });
+}
+
+function MainCtrl() {
+  var vm = this;
+}

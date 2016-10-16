@@ -42,6 +42,7 @@ module.exports = function(config) {
       'test/constants.js',
       // 'test/mock/**/*.js',
       'test/spec/routes/routes.service.js',
+      'test/spec/stops/stops.service.js'
     ],
 
     // list of files / patterns to exclude
