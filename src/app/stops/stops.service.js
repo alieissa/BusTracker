@@ -13,9 +13,9 @@
 
 import {OCCONFIG} from '../../config/oc.js';
 
-stops.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http', 'OCCONFIG'];
+stops.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
-function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http, OCCONFIG) {
+function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   var Stops = {
     getAll: getAll,
     getRouteSummary: getRouteSummary

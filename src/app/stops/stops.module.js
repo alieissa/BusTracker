@@ -7,5 +7,9 @@ angular.module('stopsMod', [
   'ngRoute',
   'firebase'
 ])
+.config(stopsConfig)
+.controller('StopsCtrl', StopsCtrl)
+.controller('StopCtrl', StopCtrl)
+.service('stops', stops);
 
 export default angular.module('stopsMod')
