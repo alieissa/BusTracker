@@ -11,53 +11,51 @@ describe('Service: routes', function () {
   // load the service's module
   beforeEach(function() {
     module('busTrackerApp');
-    module('routesMod');
+    // module('routesMod');
   });
 
   // instantiate service
   // var routes;
   beforeEach(inject(function (_routes_) {
     routes = _routes_;
-    console.log(routes);
   }));
 
   it('should have .getNextTrips defined', inject(function (_routes_) {
-    // expect(routes.getNextTrips).toBeDefined();
-    console.log(_routes_);
-    expect(true).toBe(true);
+    expect(routes.getNextTrips).toBeDefined();
+    // expect(true).toBe(true);
   }));
 
   it('should have .getAll defined',  inject(function (_routes_) {
-    expect(true).toEqual(true);
-    // expect(routes.getAll).toBeDefined();
+    // expect(true).toEqual(true);
+    expect(routes.getAll).toBeDefined();
   }));
 
 
-  // describe('.getNextTrips(routeNo, stopNo)', function() {
-  //
-  //   beforeEach(inject (function(_$httpBackend_) {
-  //     $httpBackend = _$httpBackend_;
-  //   }));
-  //
-  //   afterEach(function() {
-  //       $httpBackend.verifyNoOutstandingExpectation();
-  //       $httpBackend.verifyNoOutstandingRequest();
-  //   });
-  //
-  //   it('should get next trips for stop', function() {
-  //     // routeNo = 1;
-  //     // stopNo = 7659;
-  //     // url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
-  //     // data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&routeNo=" + routeNo + "&format=json";
-  //     //
-  //     // var nextTrips = routes.getNextTrips(routeNo, stopNo);
-  //     // $httpBackend.whenPOST(url, data).respond(NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
-  //     // $httpBackend.flush();
-  //     //
-  //     // nextTrips.then(function(trips) {
-  //     //   expect(trips).toEqual(NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
-  //     // });
-  //
-  //   });
-  // });
+  describe('.getNextTrips(routeNo, stopNo)', function() {
+
+    beforeEach(inject (function(_$httpBackend_) {
+      $httpBackend = _$httpBackend_;
+    }));
+
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('should get next trips for stop', function() {
+      routeNo = 1;
+      stopNo = 7659;
+      url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
+      data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&routeNo=" + routeNo + "&format=json";
+
+      var nextTrips = routes.getNextTrips(routeNo, stopNo);
+      $httpBackend.whenPOST(url, data).respond(NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
+      $httpBackend.flush();
+
+      nextTrips.then(function(trips) {
+        expect(trips).toEqual(NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
+      });
+
+    });
+  });
 });
