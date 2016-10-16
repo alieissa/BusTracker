@@ -8,7 +8,7 @@
  * Factory in the busTrackerApp.
  */
 
-import {OCCINFIG} from '../../config/oc.js';
+import {OCCONFIG} from '../../config/oc.js';
 
 routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
