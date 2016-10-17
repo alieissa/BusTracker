@@ -39,7 +39,8 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
       .then(getNextTripsComplete);
 
     function getNextTripsComplete(response) {
-      return response.data;
+      console.log(response.data.GetNextTripsForStopResult)
+      return response.data.GetNextTripsForStopResult;
     }
   }
 }
