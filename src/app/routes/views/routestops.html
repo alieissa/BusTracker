@@ -1,1 +1,7 @@
-<p>This is the routeStops view.</p>
+<h2 ng-if='routeStops.showError'> No trips scehdules for routes xxx for this stop</h2>
+<!-- <h2 ng-if='!routeStops.showError'> {{routeStops.routeStopDetails.Route}}</h2> -->
+<ul ng-if='!routeStops.showError' class="list-unstyled">
+  <li ng-repeat='trip in routeStops.routeStopDetails.Route.RouteDirection.Trips.Trip'>
+     {{routeStops.routeStopDetails.Route.RouteDirection.RouteNo}} {{routeStops.routeStopDetails.Route.RouteDirection.RouteLabel}} {{trip.TripStartTime}}
+  </li>
+</ul>
