@@ -4,7 +4,7 @@ routesConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 function routesConfig($routeProvider, $firebaseRefProvider) {
   $routeProvider
     .when('/routes', {
-      templateUrl: 'views/routes.html',
+      templateUrl: 'routes/views/routes.html',
       controller: 'RoutesCtrl',
       controllerAs: 'routes',
       resolve: {
@@ -14,7 +14,7 @@ function routesConfig($routeProvider, $firebaseRefProvider) {
       }
     })
     .when('/routes/:routename', {
-      templateUrl: 'views/route.html',
+      templateUrl: 'routes/views/route.html',
       controller: 'RouteCtrl',
       controllerAs: 'route'
     })

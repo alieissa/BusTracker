@@ -11,7 +11,7 @@
 //   .module('busTrackerApp')
 //   .factory('stops', stops)
 
-import {OCCONFIG} from '../../config/oc.js';
+import {OCCONFIG} from '../../../config/oc.js';
 
 stops.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 

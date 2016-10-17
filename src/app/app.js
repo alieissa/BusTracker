@@ -10,8 +10,8 @@
  */
 import {routesMod} from './routes/routes.module.js';
 import {stopsMod} from './stops/stops.module.js';
-import {firebaseInit} from '../config/database.js';
-import {FIREBASECONFIG} from '../config/fb.js';
+import {firebaseInit} from '../../config/database.js';
+import {FIREBASECONFIG} from '../../config/fb.js';
 
 angular
   .module('busTrackerApp', [
