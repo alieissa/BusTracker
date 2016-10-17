@@ -19,7 +19,7 @@ function es6() {
 			presets: ['es2015']
 		})
 		.bundle()
-		.pipe(source('app_test.js'))
+		.pipe(source('bus.tracker.js'))
 		.pipe(buffer())
 		.pipe(gulp.dest('build/'));
 }
