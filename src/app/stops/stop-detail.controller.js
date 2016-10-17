@@ -7,14 +7,15 @@
  * # StopCtrl
  * Controller of the busTrackerApp
  */
-angular
-  .module('busTrackerApp')
-  .controller('StopCtrl', StopCtrl);
+// angular
+//   .module('busTrackerApp')
+//   .controller('StopCtrl', StopCtrl);
 
 StopCtrl.$inject = ['$routeParams', 'stops'];
 
 function StopCtrl($routeParams, stops) {
   var vm = this;
+
   vm.routes = [];
   vm.stopNo = $routeParams.stopNo;
 
@@ -22,7 +23,7 @@ function StopCtrl($routeParams, stops) {
 
   function activate() {
     return getRouteSummary().then(function(routeData) {
-      console.log(routeData);
+      // console.log(routeData);
     });
   }
 
@@ -35,3 +36,5 @@ function StopCtrl($routeParams, stops) {
   }
 
 }
+
+export {StopCtrl}

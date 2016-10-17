@@ -36,10 +36,13 @@ module.exports = function(config) {
       'bower_components/firebase/firebase.js',
       'bower_components/angularfire/dist/angularfire.js',
       // endbower
-      'app/scripts/**/*.js',
+      // 'app/scripts/**/*.js',
+      // 'src/app/**/*.js',
+      'build/*.js',
       'test/constants.js',
       // 'test/mock/**/*.js',
-      'test/spec/services/*.js'
+      'test/spec/routes/routes.service.js',
+      'test/spec/stops/stops.service.js'
     ],
 
     // list of files / patterns to exclude

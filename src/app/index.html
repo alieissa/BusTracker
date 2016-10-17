@@ -26,7 +26,7 @@
       //  firebase.initializeApp(config);
     </script>
   </head>
-  <body ng-app="busTrackerApp">
+  <body ng-app="busTrackerApp" ng-controller="MainCtrl">
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -44,16 +44,16 @@
               <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" href="#/">busTracker</a>
+            <a class="navbar-brand" href="#/">Bus Tracker</a>
           </div>
 
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
-            <ul class="nav navbar-nav">
+            <!-- <ul class="nav navbar-nav">
               <li class="active"><a href="#/">Home</a></li>
               <li><a ng-href="#/routes">Routes</a></li>
               <li><a ng-href="#/stops">Stops</a></li>
-            </ul>
+            </ul> -->
           </div>
         </div>
       </div>
@@ -63,15 +63,15 @@
     <div ng-view=""></div>
     </div>
 
-    <div class="footer">
+    <!-- <div class="footer">
       <div class="container">
         <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
       </div>
-    </div>
+    </div> -->
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
+     <!-- <script>
        !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
        (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
        r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
@@ -79,7 +79,7 @@
 
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
-    </script>
+    </script> -->
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
@@ -98,16 +98,8 @@
     <!-- endbower -->
     <!-- endbuild -->
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/services/firebase_config.js"></script>
-        <script src="scripts/services/occonfig.js"></script>
-        <script src="scripts/controllers/stops.js"></script>
-        <script src="scripts/controllers/routes.js"></script>
-        <script src="scripts/services/routes.js"></script>
-        <script src="scripts/controllers/route.js"></script>
-        <script src="scripts/services/stops.js"></script>
-        <script src="scripts/controllers/stop.js"></script>
-        <!-- endbuild -->
+
+  <script src="../build/app_test.js"></script>
+
 </body>
 </html>
