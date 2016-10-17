@@ -30,7 +30,7 @@ angular
 function config($routeProvider, $firebaseRefProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'views/main.html',
+      templateUrl: '/main.html',
       controller: 'MainCtrl',
       controllerAs: 'main'
     })
@@ -47,6 +47,10 @@ function config($routeProvider, $firebaseRefProvider) {
     });
 }
 
-function MainCtrl() {
+function MainCtrl($rootScope) {
+
+  $rootScope.$on('$routeChangeError', function(event, prev, next) {
+    console.log('Gotcha');
+  })
   var vm = this;
 }
