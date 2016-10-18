@@ -6,7 +6,7 @@ stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 function stopsConfig($routeProvider, $firebaseRefProvider) {
   $routeProvider
     .when('/stops', {
-      templateUrl: 'views/stops.html',
+      templateUrl: 'stops/views/stops.html',
       controller: 'StopsCtrl',
       controllerAs: 'stops',
       resolve: {
@@ -16,7 +16,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
       }
     })
     .when('/stops/:stopNo', {
-      templateUrl: 'views/stop.html',
+      templateUrl: 'stops/views/stop.html',
       controller: 'StopCtrl',
       controllerAs: 'stop'
     });
