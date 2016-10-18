@@ -11,29 +11,16 @@
 //   .module('busTrackerApp')
 //   .controller('StopCtrl', StopCtrl);
 
-StopCtrl.$inject = ['$routeParams', 'stops'];
+StopCtrl.$inject = ['$routeParams', 'stopRouteSummary'];
 
-function StopCtrl($routeParams, stops) {
+function StopCtrl($routeParams, stopRouteSummary) {
   var vm = this;
 
-  vm.routes = [];
+  console.log(stopRouteSummary);
   vm.stopNo = $routeParams.stopNo;
 
-  activate();
-
-  function activate() {
-    return getRouteSummary().then(function(routeData) {
-      // console.log(routeData);
-    });
-  }
-
-  function getRouteSummary(){
-    return stops.getRouteSummary(vm.stopNo)
-      .then(function(routeSummary) {
-        vm.routes = routeSummary.Routes.Route;
-        return vm.routes;
-      })
-  }
+  vm.showError = stopRouteSummary.Error !== "";
+  vm.routes = vm.showError ? [] : stopRouteSummary.Routes.Route;
 
 }
 
