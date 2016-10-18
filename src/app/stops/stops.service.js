@@ -39,7 +39,21 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
       .then(getRouteSummaryComplete);
 
     function getRouteSummaryComplete(response) {
-      return response.data.GetRouteSummaryForStopResult;
+      let data = response.data.GetRouteSummaryForStopResult
+
+      if(data.Error === "") {
+        data = {
+          "Error":data.Error,
+          "Routes": data.Routes.Route,
+          "StopDescription": data.StopDescription,
+          "StopNo": data.StopNo
+
+        };
+        data.Routes.forEach((route, index, self) => {
+          if (typeof route.Trips === 'undefined') route.Trips = [];
+        });
+      }
+      return data;
     }
   }
 

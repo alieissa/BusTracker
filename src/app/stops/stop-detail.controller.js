@@ -16,11 +16,9 @@ StopCtrl.$inject = ['$routeParams', 'stopRouteSummary'];
 function StopCtrl($routeParams, stopRouteSummary) {
   var vm = this;
 
-  console.log(stopRouteSummary);
   vm.stopNo = $routeParams.stopNo;
-
   vm.showError = stopRouteSummary.Error !== "";
-  vm.routes = vm.showError ? [] : stopRouteSummary.Routes.Route;
+  vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
 
 }
 
