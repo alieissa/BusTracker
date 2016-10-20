@@ -31,16 +31,20 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   }
 
   function getNextTrips(routeNo, stopNo) {
-    var headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
-    var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
-    var data = "appID=" + OCCONFIG.APP_ID + "&apiKey=" + OCCONFIG.API_KEY + "&stopNo=" + stopNo + "&routeNo=" + routeNo + "&format=json";
+    let headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
+    let url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
+    let data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&routeNo=${routeNo}&format=json`;
 
     return $http.post(url, data, headers)
       .then(getNextTripsComplete);
 
     function getNextTripsComplete(response) {
-      console.log(response.data.GetNextTripsForStopResult)
-      return response.data.GetNextTripsForStopResult;
+      let tripsRes = response.data.GetNextTripsForStopResult;
+
+      if (typeof tripsRes.Route.RouteDirection !== "undefined" && !Array.isArray(tripsRes.Route.RouteDirection)) {
+          tripsRes.Route.RouteDirection = [tripsRes.Route.RouteDirection];
+      }
+      return tripsRes;
     }
   }
 }
