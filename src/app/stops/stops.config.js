@@ -1,6 +1,4 @@
-// angular
-//   .module('stopsMod')
-//   .config(stopsConfig)
+
 stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function stopsConfig($routeProvider, $firebaseRefProvider) {
