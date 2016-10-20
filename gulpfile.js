@@ -7,7 +7,7 @@ const buffer = require('vinyl-buffer');
 
 
 gulp.task('default', ['es6', 'test'],() => {
-	gulp.watch(['src/**/*.js'],['es6', 'test']);
+	gulp.watch(['src/**/*.js', 'test/**/*.js'],['es6', 'test']);
 });
 gulp.task('es6', es6);
 gulp.task('test', test);
