@@ -7,14 +7,46 @@ describe('Controller: RouteCtrl', function () {
 
   var RouteCtrl,
     scope;
+  var routeParams;
+  var stops;
+  var routesMock;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
-    scope = $rootScope.$new();
+    routesMock = {
+      getStops: function(routeParams) {
+        stops = {
+          "3010": "LEBRETON 3A",
+          "3011": "TUNNEY'S PASTURE D",
+          "3060": "BAYVIEW 2A",
+          "5718": "PROMENAD AND TERRASSES DE LA CHAUDIÈRE",
+          "5722": "BOOTH AND VIMY PLACE",
+          "6530": "EDDY AND LAURIER"
+        };
+        return stops;
+      }
+    };
+
+    routeParams = {
+      routename: '1 Ottawa-Rockcliffe'
+    };
+
     RouteCtrl = $controller('RouteCtrl', {
-      $scope: scope
-      // place here mocked dependencies
+      $routeParams: routeParams,
+      routes: routesMock
     });
   }));
-  
+
+  it('Should parse route name and set vm.routeNo using parsed data', function() {
+    expect(RouteCtrl.routeNo).toEqual(routeParams.routename.split(" ")[0]);
+  });
+
+  it('Should set vm.routeName to to $routeParams.routeName', function() {
+      expect(RouteCtrl.routeName).toEqual(routeParams.routename)
+  });
+
+  it('Should set vm.stops to result of route.getStops(vm.routeName)', function() {
+    expect(RouteCtrl.stops).toEqual(stops);
+  });
+
 });

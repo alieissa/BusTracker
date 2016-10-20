@@ -41,7 +41,7 @@ module.exports = function(config) {
       'build/*.js',
       'test/constants.js',
       // 'test/mock/**/*.js',
-      'test/spec/routes/routes.service.js',
+      'test/spec/routes/*.js',
       'test/spec/stops/stops.service.js'
     ],
 

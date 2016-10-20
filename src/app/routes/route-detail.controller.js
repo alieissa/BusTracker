@@ -7,9 +7,6 @@
  * # RouteCtrl
  * Controller of the busTrackerApp
  */
-// angular
-//   .module('busTrackerApp')
-//   .controller('RouteCtrl', RouteCtrl);
 
 RouteCtrl.$inject = ['routes', '$routeParams'];
 
