@@ -8,7 +8,7 @@
  * Factory in the busTrackerApp.
  */
 
-import {OCCONFIG} from '../../../config/oc.js';
+// import {OCCONFIG} from '../../../config/oc.js';
 
 routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
@@ -31,6 +31,7 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   }
 
   function getNextTrips(routeNo, stopNo) {
+    let OCCONFIG = window._env.OC;
     let headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
     let url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
     let data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&routeNo=${routeNo}&format=json`;

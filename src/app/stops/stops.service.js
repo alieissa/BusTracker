@@ -9,7 +9,7 @@
  */
 
 import {OCData} from '../../util/OCData.js';
-import {OCCONFIG} from '../../../config/oc.js';
+// import {OCCONFIG} from '../../../config/oc.js';
 
 stops.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
@@ -29,6 +29,7 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
 
     // Content-Type must be x-www-form-urlencoded. Tried with JSON
     // but OC Transpo returns error (weird)
+    var OCCONFIG = window._env.OC;
     var headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
     var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
     var data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
