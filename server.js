@@ -6,6 +6,7 @@ app.use('/', express.static(__dirname + '/src/app'))
 
 app.use('/bower_components', express.static(__dirname + '/bower_components/'));
 app.use('/build', express.static(__dirname + '/build/'));
+app.use('/env.js', express.static(__dirname + '/env.js'));
 
 app.use('/routes/views/', express.static(__dirname + '/src/app/routes/views/'))
 app.use('/stops/views/', express.static(__dirname + '/src/app/stops/views/'))
