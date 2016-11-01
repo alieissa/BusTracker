@@ -6,14 +6,10 @@ function initFirebase(databaseURL) {
   try {
       let firebaseApp = firebase.initializeApp({databaseURL: databaseURL});
       return firebaseApp;
-    // let firebaseApp = firebase.app()
-
   }
   catch(error) {
-    // console.log('Firebase app already exists ...');
     return firebase.app();
   }
-
 }
 
 export {initFirebase}
