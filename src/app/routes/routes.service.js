@@ -14,7 +14,7 @@ routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
 export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
 
-  var Routes = {
+  const Routes = {
     getAll: getAll,
     getStops: getStops,
     getNextTrips: getNextTrips
@@ -31,6 +31,7 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   }
 
   function getNextTrips(routeNo, stopNo) {
+
     let OCCONFIG = window._env.OC;
     let headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
     let url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
@@ -42,6 +43,7 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
     function getNextTripsComplete(response) {
       let tripsRes = response.data.GetNextTripsForStopResult;
 
+      // if RouteDirection value is not an array make it one 
       if (typeof tripsRes.Route.RouteDirection !== "undefined" && !Array.isArray(tripsRes.Route.RouteDirection)) {
           tripsRes.Route.RouteDirection = [tripsRes.Route.RouteDirection];
       }

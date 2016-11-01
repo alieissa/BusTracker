@@ -9,6 +9,7 @@ var routes;
 console.log(OC_CONFIG_MOCK);
 window._env = {};
 window._env.OC = OC_CONFIG_MOCK;
+
 describe('Service: routes', function () {
 
   // load the service's module

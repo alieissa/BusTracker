@@ -1,3 +1,5 @@
+import {initFirebase} from '../init-firebase.js'
+
 
 routesConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
@@ -36,6 +38,14 @@ function routesConfig($routeProvider, $firebaseRefProvider) {
       controller: 'ErrorCtrl',
       controllerAs: 'error'
     })
+
+    let databaseURL = "https://octranspo-a9250.firebaseio.com";
+    const firebaseApp = initFirebase(databaseURL);
+    //
+    $firebaseRefProvider.registerUrl({
+      default: databaseURL,
+      routes: `${databaseURL}/routes`,
+    });
 }
 
 export {routesConfig}
