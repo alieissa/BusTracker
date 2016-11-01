@@ -42,7 +42,7 @@ module.exports = function(config) {
       'test/constants.js',
       // 'test/mock/**/*.js',
       'test/spec/routes/*.js',
-    //   'test/spec/stops/stops.service.js'
+      'test/spec/stops/*.js'
     ],
 
     // list of files / patterns to exclude
@@ -61,7 +61,8 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'PhantomJS'
+        'Chrome',
+        // 'PhantomJS'
     ],
 
     // plugins: [
