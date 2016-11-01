@@ -1,24 +1,26 @@
 'use strict';
 
+const routesList = ["1 Ottawa-Rockcliffe", "1 South Keys"];
+
 describe('Controller: RoutesCtrl', function () {
 
-  // load the controller's module
-  beforeEach(module('busTrackerApp'));
+    let RoutesCtrl;
 
-  var RoutesCtrl;
-  var _routesList;
+    // load the controller's module
+    beforeEach(module('busTrackerApp'));
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller) {
+    // Initialize the controller and a mock scope
+    beforeEach(inject(function ($controller) {
 
-    //Should proper firebase mock to replace this
-    _routesList = ["1 Ottawa-Rockcliffe", "1 South Keys"];
-    RoutesCtrl = $controller('RoutesCtrl', {
-      routesList: _routesList
+        //Should proper firebase mock to replace this
+
+        RoutesCtrl = $controller('RoutesCtrl', {
+          routesList: routesList
+        });
+
+    }));
+
+    it('Should have vm.routesList injected routesList array', function() {
+        expect(RoutesCtrl.routesList).toEqual(routesList);
     });
-  }));
-
-  it('Should have vm.stopsList defined', function() {
-    expect(RoutesCtrl.routesList).toBeDefined(_routesList);
-  })
 });

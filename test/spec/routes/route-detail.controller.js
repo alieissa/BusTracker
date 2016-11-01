@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: RouteCtrl', function () {
+describe('Controller: RouteDetailCtrl', function () {
 
   // load the controller's module
   beforeEach(module('busTrackerApp'));
