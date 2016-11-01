@@ -29,17 +29,44 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
 
     // Content-Type must be x-www-form-urlencoded. Tried with JSON
     // but OC Transpo returns error (weird)
-    var OCCONFIG = window._env.OC;
-    var headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
-    var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
-    var data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
+    const OCCONFIG = window._env.OC;
+    const headers = {headers: { "Content-Type": "application/x-www-form-urlencoded"}};
+    const url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
+    const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
 
     return $http.post(url, data, headers)
       .then(getRouteSummaryComplete);
 
     function getRouteSummaryComplete(response) {
-      let data = response.data.GetRouteSummaryForStopResult;
-      return data.Error === "" ? OCData.parseRoutes(data) : data
+
+        let result = response.data.GetRouteSummaryForStopResult;
+
+        if(result.Error !== "") {
+            return result;
+        }
+
+        result = {
+          "Error":result.Error,
+          "Routes": result.Routes.Route,
+          "StopDescription": result.StopDescription,
+          "StopNo": result.StopNo
+
+        };
+
+      result.Routes.forEach((route) => {
+        if(Array.isArray(route.Trips)) {
+          return;
+        }
+        else if(typeof route.Trips === 'undefined') {
+          route.Trips = [];
+        }
+        else {
+            route.Trips = [route.Trips];
+        }
+      });
+
+    //   return OCData.sortRoutesByTrips(result.Routes);
+        return result.Routes;
     }
   }
 
