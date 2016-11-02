@@ -1,4 +1,4 @@
-import {initFirebase} from '../init-firebase.js';
+// import {initFirebase} from '../init-firebase.js';
 
 stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
@@ -26,13 +26,6 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
       }
     });
 
-    let databaseURL = "https://octranspo-a9250.firebaseio.com";
-    const firebaseApp = initFirebase(databaseURL);
-    //
-    $firebaseRefProvider.registerUrl({
-      default: databaseURL,
-      routes: `${databaseURL}/stops`,
-    });
 }
 
 export {stopsConfig}

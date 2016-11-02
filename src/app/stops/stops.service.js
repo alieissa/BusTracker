@@ -14,6 +14,11 @@ import {OCData} from '../../util/OCData.js';
 stops.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
 function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
+
+    let databaseURL = "https://octranspo-a9250.firebaseio.com";
+    let firebaseApp = firebase.initializeApp({databaseURL: databaseURL}, 'stopsApp');
+    let stopsRef = firebaseApp.database().ref('/stops');
+
   var Stops = {
     getAll: getAll,
     getRouteSummary: getRouteSummary
@@ -22,7 +27,7 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   return Stops;
 
   function getAll() {
-    return $firebaseArray($firebaseRef.stops);
+    return $firebaseArray(stopsRef);
   }
 
   function getRouteSummary(stopNo) {
@@ -40,9 +45,17 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
     function getRouteSummaryComplete(response) {
 
         let result = response.data.GetRouteSummaryForStopResult;
-
+        console.log(result)
         if(result.Error !== "") {
             return result;
+        }
+
+        if(Array.isArray(result.Routes) && result.Routes.length === 0) {
+            result.Error = "15"
+            return result
+        }
+        if(typeof result.Routes.Route !== "undefined" && !Array.isArray(result.Routes.Route) ) {
+            result.Routes.Route = [result.Routes.Route]
         }
 
         result = {
@@ -66,7 +79,7 @@ function stops ($firebaseArray, $firebaseObject, $firebaseRef, $http) {
       });
 
     //   return OCData.sortRoutesByTrips(result.Routes);
-        return result.Routes;
+        return result;
     }
   }
 
