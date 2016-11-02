@@ -13,7 +13,9 @@
 routes.$inject = ['$firebaseArray', '$firebaseObject', '$firebaseRef', '$http'];
 
 export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
-
+    let databaseURL = "https://octranspo-a9250.firebaseio.com";
+    let firebaseApp = firebase.initializeApp({databaseURL: databaseURL}, 'routesApp');
+    let routesRef = firebaseApp.database().ref('/routes')
   const Routes = {
     getAll: getAll,
     getStops: getStops,
@@ -23,11 +25,11 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
   return Routes;
 
   function getAll() {
-    return $firebaseArray($firebaseRef.routes);
+    return $firebaseArray(routesRef);
   }
 
   function getStops(routeName) {
-    return $firebaseArray($firebaseRef.routes.child(routeName).child('stops'));
+    return $firebaseArray(routesRef.child(routeName).child('stops'));
   }
 
   function getNextTrips(routeNo, stopNo) {
@@ -43,7 +45,7 @@ export function routes($firebaseArray, $firebaseObject, $firebaseRef, $http) {
     function getNextTripsComplete(response) {
       let tripsRes = response.data.GetNextTripsForStopResult;
 
-      // if RouteDirection value is not an array make it one 
+      // if RouteDirection value is not an array make it one
       if (typeof tripsRes.Route.RouteDirection !== "undefined" && !Array.isArray(tripsRes.Route.RouteDirection)) {
           tripsRes.Route.RouteDirection = [tripsRes.Route.RouteDirection];
       }

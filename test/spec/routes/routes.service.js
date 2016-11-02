@@ -12,24 +12,22 @@ window._env.OC = OC_CONFIG_MOCK;
 describe('Service: routes', function () {
 
   // load the service's module
-  beforeEach(function() {
-    module('busTrackerApp');
-    // module('routesMod');
-  });
+    beforeEach(function() {
+        module('routesMod');
+    });
 
-  // instantiate service
-  // var routes;
-  beforeEach(inject(function (_routes_) {
-    routes = _routes_;
-  }));
 
-  it('should have .getNextTrips defined', inject(function (_routes_) {
-    expect(routes.getNextTrips).toBeDefined();
-  }));
+    beforeEach(inject(function (_routes_) {
+        routes = _routes_;
+    }));
 
-  it('should have .getAll defined',  inject(function (_routes_) {
-    expect(routes.getAll).toBeDefined();
-  }));
+    it('should have .getNextTrips defined', inject(function (_routes_) {
+        expect(routes.getNextTrips).toBeDefined();
+    }));
+
+    it('should have .getAll defined',  inject(function (_routes_) {
+        expect(routes.getAll).toBeDefined();
+    }));
 
 
   describe('.getNextTrips(routeNo, stopNo)', function() {
