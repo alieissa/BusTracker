@@ -2,7 +2,7 @@
 
 var routeParams = {};
 var StopCtrl;
-var stops;
+// var stops;
 var mockStops;
 var stopNo = 7659;
 
@@ -25,7 +25,7 @@ describe('Controller: Stop', function () {
     //   }
     // };
 
-    stops = _stops_;
+    let stops = _stops_;
 
     let stopRouteSummary = {
         Error: "12"

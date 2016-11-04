@@ -5,13 +5,17 @@ const babelify = require('babelify');
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
-const path = require("path");
+const path = require('path');
 const server = require('karma').Server;
 
-let shell = require("shelljs");
+let shell = require('shelljs');
 shell.config.fatal = true;
 gulp.task('default', ['lint', 'es6', 'test'],() => {
 	gulp.watch(['app/**/*.js', 'test/**/*.js'], ['lint', 'es6', 'test']);
+});
+
+gulp.task('watch-es6', ['es6'], () => {
+	gulp.watch(['app/**/*.js'], ['es6']);
 });
 
 gulp.task('lint', lint);
@@ -39,18 +43,20 @@ function dist() {
 	let flag = process.argv[3];
 
 	switch(flag) {
-		case "--production":
+		case '--production':
 			// move to app.js, views/, assets/, config.xml, database/ to www
 			
 			break;
-		case "--development":
+		case '--development':
 			// move to app.js, views/, assets/, config.xml, database/ to dist
 	
-			cpDirFiles(path.join(__dirname, "app/index.html"), path.join(__dirname, "dist"));
-			cpDirFiles(path.join(__dirname, "app/stops/views/*"), path.join(__dirname, "dist/views"));
-			cpDirFiles(path.join(__dirname, "app/routes/views/*"), path.join(__dirname, "dist/views"));
-			cpDirFiles(path.join(__dirname, "app/common/*.db"), path.join(__dirname, "dist/database"));
-			cpDirFiles(path.join(__dirname, "assets/*"), path.join(__dirname, "dist/assets"));
+			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
+			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/favourites.html'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/common/*.db'), path.join(__dirname, 'dist/database'));
+			cpDirFiles(path.join(__dirname, 'assets/*'), path.join(__dirname, 'dist/assets'));
 
 			break;
 		default:
@@ -102,9 +108,9 @@ function test(done) {
 		Reference https://github.com/karma-runner/gulp-karma/issues/18
 	/----------------------------------------------------------------- */
 
-	let karmaServerCallback = () => {
-		let error = typeof error !== 'undefined' ? new Error('Karma returned with the error code: ' + error) : undefined;
-		done(error);
+	let karmaServerCallback = (error) => {
+		let err = typeof error !== 'undefined' ? new Error('Karma returned with the error code: ' + error) : undefined;
+		done(err);
 	};
 
 	new server(karmaConfig, karmaServerCallback).start();

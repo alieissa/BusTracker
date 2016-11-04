@@ -23,25 +23,17 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
-      'bower_components/jquery/dist/jquery.js',
-      'bower_components/angular/angular.js',
-      'bower_components/bootstrap/dist/js/bootstrap.js',
-      'bower_components/angular-animate/angular-animate.js',
-      'bower_components/angular-cookies/angular-cookies.js',
-      'bower_components/angular-resource/angular-resource.js',
-      'bower_components/angular-route/angular-route.js',
-      'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-touch/angular-touch.js',
-      'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/firebase/firebase.js',
-      'bower_components/angularfire/dist/angularfire.js',
+      'assets/lib//jquery/dist/jquery.js',
+      'assets/lib//angular/angular.js',
+      'assets/lib//angular-route/angular-route.js',
+      'assets/lib//firebase/firebase.js',
+      'assets/lib//angularfire/dist/angularfire.js',
       // endbower
 
       'dist/*.js',
       'test/constants.js',
       'test/spec/routes/*.js',
       'test/spec/stops/*.js',
-      'test/spec/favourites/*.js'
     ],
 
     // list of files / patterns to exclude
@@ -60,8 +52,9 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-        'Chrome',
-        // 'PhantomJS'
+        
+        //'Chrome',
+        'PhantomJS'
     ],
 
     // plugins: [
