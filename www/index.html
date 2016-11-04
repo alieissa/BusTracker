@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <title>BusTracker</title>
+    </head>
+    <body>
+        <!-- Always shows a header, even in smaller screens. -->
+
+        <div class="container">
+            <div ng-view=""></div>
+        </div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="assets/lib/jquery/dist/jquery.min.js"></script>
+        <!-- <script src="assets/lib/material-design-lite/material.min.js"></script> -->
+        <script src="assets/lib/firebase/firebase.js"></script>
+        <script src="assets/lib/angular/angular.min.js"></script>
+        <script src="assets/lib/angular-route/angular-route.min.js"></script>
+        <script type="text/javascript">
+            // document.addEventListener('deviceready', function() {
+            //     console.log("Device ready echo test");
+            //     window.sqlitePlugin.echoTest(function() {
+            //         console.log('SQLite plugin ECHO test OK');
+            //     });
+            // });
+
+            $('document').ready(function() {
+                document.addEventListener('deviceready', () => {
+                    // angular.bootstrap(document, "busTrackerApp");
+                    var appBase = document.getElementsByTagName('body')[0]
+                    angular.bootstrap(appBase, ['busTrackerApp']);
+                    console.log('SQLite Service Test');
+                    
+                    var db = window.sqlitePlugin.openDatabase({ name: 'demo.db', iosDatabaseLocation: 'default' }, function (db) {
+
+                        alert("Open database successfully")
+                    }, function (err) {
+                        alert("Error object is" + JSON.stringify(err));
+                    });
+                    console.log("Device ready echo test");
+                });
+            })
+
+            // document.addEventListener('deviceready', function() {
+            //     var db = window.sqlitePlugin.openDatabase({name: 'test.db', location: 'default'});
+            //     db.transaction(function(tr) {
+            //         tr.executeSql("SELECT upper('Test string') AS upperString", [], function(tr, rs) {
+            //           console.log('Got upperString result: ' + rs.rows.item(0).upperString);
+            //         });
+            //     });
+            // });
+
+            console.log("Echo test")
+        </script>
+        <script src="assets/lib/angularfire/dist/angularfire.min.js"></script>
+        <!-- <script src="assets/lib/index.js"></script> -->
+        <script src="app.js"></script>
+    </body>
+</html>
