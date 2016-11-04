@@ -69,13 +69,14 @@ angular.module('SQLiteMod', []).factory('dataService', dataService);
 
 function dataService() {
 	console.log('SQLite Service Test');
-	var db = window.sqlitePlugin.openDatabase({ name: 'octranspo.db', location: './' });
+	var db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024);
 
 	db.transaction(func1, func2);
 
 	function func1(tx) {
-		tx.executeSql('SELECT count(*) AS mycount FROM routes', [], function (tx, rs) {
-			console.log('Record count (expected to be 2): ' + rs.rows.item(0).mycount);
+		console.log('Database is opened successfully');
+		tx.executeSql('SELECT *  FROM sqlite_master', [], function (tx, rs) {
+			console.log('Record count (expected to be 2): ' + JSON.stringify(rs.rows.item(1)));
 		});
 	}
 
@@ -95,11 +96,40 @@ function dataService() {
 	return dataService;
 
 	function getAllRoutes() {
-		// Get all routes
+
+		db.transaction(handleRoutesResult, handleRoutesError);
+
+		function handleRoutesResult(tx) {
+			// Resolve promise here
+			tx.executeSql('SELECT * FROM routes', [], function (tx, result) {
+				return console.log(result.rows);
+			});
+			// tx.executeSql('SELECT count(*) FROM routes', [], (tx, result) => console.log(result.rows));
+		}
+
+		function handleRoutesError(tx, error) {
+			// Reject promise
+			console.log(error.message);
+		}
 	}
 
 	function getAllStops() {
 		// Get all stops
+
+		db.transaction(handleStopsResult, handleStopsError);
+
+		function handleStopsResult(tx) {
+			// Resolve promise here
+			tx.executeSql('SELECT * FROM stops', [], function (tx, result) {
+				return console.log(result.rows);
+			});
+			// tx.executeSql('SELECT count(*) FROM stops', [], (tx, result) => console.log(result.rows));
+		}
+
+		function handleStopsError(tx, error) {
+			// Reject promise
+			console.log(error.message);
+		}
 	}
 
 	function addFaveRoute(route) {
@@ -174,21 +204,23 @@ Object.defineProperty(exports, "__esModule", {
 routesConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function routesConfig($routeProvider, $firebaseRefProvider) {
+
   $routeProvider.when('/routes', {
-    templateUrl: 'routes/views/routes.html',
+    templateUrl: 'views/routes.html',
     controller: 'RoutesCtrl',
     controllerAs: 'routes',
     resolve: {
-      routesList: function routesList(routes) {
-        return routes.getAll().$loaded();
+      routesList: function routesList(routes, dataService) {
+        return dataService.getAllRoutes();
+        // return routes.getAll().$loaded();
       }
     }
   }).when('/routes/:routename', {
-    templateUrl: 'routes/views/route.html',
+    templateUrl: 'views/route.html',
     controller: 'RouteCtrl',
     controllerAs: 'route'
   }).when('/routes/:routename/:stopNo', {
-    templateUrl: 'routes/views/routestops.html',
+    templateUrl: 'views/routestops.html',
     controller: 'RouteStopDetailCtrl',
     controllerAs: 'routeStops',
     resolve: {
@@ -353,16 +385,17 @@ stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function stopsConfig($routeProvider, $firebaseRefProvider) {
   $routeProvider.when('/stops', {
-    templateUrl: 'stops/views/stops.html',
+    templateUrl: 'views/stops.html',
     controller: 'StopsCtrl',
     controllerAs: 'stops',
     resolve: {
-      stopsList: function stopsList(stops) {
-        return stops.getAll().$loaded();
+      stopsList: function stopsList(stops, dataService) {
+        dataService.getAllStops();
+        // return stops.getAll().$loaded();
       }
     }
   }).when('/stops/:stopNo', {
-    templateUrl: 'stops/views/stop.html',
+    templateUrl: 'views/stop.html',
     controller: 'StopCtrl',
     controllerAs: 'stop',
     resolve: {

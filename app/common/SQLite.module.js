@@ -6,13 +6,14 @@ angular.module('SQLiteMod', [])
 
 function dataService() {
     console.log('SQLite Service Test');
-	const db = window.sqlitePlugin.openDatabase({name: 'octranspo.db', location: './'});
+	const db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024);
 	
 	db.transaction(func1, func2);
 
 	function func1(tx) {
-    	tx.executeSql('SELECT count(*) AS mycount FROM routes', [], function(tx, rs) {
-      		console.log('Record count (expected to be 2): ' + rs.rows.item(0).mycount);
+		console.log('Database is opened successfully');
+    	tx.executeSql('SELECT *  FROM sqlite_master', [], function(tx, rs) {
+      		console.log('Record count (expected to be 2): ' + JSON.stringify(rs.rows.item(1)));
     	});
     }
 
@@ -31,12 +32,39 @@ function dataService() {
 
 	return dataService;
 
+
 	function getAllRoutes() {
-		// Get all routes
+
+		db.transaction(handleRoutesResult, handleRoutesError)
+
+		function handleRoutesResult(tx) {
+			// Resolve promise here
+			tx.executeSql('SELECT * FROM routes', [], (tx, result) => console.log(result.rows));
+			// tx.executeSql('SELECT count(*) FROM routes', [], (tx, result) => console.log(result.rows));
+		}
+
+		function handleRoutesError(tx, error) {
+			// Reject promise
+			console.log(error.message);
+		}
+		
 	}
 
 	function getAllStops() {
 		// Get all stops
+
+		db.transaction(handleStopsResult, handleStopsError)
+
+		function handleStopsResult(tx) {
+			// Resolve promise here
+			tx.executeSql('SELECT * FROM stops', [], (tx, result) => console.log(result.rows));
+			// tx.executeSql('SELECT count(*) FROM stops', [], (tx, result) => console.log(result.rows));
+		}
+
+		function handleStopsError(tx, error) {
+			// Reject promise
+			console.log(error.message);
+		}
 	}
 
 	function addFaveRoute(route) {
