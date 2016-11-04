@@ -1,28 +1,29 @@
 'use strict';
 
+const stops = {
+  "3010": "LEBRETON 3A",
+  "3011": "TUNNEY'S PASTURE D",
+  "3060": "BAYVIEW 2A",
+  "5718": "PROMENAD AND TERRASSES DE LA CHAUDIÈRE",
+  "5722": "BOOTH AND VIMY PLACE",
+  "6530": "EDDY AND LAURIER"
+};
+
 describe('Controller: RouteDetailCtrl', function () {
 
   // load the controller's module
   beforeEach(module('busTrackerApp'));
 
-  var RouteCtrl,
-    scope;
+  var RouteCtrl;
+  var scope;
   var routeParams;
-  var stops;
   var routesMock;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
+
     routesMock = {
       getStops: function(routeParams) {
-        stops = {
-          "3010": "LEBRETON 3A",
-          "3011": "TUNNEY'S PASTURE D",
-          "3060": "BAYVIEW 2A",
-          "5718": "PROMENAD AND TERRASSES DE LA CHAUDIÈRE",
-          "5722": "BOOTH AND VIMY PLACE",
-          "6530": "EDDY AND LAURIER"
-        };
         return stops;
       }
     };
@@ -35,6 +36,7 @@ describe('Controller: RouteDetailCtrl', function () {
       $routeParams: routeParams,
       routes: routesMock
     });
+
   }));
 
   it('Should parse route name and set vm.routeNo using parsed data', function() {

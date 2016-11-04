@@ -12,15 +12,13 @@ describe('Controller: RoutesCtrl', function () {
     // Initialize the controller and a mock scope
     beforeEach(inject(function ($controller) {
 
-        //Should proper firebase mock to replace this
-
         RoutesCtrl = $controller('RoutesCtrl', {
           routesList: routesList
         });
 
     }));
 
-    it('Should have vm.routesList injected routesList array', function() {
+    it('Should set vm.routesList to resolved routesList array', function() {
         expect(RoutesCtrl.routesList).toEqual(routesList);
     });
 });

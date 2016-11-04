@@ -39,9 +39,9 @@ function config($routeProvider, $firebaseRefProvider) {
 }
 
 function MainCtrl($rootScope) {
+  let vm = this;
 
   $rootScope.$on('$routeChangeError', function(event, prev, next) {
     console.log('Gotcha');
   })
-  var vm = this;
 }

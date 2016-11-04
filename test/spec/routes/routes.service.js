@@ -16,7 +16,6 @@ describe('Service: routes', function () {
         module('routesMod');
     });
 
-
     beforeEach(inject(function (_routes_) {
         routes = _routes_;
     }));
@@ -30,18 +29,20 @@ describe('Service: routes', function () {
     }));
 
 
-  describe('.getNextTrips(routeNo, stopNo)', function() {
+  describe('routes.getNextTrips(routeNo, stopNo)', function() {
 
     beforeEach(inject (function(_$httpBackend_) {
       $httpBackend = _$httpBackend_;
     }));
 
     afterEach(function() {
+
         $httpBackend.verifyNoOutstandingExpectation();
         $httpBackend.verifyNoOutstandingRequest();
     });
 
     it('should get next trips for stop', function() {
+
       routeNo = 1;
       stopNo = 3038;
       url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
