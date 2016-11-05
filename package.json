@@ -4,10 +4,10 @@
   "description": "OC Transpo App",
   "main": "app/app.js",
   "scripts": {
-    "dev:start": "gulp default && nodemon server.js", // lint, es6, server
-    "dev:deploy": "gulp deploy --development", //sp to dist
-    "build": "gulp default && npm test", //lint, es6, test
-    "deploy": "gulp deploy --production", //cp to www
+    "dev:start": "gulp default && nodemon server.js",
+    "dev:deploy": "gulp deploy --development", 
+    "build": "gulp default && npm test", 
+    "deploy": "gulp deploy --production", 
     "test": "karma start test/karma.conf.js"
   },
   "author": "Ali Eissa",
