@@ -20,16 +20,17 @@ module.exports = function(config) {
 
     // Order of file loading is important
     files: [
-    
+
       // Libraries
       'assets/lib/jquery/dist/jquery.js',
       'assets/lib/angular/angular.js',
       'assets/lib/angular-route/angular-route.js',
+      'assets/lib/angular-mocks/angular-mocks.js',
       'assets/lib/firebase/firebase.js',
       'assets/lib/angularfire/dist/angularfire.js',
 
       // My Code
-      'dist/*.js',
+      'dist/app.js',
       'test/constants.js',
       'test/spec/routes/*.js',
       'test/spec/stops/*.js'
@@ -42,7 +43,7 @@ module.exports = function(config) {
     port: 8080,
     browsers: [
         
-        //'Chrome',
+        // 'Chrome',
         'PhantomJS'
     ],
 
