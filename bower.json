@@ -1,11 +1,11 @@
 {
-  "name": "BusTracker",
+  "name": "bustracker",
   "authors": [
     "Ali Eissa"
   ],
   "description": "OC Transpo App",
-  "main": "app.js",
-  "license": "MIT",
+  "main": "app/app.js",
+  "license": "ISC",
   "homepage": "",
   "private": true,
   "ignore": [
@@ -19,8 +19,6 @@
   "dependencies": {
     "angular": "^1.5.8",
     "angular-route": "^1.5.8",
-    "angularfire": "^2.0.2",
-    "bootstrap": "^3.3.7",
-    "material-design-lite": "^1.2.1"
+    "angularfire": "^2.0.2"
   }
 }
