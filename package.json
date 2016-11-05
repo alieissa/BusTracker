@@ -4,11 +4,9 @@
   "description": "OC Transpo App",
   "main": "app/app.js",
   "scripts": {
-    "dev-start": "npm run dev-deploy && nodemon server.js",
-    "dev-deploy": "gulp deploy --development",
-    "compile": "gulp lint && gulp es6",
-    "prebuild": "rm dist/app.js",
-    "build": "npm run prebuild && npm run compile && npm test",
+    "dev:start": "gulp deploy --development && nodemon server.js",
+    "dev:deploy": "gulp deploy --development",
+    "build": "gulp build",
     "deploy": "gulp deploy --production",
     "test": "gulp test"
   },
