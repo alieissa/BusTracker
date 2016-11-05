@@ -4,11 +4,11 @@
   "description": "OC Transpo App",
   "main": "app/app.js",
   "scripts": {
-    "dev:start": "gulp deploy --development && nodemon server.js",
-    "dev:deploy": "gulp deploy --development",
-    "build": "gulp build",
-    "deploy": "gulp deploy --production",
-    "test": "gulp test"
+    "dev:start": "gulp default && nodemon server.js", // lint, es6, server
+    "dev:deploy": "gulp deploy --development", //sp to dist
+    "build": "gulp default && npm test", //lint, es6, test
+    "deploy": "gulp deploy --production", //cp to www
+    "test": "karma start test/karma.conf.js"
   },
   "author": "Ali Eissa",
   "license": "ISC",
@@ -17,7 +17,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "express": "^4.14.0",
-    "gulp": "^3.9.1",
+    "gulp": "github:gulpjs/gulp#4.0",
     "gulp-jshint": "^2.0.2",
     "jasmine": "^2.5.2",
     "jshint": "^2.9.4",
