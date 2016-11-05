@@ -1,6 +1,6 @@
 'use strict';
 
-const stops = {
+var stops = {
   "3010": "LEBRETON 3A",
   "3011": "TUNNEY'S PASTURE D",
   "3060": "BAYVIEW 2A",

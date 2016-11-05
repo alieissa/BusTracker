@@ -10,9 +10,9 @@ describe('Controller: Stop', function () {
   // load the controller's module
   beforeEach(module('stopsMod'));
 
-  let StopCtrl;
+  var StopCtrl;
 
-  const routeParams = {
+  var routeParams = {
       stopNo:stopNo
   };
   // Initialize the controller
@@ -25,9 +25,9 @@ describe('Controller: Stop', function () {
     //   }
     // };
 
-    let stops = _stops_;
+    var stops = _stops_;
 
-    let stopRouteSummary = {
+    var stopRouteSummary = {
         Error: "12"
     }
 
@@ -53,7 +53,7 @@ describe('Controller: Stop', function () {
 
     describe("An error in getting the route summary for stop", function() {
 
-        let stopRouteSummary = {
+        varstopRouteSummary = {
           Error: "12",
           StopRouteDescription: "Stop description"
         }
@@ -79,7 +79,7 @@ describe('Controller: Stop', function () {
     });
 
     describe("stopRouteSummary contains data", function() {
-        let stopRouteSummary = {}
+        varstopRouteSummary = {}
 
         beforeEach(inject(function() {
 

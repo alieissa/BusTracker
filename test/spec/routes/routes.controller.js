@@ -1,10 +1,10 @@
 'use strict';
 
-const routesList = ["1 Ottawa-Rockcliffe", "1 South Keys"];
+var routesList = ["1 Ottawa-Rockcliffe", "1 South Keys"];
 
 describe('Controller: RoutesCtrl', function () {
 
-    let RoutesCtrl;
+    var RoutesCtrl;
 
     // load the controller's module
     beforeEach(module('busTrackerApp'));

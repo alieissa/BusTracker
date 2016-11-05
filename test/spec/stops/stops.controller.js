@@ -1,5 +1,5 @@
 'use strict';
-const stopsList = [
+var stopsList = [
     "1010 TERON",
     "1090 AMBLESIDE",
     "1145 HUNT CLUB",
@@ -11,7 +11,7 @@ const stopsList = [
 
 describe('Controller: StopsCtrl', function () {
 
-    let StopsCtrl;
+    var StopsCtrl;
 
   // load the controller's module
   beforeEach(module('stopsMod'));
