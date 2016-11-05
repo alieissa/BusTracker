@@ -10,8 +10,9 @@ const server = require('karma').Server;
 
 let shell = require('shelljs');
 shell.config.fatal = true;
-gulp.task('default', ['lint', 'es6', 'test'],() => {
-	gulp.watch(['app/**/*.js', 'test/**/*.js'], ['lint', 'es6', 'test']);
+
+gulp.task('default', ['lint', 'es6'],() => {
+	gulp.watch(['app/**/*.js'], ['lint', 'es6']);
 });
 
 gulp.task('watch-es6', ['es6'], () => {
