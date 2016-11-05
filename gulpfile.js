@@ -6,27 +6,21 @@ const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
 const path = require('path');
-const server = require('karma').Server;
 
 let shell = require('shelljs');
 shell.config.fatal = true;
 
-gulp.task('default', ['lint', 'es6'],() => {
-	gulp.watch(['app/**/*.js'], ['lint', 'es6']);
-});
-
-gulp.task('watch-es6', ['es6'], () => {
-	gulp.watch(['app/**/*.js'], ['es6']);
-});
 
 gulp.task('lint', lint);
 gulp.task('es6', es6);
-gulp.task('test', test);
 gulp.task('dist', dist);
 
-gulp.task('compile', ['lint'], () => { gulp.start('es6')}); // lint then es6
-gulp.task('build', ['compile'], () => {gulp.start('test')}); // compile then test
-gulp.task('deploy', ['build'], () => {gulp.start('dist')}); // build then dist
+gulp.task('default', gulp.series('lint', 'es6', (done) => {
+	gulp.watch('app/**/*.js', gulp.series('lint', 'es6'));
+	done();
+});
+
+gulp.task('deploy', gulp.series('build', 'dist')); // build then dist
 
 function build() {
 
@@ -62,7 +56,7 @@ function dist() {
 			break;
 		default:
 			// print usage
-			break
+			break;
 	}
 
 	function cpDirFiles(src, target) {
@@ -95,24 +89,4 @@ function es6() {
 		.pipe(source('app.js'))
 		.pipe(buffer())
 		.pipe(gulp.dest('dist/'));
-}
-
-function test(done) {
-
-	let karmaConfig = {
-		configFile: __dirname + '/test/karma.conf.js',
-		singleRun: true
-	};
-
-	/* -----------------------------------------------------------------/
-		Without this callback run once config causes gulp to throw error
-		Reference https://github.com/karma-runner/gulp-karma/issues/18
-	/----------------------------------------------------------------- */
-
-	let karmaServerCallback = (error) => {
-		let err = typeof error !== 'undefined' ? new Error('Karma returned with the error code: ' + error) : undefined;
-		done(err);
-	};
-
-	new server(karmaConfig, karmaServerCallback).start();
 }
