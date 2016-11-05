@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('SQLiteMod', [])
+	.constant('DATABASE', 'octranspo');
 	.factory('dataService', dataService);
 
 
-function dataService() {
+function dataService(DATABASE) {
     console.log('SQLite Service Test');
-	const db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024);
+	const db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); 
 	
 	db.transaction(func1, func2);
 
