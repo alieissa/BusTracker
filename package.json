@@ -4,7 +4,7 @@
   "description": "OC Transpo App",
   "main": "app/app.js",
   "scripts": {
-    "dev:start": "gulp default && nodemon server.js",
+    "dev:start": "gulp build --development && nodemon server.js",
     "dev:deploy": "gulp deploy --development", 
     "build": "gulp default && npm test", 
     "deploy": "gulp deploy --production", 
