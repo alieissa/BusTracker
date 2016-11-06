@@ -18,7 +18,12 @@ var _SQLiteModule = require('./common/SQLite.module.js');
 
 angular.module('busTrackerApp', ['firebase', 'ngRoute', 'routesMod', 'stopsMod', 'SQLiteMod']).config(config).controller('FavesCtrl', FavesCtrl).controller('MainCtrl', MainCtrl);
 
-function config($routeProvider) {
+function config($routeProvider, $httpProvider) {
+
+  $httpProvider.defaults.useXDomain = true;
+  $httpProvider.defaults.withCredentials = true;
+  delete $httpProvider.defaults.headers.common["X-Requested-With"];
+
   $routeProvider.when('/', {
     templateUrl: 'views/main.html',
     controller: 'MainCtrl',
@@ -65,24 +70,11 @@ function MainCtrl($rootScope) {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-angular.module('SQLiteMod', []).factory('dataService', dataService);
+angular.module('SQLiteMod', []).constant('DATABASE', 'octranspo').factory('dataService', dataService);
 
-function dataService() {
-	console.log('SQLite Service Test');
-	var db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024);
+function dataService(DATABASE, $q) {
 
-	db.transaction(func1, func2);
-
-	function func1(tx) {
-		console.log('Database is opened successfully');
-		tx.executeSql('SELECT *  FROM sqlite_master', [], function (tx, rs) {
-			console.log('Record count (expected to be 2): ' + JSON.stringify(rs.rows.item(1)));
-		});
-	}
-
-	function func2(tx, error) {
-		console.log('SELECT error: ' + error.message);
-	}
+	var db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
 
 	var dataService = {
 		addFaveStop: addFaveStop,
@@ -90,46 +82,106 @@ function dataService() {
 		getFaveRoutes: getFaveRoutes,
 		getFaveStops: getFaveStops,
 		getAllRoutes: getAllRoutes,
-		getAllStops: getAllStops
+		getAllStops: getAllStops,
+		getRouteStops: getRouteStops
 	};
 
 	return dataService;
 
 	function getAllRoutes() {
 
+		var defer = $q.defer();
+
 		db.transaction(handleRoutesResult, handleRoutesError);
 
 		function handleRoutesResult(tx) {
-			// Resolve promise here
+
+			var routes = [];
+
 			tx.executeSql('SELECT * FROM routes', [], function (tx, result) {
-				return console.log(result.rows);
+
+				for (var i = 0; i < result.rows.length; i++) {
+					routes.push(result.rows.item(i));
+				}
+
+				defer.resolve(routes);
+				return;
 			});
-			// tx.executeSql('SELECT count(*) FROM routes', [], (tx, result) => console.log(result.rows));
 		}
 
 		function handleRoutesError(tx, error) {
-			// Reject promise
-			console.log(error.message);
+
+			defer.reject(error);
+			return;
 		}
+
+		return defer.promise;
 	}
 
 	function getAllStops() {
 		// Get all stops
 
+		var defer = $q.defer();
+
 		db.transaction(handleStopsResult, handleStopsError);
 
 		function handleStopsResult(tx) {
-			// Resolve promise here
-			tx.executeSql('SELECT * FROM stops', [], function (tx, result) {
-				return console.log(result.rows);
+
+			var stops = [];
+
+			tx.executeSql('SELECT * FROM stops LIMIT 500', [], function (tx, result) {
+				for (var i = 0; i < result.rows.length; i++) {
+					stops.push(result.rows.item(i));
+				}
+
+				defer.resolve(stops);
+				return;
 			});
-			// tx.executeSql('SELECT count(*) FROM stops', [], (tx, result) => console.log(result.rows));
 		}
 
 		function handleStopsError(tx, error) {
-			// Reject promise
-			console.log(error.message);
+			defer.reject(error);
+			return;
 		}
+
+		return defer.promise;
+	}
+
+	function getRouteStops(routeName) {
+
+		var defer = $q.defer();
+
+		db.transaction(handleRouteStopsResult, handleRouteStopsError);
+
+		function handleRouteStopsResult(tx) {
+
+			var stops = [];
+
+			tx.executeSql('SELECT stops FROM routes WHERE name = ?', [routeName], function (tx, result) {
+
+				var stopsString = result.rows.item(0).stops;
+				stops = stopsString.split('\t');
+
+				// stops number and name are both in a long space separated string
+				stops = stops.map(function (stop) {
+					return {
+						number: stop.split(' ')[0],
+						name: stop.split(' ').slice(1).join(' ')
+					};
+				});
+
+				defer.resolve(stops);
+				return;
+			});
+		}
+
+		function handleRouteStopsError(tx, error) {
+
+			defer.reject(error);
+			return;
+		}
+
+		return defer.promise;
 	}
 
 	function addFaveRoute(route) {
@@ -165,14 +217,15 @@ exports.default = angular.module('SQLiteMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-RouteCtrl.$inject = ['routes', '$routeParams'];
+RouteCtrl.$inject = ['routes', '$routeParams', 'stopsList'];
 
-function RouteCtrl(routes, $routeParams) {
+function RouteCtrl(routes, $routeParams, stopsList) {
+
   var vm = this;
 
   vm.routeName = $routeParams.routename;
   vm.routeNo = vm.routeName.split(' ')[0]; //smelly
-  vm.stops = routes.getStops($routeParams.routename);
+  vm.stops = stopsList; //routes.getStops($routeParams.routename);
 }
 
 exports.RouteCtrl = RouteCtrl;
@@ -186,7 +239,9 @@ Object.defineProperty(exports, "__esModule", {
 RouteStopDetailCtrl.$inject = ['routeStopDetails'];
 
 function RouteStopDetailCtrl(routeStopDetails) {
+
   var vm = this;
+
   vm.showError = routeStopDetails.Error === '' ? false : true;
   vm.error = routeStopDetails.Error;
 
@@ -201,9 +256,9 @@ exports.RouteStopDetailCtrl = RouteStopDetailCtrl;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-routesConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
+routesConfig.$inject = ['$routeProvider'];
 
-function routesConfig($routeProvider, $firebaseRefProvider) {
+function routesConfig($routeProvider) {
 
   $routeProvider.when('/routes', {
     templateUrl: 'views/routes.html',
@@ -218,7 +273,13 @@ function routesConfig($routeProvider, $firebaseRefProvider) {
   }).when('/routes/:routename', {
     templateUrl: 'views/route.html',
     controller: 'RouteCtrl',
-    controllerAs: 'route'
+    controllerAs: 'route',
+    resolve: {
+      stopsList: function stopsList($route, dataService) {
+        var routeName = $route.current.params.routename;
+        return dataService.getRouteStops(routeName);
+      }
+    }
   }).when('/routes/:routename/:stopNo', {
     templateUrl: 'views/routestops.html',
     controller: 'RouteStopDetailCtrl',
@@ -257,6 +318,7 @@ Object.defineProperty(exports, "__esModule", {
 RoutesCtrl.$inject = ['routesList'];
 
 function RoutesCtrl(routesList) {
+
   var vm = this;
 
   vm.routesList = [];
@@ -303,33 +365,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.routes = routes;
-routes.$inject = ['$firebaseArray', '$firebaseObject', '$http'];
+routes.$inject = ['$http'];
 
-function routes($firebaseArray, $firebaseObject, $http) {
-
-  var databaseURL = 'https://octranspo-a9250.firebaseio.com';
-  var firebaseApp = firebase.initializeApp({ databaseURL: databaseURL }, 'routesApp');
-  var routesRef = firebaseApp.database().ref('/routes');
+function routes($http) {
 
   var Routes = {
-    getAll: getAll,
-    getStops: getStops,
     getNextTrips: getNextTrips
   };
 
   return Routes;
 
-  function getAll() {
-    return $firebaseArray(routesRef);
-  }
-
-  function getStops(routeName) {
-    return $firebaseArray(routesRef.child(routeName).child('stops'));
-  }
-
   function getNextTrips(routeNo, stopNo) {
 
     var OCCONFIG = window._env.OC;
+
     var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
     var url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop';
     var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&routeNo=' + routeNo + '&format=json';
@@ -365,6 +414,7 @@ Object.defineProperty(exports, "__esModule", {
 StopCtrl.$inject = ['$routeParams', 'stopRouteSummary'];
 
 function StopCtrl($routeParams, stopRouteSummary) {
+
   var vm = this;
 
   vm.stopNo = $routeParams.stopNo;
@@ -384,13 +434,14 @@ Object.defineProperty(exports, "__esModule", {
 stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function stopsConfig($routeProvider, $firebaseRefProvider) {
+
   $routeProvider.when('/stops', {
     templateUrl: 'views/stops.html',
     controller: 'StopsCtrl',
     controllerAs: 'stops',
     resolve: {
       stopsList: function stopsList(stops, dataService) {
-        dataService.getAllStops();
+        return dataService.getAllStops();
         // return stops.getAll().$loaded();
       }
     }
@@ -421,14 +472,15 @@ exports.stopsConfig = stopsConfig;
  */
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 StopsCtrl.$inject = ['stopsList'];
 
 function StopsCtrl(stopsList) {
-    var vm = this;
 
-    vm.stopsList = stopsList;
+  var vm = this;
+
+  vm.stopsList = stopsList;
 }
 
 exports.StopsCtrl = StopsCtrl;
@@ -470,24 +522,15 @@ exports.default = angular.module('stopsMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-stops.$inject = ['$firebaseArray', '$firebaseObject', '$http'];
+stops.$inject = ['$http'];
 
-function stops($firebaseArray, $firebaseObject, $http) {
-
-  var databaseURL = 'https://octranspo-a9250.firebaseio.com';
-  var firebaseApp = firebase.initializeApp({ databaseURL: databaseURL }, 'stopsApp');
-  var stopsRef = firebaseApp.database().ref('/stops');
+function stops($http) {
 
   var Stops = {
-    getAll: getAll,
     getRouteSummary: getRouteSummary
   };
 
   return Stops;
-
-  function getAll() {
-    return $firebaseArray(stopsRef);
-  }
 
   function getRouteSummary(stopNo) {
 
