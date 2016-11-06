@@ -3,6 +3,7 @@
 stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
 
 function stopsConfig($routeProvider, $firebaseRefProvider) {
+  
   $routeProvider
     .when('/stops', {
       templateUrl: 'views/stops.html',
@@ -10,7 +11,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
       controllerAs: 'stops',
       resolve: {
         stopsList: function(stops, dataService) {
-          dataService.getAllStops();
+          return dataService.getAllStops();
           // return stops.getAll().$loaded();
         }
       }

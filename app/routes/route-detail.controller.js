@@ -8,14 +8,15 @@
  * Controller of the busTrackerApp
  */
 
-RouteCtrl.$inject = ['routes', '$routeParams'];
+RouteCtrl.$inject = ['routes', '$routeParams', 'stopsList'];
 
-function RouteCtrl (routes, $routeParams) {
-  var vm = this;
+function RouteCtrl (routes, $routeParams, stopsList) {
+  
+  let vm = this;
 
   vm.routeName = $routeParams.routename;
   vm.routeNo = vm.routeName.split(' ')[0]; //smelly
-  vm.stops = routes.getStops($routeParams.routename);
+  vm.stops = stopsList; //routes.getStops($routeParams.routename);
 }
 
 export {RouteCtrl};

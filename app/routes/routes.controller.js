@@ -11,7 +11,8 @@
 RoutesCtrl.$inject = ['routesList'];
 
 function RoutesCtrl(routesList) {
-  var vm = this;
+  
+  let vm = this;
 
   vm.routesList = [];
   vm.routesList = routesList;

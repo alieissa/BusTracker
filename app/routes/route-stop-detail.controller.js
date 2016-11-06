@@ -3,7 +3,9 @@
 RouteStopDetailCtrl.$inject = ['routeStopDetails'];
 
 function RouteStopDetailCtrl(routeStopDetails) {
-  var vm = this;
+  
+  let vm = this;
+  
   vm.showError = routeStopDetails.Error === '' ? false : true;
   vm.error = routeStopDetails.Error;
 

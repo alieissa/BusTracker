@@ -23,7 +23,12 @@ angular
   .controller('FavesCtrl', FavesCtrl)
   .controller('MainCtrl', MainCtrl);
 
-function config($routeProvider) {
+function config($routeProvider, $httpProvider) {
+
+  $httpProvider.defaults.useXDomain = true;
+  $httpProvider.defaults.withCredentials = true;
+  delete $httpProvider.defaults.headers.common["X-Requested-With"];
+
   $routeProvider
     .when('/', {
       templateUrl: 'views/main.html',

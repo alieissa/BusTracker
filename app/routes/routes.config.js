@@ -1,8 +1,8 @@
 'use strict';
 
-routesConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
+routesConfig.$inject = ['$routeProvider'];
 
-function routesConfig($routeProvider, $firebaseRefProvider) {
+function routesConfig($routeProvider) {
   
   $routeProvider
     .when('/routes', {
@@ -19,7 +19,13 @@ function routesConfig($routeProvider, $firebaseRefProvider) {
     .when('/routes/:routename', {
       templateUrl: 'views/route.html',
       controller: 'RouteCtrl',
-      controllerAs: 'route'
+      controllerAs: 'route',
+      resolve: {
+        stopsList: function($route, dataService) {
+          let routeName = $route.current.params.routename;
+          return dataService.getRouteStops(routeName)
+        }
+    }
     })
     .when('/routes/:routename/:stopNo', {
       templateUrl: 'views/routestops.html',

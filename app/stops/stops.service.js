@@ -10,24 +10,17 @@
 
 // import {OCData} from '../../util/OCData.js';
 
-stops.$inject = ['$firebaseArray', '$firebaseObject', '$http'];
+stops.$inject = ['$http'];
 
-function stops ($firebaseArray, $firebaseObject, $http) {
-
-    let databaseURL = 'https://octranspo-a9250.firebaseio.com';
-    let firebaseApp = firebase.initializeApp({databaseURL: databaseURL}, 'stopsApp');
-    let stopsRef = firebaseApp.database().ref('/stops');
+function stops ($http) {
 
   var Stops = {
-    getAll: getAll,
     getRouteSummary: getRouteSummary
   };
 
   return Stops;
 
-  function getAll() {
-    return $firebaseArray(stopsRef);
-  }
+
 
   function getRouteSummary(stopNo) {
 

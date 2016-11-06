@@ -9,33 +9,21 @@
  */
 
 
-routes.$inject = ['$firebaseArray', '$firebaseObject', '$http'];
+routes.$inject = ['$http'];
 
-export function routes($firebaseArray, $firebaseObject, $http) {
+export function routes($http) {
   
-    let databaseURL = 'https://octranspo-a9250.firebaseio.com';
-    let firebaseApp = firebase.initializeApp({databaseURL: databaseURL}, 'routesApp');
-    let routesRef = firebaseApp.database().ref('/routes');
     
-    const Routes = {
-      getAll: getAll,
-      getStops: getStops,
-      getNextTrips: getNextTrips
-    };
+  const Routes = {
+    getNextTrips: getNextTrips
+  };
 
   return Routes;
-
-  function getAll() {
-    return $firebaseArray(routesRef);
-  }
-
-  function getStops(routeName) {
-    return $firebaseArray(routesRef.child(routeName).child('stops'));
-  }
 
   function getNextTrips(routeNo, stopNo) {
 
     let OCCONFIG = window._env.OC;
+    
     let headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}};
     let url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop';
     let data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&routeNo=${routeNo}&format=json`;
