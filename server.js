@@ -29,7 +29,18 @@ app.post('/v1.2/GetNextTripsForStopAllRoutes', function(req, res, err) {
 
 })
 
+app.post('/v1.2/GetNextTripsForStop', (req, res, err) => {
+	console.log(res.body);
+	let url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop';
+	let ocReq = {url:url, form: req.body};
+	console.log(req.body);
 
+	request.post(ocReq, (err, ocRes) => {
+		console.log(ocRes.body);
+		res.send(ocRes.body)
+		res.end();
+	})
+})
 
 app.listen(3000, function() {
   console.log('Listening on 3000 ---')
