@@ -45,7 +45,7 @@ function dist(done) {
 			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/common/*.db'), path.join(__dirname, 'dist/database'));
-			// cpDirFiles(path.join(__dirname, 'assets/*'), path.join(__dirname, 'dist/assets'));
+			cpDirFiles(path.join(__dirname, 'app/assets/css/*'), path.join(__dirname, 'dist/assets/css'));
 
 			break;
 		default:

@@ -10,20 +10,31 @@ function routesConfig($routeProvider) {
       controller: 'RoutesCtrl',
       controllerAs: 'routes',
       resolve: {
-        routesList: function(routes, dataService) {
+        routesList: (routes, dataService) => {
           return dataService.getAllRoutes();
-          // return routes.getAll().$loaded();
         }
       }
     })
     .when('/routes/:routename', {
+
       templateUrl: 'views/route.html',
       controller: 'RouteCtrl',
       controllerAs: 'route',
       resolve: {
-        stopsList: function($route, dataService) {
+        stopsList: ($route, dataService) => {
+
           let routeName = $route.current.params.routename;
           return dataService.getRouteStops(routeName)
+        },
+
+        faveStatus: ($route, dataService) => {
+
+          let routeName = $route.current.params.routename;
+          return dataService.getRouteFaveStatus(routeName);
+        },
+
+        setFaveStatus: (dataService) => {
+          return dataService.setRouteFaveStatus;
         }
     }
     })
@@ -33,6 +44,7 @@ function routesConfig($routeProvider) {
       controllerAs: 'routeStops',
       resolve: {
         routeStopDetails: function(routes, $route){
+
           let routeName = $route.current.params.routename;
           let stopNo = $route.current.params.stopNo;
 

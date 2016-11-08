@@ -97,6 +97,15 @@ h1 {
     display:none;
 }
 
+.faveBtnStatus0 {
+    color: black;
+}
+
+..faveBtnStatus1 {
+    background-color: !important black;
+    color: red;
+}
+
 @keyframes fade {
     from { opacity: 1.0; }
     50% { opacity: 0.4; }

@@ -11,7 +11,8 @@ function dataService(DATABASE, $q) {
 	
 	let dataService = {
 		addFaveStop: addFaveStop,
-		addFaveRoute: addFaveRoute,
+		getRouteFaveStatus: getRouteFaveStatus,
+		setRouteFaveStatus: setRouteFaveStatus,
 		getFaveRoutes: getFaveRoutes,
 		getFaveStops: getFaveStops,
 		getAllRoutes: getAllRoutes,
@@ -21,7 +22,7 @@ function dataService(DATABASE, $q) {
 
 	return dataService;
 
-
+	
 	function getAllRoutes() {
 
 		let defer = $q.defer();
@@ -82,6 +83,7 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
+	// Get bus stops for bus 'routeName'
 	function getRouteStops(routeName) {
 		
 		let defer = $q.defer();
@@ -120,19 +122,84 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-	function addFaveRoute(route) {
+	function setRouteFaveStatus(route, status) {
+		
+		let defer = $q.defer();
+		
 		// Add route to db
+		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+
+		function handleFaveRouteResult(tx) {
+
+			tx.executeSql('UPDATE routes SET favourite = ? WHERE name = ?', [status, route], (tx, result) => {
+				console.log(result)
+				return defer.resolve(result.rows);
+			});
+
+		}
+
+		function handleFaveRouteError(tx, error) {
+			defer.reject(error);
+		}
+
+		return defer.promise;
+	}
+
+
+	function getRouteFaveStatus(route) {
+
+		let defer = $q.defer();
+
+		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+
+		function handleFaveRouteResult(tx) {
+			tx.executeSql('SELECT favourite FROM routes WHERE name = ?', [route], (tx, result) => {
+				return defer.resolve(result.rows.item(0).favourite);
+			});
+
+			return;
+		}
+
+		function handleFaveRouteError(tx, error) {
+
+			defer.reject(error);
+
+			return;
+		}
+
+		return defer.promise;
 	}
 
 	function addFaveStop(stop) {
 		// Add route to db
 	}
+	function getFaveRoutes() {
 
-	function getFaveRoutes(routeName) {
+		let defer = $q.defer();
+
 		// Get fave route
+		db.transaction(handleFaveRoutesResult, handleFaveRoutesError);
+
+		function handleFaveRoutesResult(tx) {
+
+			let faves = [];
+
+			tx.executeSql('SELECT * FROM routes WHERE favourite = 1', (tx, result) => {
+				for(let i = 0; i < result.rows.length; i++) {
+					faves.push(result.rows.item(i));
+				}
+				
+				defer.resolve(faves);
+			});
+
+		}
+
+		function handleFaveRoutesError(tx, error) {
+			defer.reject(error);
+		}
 	}
 
-	function getFaveStops(stopNo) {
+	function getFaveStops() {
 		// Get fave stop
 	}
 }

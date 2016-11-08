@@ -78,7 +78,8 @@ function dataService(DATABASE, $q) {
 
 	var dataService = {
 		addFaveStop: addFaveStop,
-		addFaveRoute: addFaveRoute,
+		getRouteFaveStatus: getRouteFaveStatus,
+		setRouteFaveStatus: setRouteFaveStatus,
 		getFaveRoutes: getFaveRoutes,
 		getFaveStops: getFaveStops,
 		getAllRoutes: getAllRoutes,
@@ -147,6 +148,7 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
+	// Get bus stops for bus 'routeName'
 	function getRouteStops(routeName) {
 
 		var defer = $q.defer();
@@ -184,19 +186,81 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-	function addFaveRoute(route) {
+	function setRouteFaveStatus(route, status) {
+
+		var defer = $q.defer();
+
 		// Add route to db
+		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+
+		function handleFaveRouteResult(tx) {
+
+			tx.executeSql('UPDATE routes SET favourite = ? WHERE name = ?', [status, route], function (tx, result) {
+				console.log(result);
+				return defer.resolve(result.rows);
+			});
+		}
+
+		function handleFaveRouteError(tx, error) {
+			defer.reject(error);
+		}
+
+		return defer.promise;
+	}
+
+	function getRouteFaveStatus(route) {
+
+		var defer = $q.defer();
+
+		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+
+		function handleFaveRouteResult(tx) {
+			tx.executeSql('SELECT favourite FROM routes WHERE name = ?', [route], function (tx, result) {
+				return defer.resolve(result.rows.item(0).favourite);
+			});
+
+			return;
+		}
+
+		function handleFaveRouteError(tx, error) {
+
+			defer.reject(error);
+
+			return;
+		}
+
+		return defer.promise;
 	}
 
 	function addFaveStop(stop) {
 		// Add route to db
 	}
+	function getFaveRoutes() {
 
-	function getFaveRoutes(routeName) {
+		var defer = $q.defer();
+
 		// Get fave route
+		db.transaction(handleFaveRoutesResult, handleFaveRoutesError);
+
+		function handleFaveRoutesResult(tx) {
+
+			var faves = [];
+
+			tx.executeSql('SELECT * FROM routes WHERE favourite = 1', function (tx, result) {
+				for (var i = 0; i < result.rows.length; i++) {
+					faves.push(result.rows.item(i));
+				}
+
+				defer.resolve(faves);
+			});
+		}
+
+		function handleFaveRoutesError(tx, error) {
+			defer.reject(error);
+		}
 	}
 
-	function getFaveStops(stopNo) {
+	function getFaveStops() {
 		// Get fave stop
 	}
 }
@@ -217,15 +281,23 @@ exports.default = angular.module('SQLiteMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-RouteCtrl.$inject = ['routes', '$routeParams', 'stopsList'];
+RouteCtrl.$inject = ['routes', '$routeParams', '$timeout', 'stopsList', 'faveStatus', 'setFaveStatus'];
 
-function RouteCtrl(routes, $routeParams, stopsList) {
+function RouteCtrl(routes, $routeParams, $timeout, stopsList, faveStatus, setFaveStatus) {
 
   var vm = this;
 
   vm.routeName = $routeParams.routename;
   vm.routeNo = vm.routeName.split(' ')[0]; //smelly
-  vm.stops = stopsList; //routes.getStops($routeParams.routename);
+  vm.stops = stopsList;
+  vm.faveStatus = faveStatus;
+
+  // Handler of Favourite button click events in route.html template
+  vm.setFaveStatus = function (routeName) {
+    //toggle fave status according to fave btn clicks
+    vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
+    setFaveStatus(routeName, vm.faveStatus);
+  };
 }
 
 exports.RouteCtrl = RouteCtrl;
@@ -267,17 +339,28 @@ function routesConfig($routeProvider) {
     resolve: {
       routesList: function routesList(routes, dataService) {
         return dataService.getAllRoutes();
-        // return routes.getAll().$loaded();
       }
     }
   }).when('/routes/:routename', {
+
     templateUrl: 'views/route.html',
     controller: 'RouteCtrl',
     controllerAs: 'route',
     resolve: {
       stopsList: function stopsList($route, dataService) {
+
         var routeName = $route.current.params.routename;
         return dataService.getRouteStops(routeName);
+      },
+
+      faveStatus: function faveStatus($route, dataService) {
+
+        var routeName = $route.current.params.routename;
+        return dataService.getRouteFaveStatus(routeName);
+      },
+
+      setFaveStatus: function setFaveStatus(dataService) {
+        return dataService.setRouteFaveStatus;
       }
     }
   }).when('/routes/:routename/:stopNo', {
@@ -286,6 +369,7 @@ function routesConfig($routeProvider) {
     controllerAs: 'routeStops',
     resolve: {
       routeStopDetails: function routeStopDetails(routes, $route) {
+
         var routeName = $route.current.params.routename;
         var stopNo = $route.current.params.stopNo;
 

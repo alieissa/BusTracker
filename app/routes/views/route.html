@@ -6,7 +6,8 @@
   </li>
 </ul>
 <div>
-	<button style="float: right"> Favourite </button>
+	<button style="float: right" ng-click="route.setFaveStatus(route.routeName)" ng-class="'faveStatusBtn' + route.faveStatus"> Favourite </button>
 	<div style="height: 100px"></div>
+
 </div>
 
