@@ -122,7 +122,7 @@ function dataService(DATABASE, $q) {
 	}
 
 	// Get bus stops for bus 'routeName'
-	function getRouteStops(routeName) {
+	function getRouteStops(name) {
 
 		var defer = $q.defer();
 
@@ -131,11 +131,16 @@ function dataService(DATABASE, $q) {
 		function handleRouteStopsResult(tx) {
 
 			var stops = [];
+			var number = '';
 
-			tx.executeSql('SELECT stops FROM routes WHERE name = ?', [routeName], function (tx, result) {
+			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], function (tx, result) {
+				console.log(result.rows);
+				var data = result.rows.item(0);
+				//.stops = data.stops.split('\t');
 
-				var stopsString = result.rows.item(0).stops;
-				stops = stopsString.split('\t');
+				// number = result.rows.item(0).number;
+				// let stopsString = data.stops;
+				stops = data.stops.split('\t');
 
 				// stops number and name are both in a long space separated string
 				stops = stops.map(function (stop) {
@@ -145,7 +150,9 @@ function dataService(DATABASE, $q) {
 					};
 				});
 
-				defer.resolve(stops);
+				data.stops = stops;
+				// TODO: return entire result
+				defer.resolve(data);
 				return;
 			});
 		}
@@ -321,22 +328,23 @@ exports.default = angular.module('SQLiteMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-RouteCtrl.$inject = ['routes', '$routeParams', '$timeout', 'stopsList', 'faveStatus', 'setFaveStatus'];
+RouteCtrl.$inject = ['details', 'setFaveStatus'];
 
-function RouteCtrl(routes, $routeParams, $timeout, stopsList, faveStatus, setFaveStatus) {
+function RouteCtrl(details, setFaveStatus) {
 
   var vm = this;
 
-  vm.routeName = $routeParams.routename;
-  vm.routeNo = vm.routeName.split(' ')[0]; //smelly
-  vm.stops = stopsList;
-  vm.faveStatus = faveStatus;
+  // console.log(details);
+  vm.faveStatus = details.favourite;
+  vm.name = details.name;
+  vm.number = details.number;
+  vm.stops = details.stops;
 
   // Handler of Favourite button click events in route.html template
-  vm.setFaveStatus = function (routeName) {
+  vm.setFaveStatus = function (name) {
     //toggle fave status according to fave btn clicks
     vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
-    setFaveStatus(routeName, vm.faveStatus);
+    setFaveStatus(vm.name, vm.faveStatus);
   };
 }
 
@@ -381,39 +389,35 @@ function routesConfig($routeProvider) {
         return dataService.getAllRoutes();
       }
     }
-  }).when('/routes/:routename', {
+  }).when('/routes/:number', {
 
     templateUrl: 'views/route.html',
     controller: 'RouteCtrl',
     controllerAs: 'route',
     resolve: {
-      stopsList: function stopsList($route, dataService) {
+      details: function details($location, dataService) {
 
-        var routeName = $route.current.params.routename;
-        return dataService.getRouteStops(routeName);
-      },
-
-      faveStatus: function faveStatus($route, dataService) {
-
-        var routeName = $route.current.params.routename;
-        return dataService.getRouteFaveStatus(routeName);
+        // get route name form query string
+        var name = $location.search().name;
+        return dataService.getRouteStops(name);
       },
 
       setFaveStatus: function setFaveStatus(dataService) {
         return dataService.setRouteFaveStatus;
       }
     }
-  }).when('/routes/:routename/:stopNo', {
+  }).when('/routes/:number/:stopNo', {
     templateUrl: 'views/routestops.html',
     controller: 'RouteStopDetailCtrl',
     controllerAs: 'routeStops',
     resolve: {
       routeStopDetails: function routeStopDetails(routes, $route) {
 
-        var routeName = $route.current.params.routename;
+        // route number
+        var number = $route.current.params.number;
         var stopNo = $route.current.params.stopNo;
 
-        return routes.getNextTrips(routeName, stopNo);
+        return routes.getNextTrips(number, stopNo);
       }
     }
   }).when('/routes/:routeNo/:stopNo/error', {
@@ -504,7 +508,7 @@ function routes($http, config) {
     var OCCONFIG = window._env.OC;
 
     var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-    var url = '${config.OC_URL}/GetNextTripsForStop';
+    var url = config.OC_URL + '/GetNextTripsForStop';
     var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&routeNo=' + routeNo + '&format=json';
 
     return $http.post(url, data, headers).then(getNextTripsComplete);

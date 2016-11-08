@@ -58,7 +58,7 @@ function dataService(DATABASE, $q) {
 
 
 	// Get bus stops for bus 'routeName'
-	function getRouteStops(routeName) {
+	function getRouteStops(name) {
 		
 		let defer = $q.defer();
 		
@@ -67,11 +67,16 @@ function dataService(DATABASE, $q) {
 		function handleRouteStopsResult(tx) {
 
 			let stops = []
+			let number = '';
 
-			tx.executeSql('SELECT stops FROM routes WHERE name = ?', [routeName], (tx, result) => {
+			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], (tx, result) => {
+				console.log(result.rows);
+				let data = result.rows.item(0);
+				//.stops = data.stops.split('\t');
 
-				let stopsString = result.rows.item(0).stops;
-				stops = stopsString.split('\t');
+				// number = result.rows.item(0).number;
+				// let stopsString = data.stops;
+				stops = data.stops.split('\t');
 
 				// stops number and name are both in a long space separated string
 				stops = stops.map((stop) => {
@@ -82,7 +87,9 @@ function dataService(DATABASE, $q) {
 
 				});
 
-				defer.resolve(stops);
+				data.stops = stops;
+				// TODO: return entire result
+				defer.resolve(data);
 				return;
 			});
 		}

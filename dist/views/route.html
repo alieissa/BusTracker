@@ -1,13 +1,12 @@
-<h2>{{route.routeName}}</h2>
+<h2>{{route.name}}</h2>
 
 <ul>
   <li ng-repeat="stop in route.stops">
-  	<a ng-href="#/routes/{{route.routeNo}}/{{stop.number}}"> {{stop.number}}  {{stop.name}}</a>
+  	<a ng-href="#/routes/{{route.number}}/{{stop.number}}"> {{stop.number}}  {{stop.name}}</a>
   </li>
 </ul>
 <div>
-	<button style="float: right" ng-click="route.setFaveStatus(route.routeName)" ng-class="'faveStatusBtn' + route.faveStatus"> Favourite </button>
+	<button style="float: right" ng-click="route.setFaveStatus(route.name)" ng-class="'faveStatusBtn' + route.faveStatus"> Favourite </button>
 	<div style="height: 100px"></div>
-
 </div>
 

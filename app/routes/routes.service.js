@@ -25,7 +25,7 @@ export function routes($http, config) {
     let OCCONFIG = window._env.OC;
     
     let headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}};
-    let url = '${config.OC_URL}/GetNextTripsForStop';
+    let url = `${config.OC_URL}/GetNextTripsForStop`;
     let data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&routeNo=${routeNo}&format=json`;
 
     return $http.post(url, data, headers)

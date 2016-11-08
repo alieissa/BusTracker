@@ -15,22 +15,17 @@ function routesConfig($routeProvider) {
         }
       }
     })
-    .when('/routes/:routename', {
+    .when('/routes/:number', {
 
       templateUrl: 'views/route.html',
       controller: 'RouteCtrl',
       controllerAs: 'route',
       resolve: {
-        stopsList: ($route, dataService) => {
+        details: ($location, dataService) => {
 
-          let routeName = $route.current.params.routename;
-          return dataService.getRouteStops(routeName)
-        },
-
-        faveStatus: ($route, dataService) => {
-
-          let routeName = $route.current.params.routename;
-          return dataService.getRouteFaveStatus(routeName);
+          // get route name form query string
+          let name = ($location.search()).name; 
+          return dataService.getRouteStops(name)
         },
 
         setFaveStatus: (dataService) => {
@@ -38,17 +33,18 @@ function routesConfig($routeProvider) {
         }
     }
     })
-    .when('/routes/:routename/:stopNo', {
+    .when('/routes/:number/:stopNo', {
       templateUrl: 'views/routestops.html',
       controller: 'RouteStopDetailCtrl',
       controllerAs: 'routeStops',
       resolve: {
         routeStopDetails: function(routes, $route){
 
-          let routeName = $route.current.params.routename;
+          // route number
+          let number = $route.current.params.number;
           let stopNo = $route.current.params.stopNo;
 
-          return routes.getNextTrips(routeName, stopNo);
+          return routes.getNextTrips(number, stopNo);
         }
       }
     })
