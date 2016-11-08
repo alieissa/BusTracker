@@ -10,7 +10,6 @@ const path = require('path');
 let shell = require('shelljs');
 shell.config.fatal = true;
 
-
 gulp.task('lint', lint);
 gulp.task('es6', es6);
 gulp.task('dist', dist);
@@ -25,7 +24,6 @@ gulp.task('default', gulp.series('lint', 'es6', (done) => {
 	gulp.watch(['app/**/*.js', '*.js', '/**/*.html'], gulp.series('lint', 'es6'));
 	done();
 }));
-
 
 
 function dist(done) {

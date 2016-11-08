@@ -20,6 +20,7 @@ angular
     'SQLiteMod'
   ])
   .config(config)
+  .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
   .controller('FavesCtrl', FavesCtrl)
   .controller('MainCtrl', MainCtrl);
 

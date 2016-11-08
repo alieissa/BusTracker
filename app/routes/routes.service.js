@@ -9,9 +9,9 @@
  */
 
 
-routes.$inject = ['$http'];
+routes.$inject = ['$http', 'config'];
 
-export function routes($http) {
+export function routes($http, config) {
   
     
   const Routes = {
@@ -25,7 +25,7 @@ export function routes($http) {
     let OCCONFIG = window._env.OC;
     
     let headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}};
-    let url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop';
+    let url = '${config.OC_URL}/GetNextTripsForStop';
     let data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&routeNo=${routeNo}&format=json`;
 
     return $http.post(url, data, headers)
