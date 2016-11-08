@@ -10,9 +10,10 @@
 
 // import {OCData} from '../../util/OCData.js';
 
-stops.$inject = ['$http'];
+stops.$inject = ['$http', 'config'];
 
-function stops ($http) {
+function stops ($http, config) {
+
 
   var Stops = {
     getRouteSummary: getRouteSummary
@@ -20,15 +21,13 @@ function stops ($http) {
 
   return Stops;
 
-
-
   function getRouteSummary(stopNo) {
 
     // Content-Type must be x-www-form-urlencoded. Tried with JSON
     // but OC Transpo returns error (weird)
     const OCCONFIG = window._env.OC;
     const headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}};
-    const url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes';
+    const url = `${config.OC_URL}/GetNextTripsForStopAllRoutes`;
     const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
 
     return $http.post(url, data, headers)

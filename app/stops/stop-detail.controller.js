@@ -8,9 +8,9 @@
  * Controller of the busTrackerApp
  */
 
-StopCtrl.$inject = ['$routeParams', 'stopRouteSummary'];
+StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'faveStatus', 'setFaveStatus'];
 
-function StopCtrl($routeParams, stopRouteSummary) {
+function StopCtrl($routeParams, stopRouteSummary, faveStatus, setFaveStatus) {
   
   let vm = this;
 
@@ -19,6 +19,16 @@ function StopCtrl($routeParams, stopRouteSummary) {
   vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
   vm.stopDescription = stopRouteSummary.StopDescription;
 
+  vm.faveStatus = faveStatus;
+
+  vm.setFaveStatus = (stopNo) => {
+  	
+  	vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
+  	setFaveStatus(stopNo, vm.faveStatus);
+
+  	console.log(vm.faveStatus);
+  }
+  console.log('Fave Status: ' + vm.faveStatus);
 }
 
 export {StopCtrl};

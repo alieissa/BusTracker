@@ -16,7 +16,7 @@ var _stopsModule = require('./stops/stops.module.js');
 
 var _SQLiteModule = require('./common/SQLite.module.js');
 
-angular.module('busTrackerApp', ['firebase', 'ngRoute', 'routesMod', 'stopsMod', 'SQLiteMod']).config(config).controller('FavesCtrl', FavesCtrl).controller('MainCtrl', MainCtrl);
+angular.module('busTrackerApp', ['firebase', 'ngRoute', 'routesMod', 'stopsMod', 'SQLiteMod']).config(config).constant('config', { OC_URL: 'http://localhost:3000/v1.2' }).controller('FavesCtrl', FavesCtrl).controller('MainCtrl', MainCtrl);
 
 function config($routeProvider, $httpProvider) {
 
@@ -80,6 +80,8 @@ function dataService(DATABASE, $q) {
 		addFaveStop: addFaveStop,
 		getRouteFaveStatus: getRouteFaveStatus,
 		setRouteFaveStatus: setRouteFaveStatus,
+		getStopFaveStatus: getStopFaveStatus,
+		setStopFaveStatus: setStopFaveStatus,
 		getFaveRoutes: getFaveRoutes,
 		getFaveStops: getFaveStops,
 		getAllRoutes: getAllRoutes,
@@ -198,6 +200,43 @@ function dataService(DATABASE, $q) {
 			defer.reject(error);
 
 			return;
+		}
+
+		return defer.promise;
+	}
+
+	function getStopFaveStatus(stopNo) {
+		var defer = $q.defer();
+
+		db.transaction(handleDb, function (tx, error) {
+			return defer.reject(error);
+		});
+
+		function handleDb(tx) {
+			tx.executeSql('SELECT favourite FROM stops WHERE number = ?', [stopNo], function (tx, result) {
+
+				var faveStatus = result.rows.item(0).favourite;
+				defer.resolve(faveStatus);
+
+				return;
+			});
+		}
+
+		return defer.promise;
+	}
+
+	function setStopFaveStatus(stopNo, faveStatus) {
+
+		var defer = $q.defer();
+
+		db.transaction(handleDb, function (tx, error) {
+			return defer.reject(error);
+		});
+
+		function handleDb(tx) {
+			tx.executeSql('UPDATE stops SET favourite = ? WHERE number = ?', [faveStatus, stopNo], function (tx, result) {
+				defer.resolve(result);
+			});
 		}
 
 		return defer.promise;
@@ -450,9 +489,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.routes = routes;
-routes.$inject = ['$http'];
+routes.$inject = ['$http', 'config'];
 
-function routes($http) {
+function routes($http, config) {
 
   var Routes = {
     getNextTrips: getNextTrips
@@ -465,7 +504,7 @@ function routes($http) {
     var OCCONFIG = window._env.OC;
 
     var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-    var url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStop';
+    var url = '${config.OC_URL}/GetNextTripsForStop';
     var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&routeNo=' + routeNo + '&format=json';
 
     return $http.post(url, data, headers).then(getNextTripsComplete);
@@ -496,9 +535,9 @@ function routes($http) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-StopCtrl.$inject = ['$routeParams', 'stopRouteSummary'];
+StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'faveStatus', 'setFaveStatus'];
 
-function StopCtrl($routeParams, stopRouteSummary) {
+function StopCtrl($routeParams, stopRouteSummary, faveStatus, setFaveStatus) {
 
   var vm = this;
 
@@ -506,6 +545,17 @@ function StopCtrl($routeParams, stopRouteSummary) {
   vm.showError = stopRouteSummary.Error !== '';
   vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
   vm.stopDescription = stopRouteSummary.StopDescription;
+
+  vm.faveStatus = faveStatus;
+
+  vm.setFaveStatus = function (stopNo) {
+
+    vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
+    setFaveStatus(stopNo, vm.faveStatus);
+
+    console.log(vm.faveStatus);
+  };
+  console.log('Fave Status: ' + vm.faveStatus);
 }
 
 exports.StopCtrl = StopCtrl;
@@ -538,6 +588,14 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
       stopRouteSummary: function stopRouteSummary(stops, $route) {
         var stopNo = $route.current.params.stopNo;
         return stops.getRouteSummary(stopNo);
+      },
+      faveStatus: function faveStatus($route, dataService) {
+
+        var stopNo = $route.current.params.stopNo;
+        return dataService.getStopFaveStatus(stopNo);
+      },
+      setFaveStatus: function setFaveStatus(dataService) {
+        return dataService.setStopFaveStatus;
       }
     }
   });
@@ -607,9 +665,9 @@ exports.default = angular.module('stopsMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-stops.$inject = ['$http'];
+stops.$inject = ['$http', 'config'];
 
-function stops($http) {
+function stops($http, config) {
 
   var Stops = {
     getRouteSummary: getRouteSummary
@@ -623,7 +681,7 @@ function stops($http) {
     // but OC Transpo returns error (weird)
     var OCCONFIG = window._env.OC;
     var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-    var url = 'https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes';
+    var url = config.OC_URL + '/GetNextTripsForStopAllRoutes';
     var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&format=json';
 
     return $http.post(url, data, headers).then(getRouteSummaryComplete);

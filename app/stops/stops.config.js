@@ -24,6 +24,14 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         stopRouteSummary: function (stops, $route) {
           let stopNo = $route.current.params.stopNo;
           return stops.getRouteSummary(stopNo);
+        },
+        faveStatus: function($route, dataService) {
+
+          let stopNo = $route.current.params.stopNo;
+          return dataService.getStopFaveStatus(stopNo);
+        },
+        setFaveStatus: (dataService) => {
+          return dataService.setStopFaveStatus;
         }
       }
     });

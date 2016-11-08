@@ -13,6 +13,8 @@ function dataService(DATABASE, $q) {
 		addFaveStop: addFaveStop,
 		getRouteFaveStatus: getRouteFaveStatus,
 		setRouteFaveStatus: setRouteFaveStatus,
+		getStopFaveStatus: getStopFaveStatus,
+		setStopFaveStatus: setStopFaveStatus,
 		getFaveRoutes: getFaveRoutes,
 		getFaveStops: getFaveStops,
 		getAllRoutes: getAllRoutes,
@@ -117,7 +119,6 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-
 	function getRouteFaveStatus(route) {
 
 		let defer = $q.defer();
@@ -137,6 +138,39 @@ function dataService(DATABASE, $q) {
 			defer.reject(error);
 
 			return;
+		}
+
+		return defer.promise;
+	}
+
+	function getStopFaveStatus(stopNo) {
+		let defer = $q.defer();
+
+		db.transaction(handleDb, (tx, error) => defer.reject(error));
+
+		function handleDb(tx) {
+			tx.executeSql('SELECT favourite FROM stops WHERE number = ?', [stopNo], (tx, result) => {
+				
+				let faveStatus = result.rows.item(0).favourite;
+				defer.resolve(faveStatus);
+
+				return;
+			});
+		}
+
+		return defer.promise;
+	}
+	
+	function setStopFaveStatus(stopNo, faveStatus) {
+
+		let defer = $q.defer();
+
+		db.transaction(handleDb, (tx, error) => defer.reject(error));
+
+		function handleDb(tx) {
+			tx.executeSql('UPDATE stops SET favourite = ? WHERE number = ?', [faveStatus, stopNo], (tx, result) => {
+				defer.resolve(result);
+			});
 		}
 
 		return defer.promise;
