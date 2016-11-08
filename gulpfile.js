@@ -15,13 +15,14 @@ gulp.task('lint', lint);
 gulp.task('es6', es6);
 gulp.task('dist', dist);
 gulp.task('build', gulp.series('es6', 'dist', (done) => {
-	gulp.watch('app/**/*', gulp.series('es6', 'dist'))
+	gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series('es6', 'dist'))
 	done()
 }));
+
 gulp.task('deploy', gulp.series('lint', 'es6', 'dist')); // build then dist
 
 gulp.task('default', gulp.series('lint', 'es6', (done) => {
-	gulp.watch(['app/**/*.js', './*.js', '/**/*.html'], gulp.series('lint', 'es6'));
+	gulp.watch(['app/**/*.js', '*.js', '/**/*.html'], gulp.series('lint', 'es6'));
 	done();
 }));
 
@@ -45,7 +46,7 @@ function dist(done) {
 			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/common/*.db'), path.join(__dirname, 'dist/database'));
-			cpDirFiles(path.join(__dirname, 'app/assets/css/*'), path.join(__dirname, 'dist/assets/css'));
+			cpDirFiles(path.join(__dirname, 'assets/css/*'), path.join(__dirname, 'dist/assets/css'));
 
 			break;
 		default:
