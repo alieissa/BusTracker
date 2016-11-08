@@ -119,35 +119,6 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-	function getAllStops() {
-		// Get all stops
-
-		var defer = $q.defer();
-
-		db.transaction(handleStopsResult, handleStopsError);
-
-		function handleStopsResult(tx) {
-
-			var stops = [];
-
-			tx.executeSql('SELECT * FROM stops LIMIT 500', [], function (tx, result) {
-				for (var i = 0; i < result.rows.length; i++) {
-					stops.push(result.rows.item(i));
-				}
-
-				defer.resolve(stops);
-				return;
-			});
-		}
-
-		function handleStopsError(tx, error) {
-			defer.reject(error);
-			return;
-		}
-
-		return defer.promise;
-	}
-
 	// Get bus stops for bus 'routeName'
 	function getRouteStops(routeName) {
 
@@ -232,6 +203,35 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
+	function getAllStops() {
+		// Get all stops
+
+		var defer = $q.defer();
+
+		db.transaction(handleStopsResult, handleStopsError);
+
+		function handleStopsResult(tx) {
+
+			var stops = [];
+
+			tx.executeSql('SELECT * FROM stops LIMIT 500', [], function (tx, result) {
+				for (var i = 0; i < result.rows.length; i++) {
+					stops.push(result.rows.item(i));
+				}
+
+				defer.resolve(stops);
+				return;
+			});
+		}
+
+		function handleStopsError(tx, error) {
+			defer.reject(error);
+			return;
+		}
+
+		return defer.promise;
+	}
+
 	function addFaveStop(stop) {
 		// Add route to db
 	}
@@ -252,6 +252,7 @@ function dataService(DATABASE, $q) {
 				}
 
 				defer.resolve(faves);
+				return;
 			});
 		}
 
