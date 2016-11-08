@@ -10,7 +10,6 @@ function dataService(DATABASE, $q) {
 	const db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
 	
 	let dataService = {
-		addFaveStop: addFaveStop,
 		getRouteFaveStatus: getRouteFaveStatus,
 		setRouteFaveStatus: setRouteFaveStatus,
 		getStopFaveStatus: getStopFaveStatus,
@@ -67,15 +66,11 @@ function dataService(DATABASE, $q) {
 		function handleRouteStopsResult(tx) {
 
 			let stops = []
-			let number = '';
 
 			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], (tx, result) => {
-				console.log(result.rows);
-				let data = result.rows.item(0);
-				//.stops = data.stops.split('\t');
 
-				// number = result.rows.item(0).number;
-				// let stopsString = data.stops;
+				let data = result.rows.item(0);
+
 				stops = data.stops.split('\t');
 
 				// stops number and name are both in a long space separated string
@@ -88,7 +83,7 @@ function dataService(DATABASE, $q) {
 				});
 
 				data.stops = stops;
-				// TODO: return entire result
+				data.favourite = parseInt(data.favourite); //SQLite returns float
 				defer.resolve(data);
 				return;
 			});
@@ -104,11 +99,11 @@ function dataService(DATABASE, $q) {
 	}
 
 	function setRouteFaveStatus(route, status) {
-		
+
 		let defer = $q.defer();
 		
 		// Add route to db
-		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+		db.transaction(handleFaveRouteResult, (tx, result) => defer.reject(error));
 
 		function handleFaveRouteResult(tx) {
 
@@ -117,10 +112,6 @@ function dataService(DATABASE, $q) {
 				return defer.resolve(result.rows);
 			});
 
-		}
-
-		function handleFaveRouteError(tx, error) {
-			defer.reject(error);
 		}
 
 		return defer.promise;
@@ -212,34 +203,33 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-	function addFaveStop(stop) {
-		// Add route to db
-	}
+
 	function getFaveRoutes() {
 
 		let defer = $q.defer();
-
+		
 		// Get fave route
-		db.transaction(handleFaveRoutesResult, handleFaveRoutesError);
+		db.transaction(handleData, (tx, error) => defer.reject(error));
 
-		function handleFaveRoutesResult(tx) {
+		function handleData(tx) {
 
 			let faves = [];
 
-			tx.executeSql('SELECT * FROM routes WHERE favourite = 1', (tx, result) => {
+			// SQLite storing fav as float because JS doesn't do real ints.
+			tx.executeSql('SELECT * FROM routes WHERE favourite > 0.0', [], (tx, result) => {
+				
 				for(let i = 0; i < result.rows.length; i++) {
 					faves.push(result.rows.item(i));
 				}
 				
+				console.log(faves);
 				defer.resolve(faves);
 				return;
 			});
 
 		}
 
-		function handleFaveRoutesError(tx, error) {
-			defer.reject(error);
-		}
+		return defer.promise;
 	}
 
 	function getFaveStops() {

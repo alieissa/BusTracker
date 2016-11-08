@@ -43,11 +43,12 @@ function config($routeProvider, $httpProvider) {
       resolve: {
         faveRoutes: function(dataService) {
           return dataService.getFaveRoutes();
-        },
-
-        faveStops: function(dataService) {
-          return dataService.getFaveStops();
         }
+        // ,
+
+        // faveStops: function(dataService) {
+        //   return dataService.getFaveStops();
+        // }
       }
     })
     .otherwise({
@@ -56,12 +57,12 @@ function config($routeProvider, $httpProvider) {
 
 }
 
-function FavesCtrl(faveRoutes, faveStops) {
+function FavesCtrl(faveRoutes) {
   
   let vm = this;
-  
+  console.log(faveRoutes);
   vm.routes =  faveRoutes;
-  vm.stops = faveStops;
+  // vm.stops = faveStops;
 }
 
 function MainCtrl($rootScope) {
