@@ -1,5 +1,15 @@
 <h1>Favourites</h1>
+
+<h2>Routes</h2>
 <ul>
-	<li ng-repeat="route in faves.routes"> {{route.name}}</li>
+	<li ng-repeat="route in faves.routes">
+		<a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a> 
+	</li>
 </ul>
-<p>Tabbed View with a tab for stops and a tab for routes. If no fave stops or routes then a message</p>
+
+<h2>Stops</h2>
+<ul>
+	<li ng-repeat="stop in faves.stops"> 
+		<a ng-href="#/stops/{{stop.number}}">{{stop.name}}</a>
+	</li>
+</ul>

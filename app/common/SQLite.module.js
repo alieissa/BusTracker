@@ -222,7 +222,6 @@ function dataService(DATABASE, $q) {
 					faves.push(result.rows.item(i));
 				}
 				
-				console.log(faves);
 				defer.resolve(faves);
 				return;
 			});
@@ -234,6 +233,29 @@ function dataService(DATABASE, $q) {
 
 	function getFaveStops() {
 		// Get fave stop
+		let defer = $q.defer();
+
+		let stops = [];
+
+		db.transaction(handleTx, (tx, error) => defer.reject(error));
+
+		function handleTx(tx) {
+
+			tx.executeSql('SELECT * FROM stops WHERE favourite > 0.0', [], (tx, result) => {
+				// let stops = result.rows.item(0);
+				for (let i = 0; i < result.rows.length; i++) {
+					stops.push(result.rows[i]);
+				}
+				console.log(stops);
+				// console.log(result.rows[result.rows.length - 1])
+				// console.log(result.rows);
+				defer.resolve(stops);
+
+				return;
+			});
+		}
+
+		return defer.promise;
 	}
 }
 
