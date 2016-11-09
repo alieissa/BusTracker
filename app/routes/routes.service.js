@@ -20,7 +20,7 @@ export function routes($http, config) {
 
   return Routes;
 
-  function getNextTrips(routeNo, stopNo) {
+  function getNextTrips(name, routeNo, stopNo) {
 
     let OCCONFIG = window._env.OC;
     
@@ -32,13 +32,35 @@ export function routes($http, config) {
       .then(getNextTripsComplete);
 
     function getNextTripsComplete(response) {
-      let tripsRes = response.data.GetNextTripsForStopResult;
-
-      // if RouteDirection value is not an array make it one
-      if (typeof tripsRes.Route.RouteDirection !== 'undefined' && !Array.isArray(tripsRes.Route.RouteDirection)) {
-          tripsRes.Route.RouteDirection = [tripsRes.Route.RouteDirection];
+      
+      let result = {};
+      let data = response.data.GetNextTripsForStopResult;
+      
+      
+      if(data.Error !== '') {
+        return data;
       }
-      return tripsRes;
+
+      if (!Array.isArray(data.Route.RouteDirection)) {
+        result = data.Route.RouteDirection;
+      }
+      else {
+
+        result = data.Route.RouteDirection.find((route) => {
+          let _name = `${route.RouteNo} ${route.RouteLabel}`;
+          if( _name === name) {
+            return route;
+          }
+
+        });
+      }
+
+      result.name = `${result.RouteNo} ${result.RouteLabel}`;
+      result.stopNo = stopNo;
+      result.stopName = data.StopLabel;
+      result.Trips = result.Trips.Trip;
+
+      return result;
     }
   }
 }

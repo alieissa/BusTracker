@@ -2,7 +2,7 @@
 
 <ul>
   <li ng-repeat="stop in route.stops">
-  	<a ng-href="#/routes/{{route.number}}/{{stop.number}}"> {{stop.number}}  {{stop.name}}</a>
+  	<a ng-href="#/routes/{{route.number}}/{{stop.number}}?name={{route.name}}"> {{stop.number}}  {{stop.name}}</a>
   </li>
 </ul>
 <div>

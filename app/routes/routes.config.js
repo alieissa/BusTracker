@@ -38,14 +38,17 @@ function routesConfig($routeProvider) {
       controller: 'RouteStopDetailCtrl',
       controllerAs: 'routeStops',
       resolve: {
-        routeStopDetails: function(routes, $route){
+        details: function(routes, $route, $location){
 
           // route number
+          let name = ($location.search()).name;
           let number = $route.current.params.number;
           let stopNo = $route.current.params.stopNo;
 
-          return routes.getNextTrips(number, stopNo);
-        }
+          return routes.getNextTrips(name, number, stopNo);
+        },
+        getFaveStatus: (dataService) => dataService.getStopFaveStatus,
+        setFaveStatus: (dataService) => dataService.setStopFaveStatus
       }
     })
     .when('/routes/:routeNo/:stopNo/error', {

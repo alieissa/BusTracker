@@ -373,16 +373,30 @@ exports.RouteCtrl = RouteCtrl;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-RouteStopDetailCtrl.$inject = ['routeStopDetails'];
+RouteStopDetailCtrl.$inject = ['details', 'getFaveStatus', 'setFaveStatus'];
 
-function RouteStopDetailCtrl(routeStopDetails) {
+function RouteStopDetailCtrl(details, getFaveStatus, setFaveStatus) {
 
   var vm = this;
 
-  vm.showError = routeStopDetails.Error === '' ? false : true;
-  vm.error = routeStopDetails.Error;
+  vm.showError = details.Error === '' ? false : true;
+  vm.error = details.Error;
 
-  vm.routeStopDetails = routeStopDetails;
+  vm.stopName = details.stopName;
+  vm.stopNo = details.stopNo;
+  vm.name = details.name;
+  vm.trips = details.Trips;
+  vm.details = details;
+
+  getFaveStatus(vm.stopNo).then(function (faveStatus) {
+    vm.faveStatus = faveStatus;
+  });
+
+  vm.setFaveStatus = function () {
+
+    vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
+    setFaveStatus(vm.stopNo, vm.faveStatus);
+  };
 }
 
 exports.RouteStopDetailCtrl = RouteStopDetailCtrl;
@@ -428,13 +442,20 @@ function routesConfig($routeProvider) {
     controller: 'RouteStopDetailCtrl',
     controllerAs: 'routeStops',
     resolve: {
-      routeStopDetails: function routeStopDetails(routes, $route) {
+      details: function details(routes, $route, $location) {
 
         // route number
+        var name = $location.search().name;
         var number = $route.current.params.number;
         var stopNo = $route.current.params.stopNo;
 
-        return routes.getNextTrips(number, stopNo);
+        return routes.getNextTrips(name, number, stopNo);
+      },
+      getFaveStatus: function getFaveStatus(dataService) {
+        return dataService.getStopFaveStatus;
+      },
+      setFaveStatus: function setFaveStatus(dataService) {
+        return dataService.setStopFaveStatus;
       }
     }
   }).when('/routes/:routeNo/:stopNo/error', {
@@ -520,7 +541,7 @@ function routes($http, config) {
 
   return Routes;
 
-  function getNextTrips(routeNo, stopNo) {
+  function getNextTrips(name, routeNo, stopNo) {
 
     var OCCONFIG = window._env.OC;
 
@@ -531,13 +552,32 @@ function routes($http, config) {
     return $http.post(url, data, headers).then(getNextTripsComplete);
 
     function getNextTripsComplete(response) {
-      var tripsRes = response.data.GetNextTripsForStopResult;
 
-      // if RouteDirection value is not an array make it one
-      if (typeof tripsRes.Route.RouteDirection !== 'undefined' && !Array.isArray(tripsRes.Route.RouteDirection)) {
-        tripsRes.Route.RouteDirection = [tripsRes.Route.RouteDirection];
+      var result = {};
+      var data = response.data.GetNextTripsForStopResult;
+
+      if (data.Error !== '') {
+        return data;
       }
-      return tripsRes;
+
+      if (!Array.isArray(data.Route.RouteDirection)) {
+        result = data.Route.RouteDirection;
+      } else {
+
+        result = data.Route.RouteDirection.find(function (route) {
+          var _name = route.RouteNo + ' ' + route.RouteLabel;
+          if (_name === name) {
+            return route;
+          }
+        });
+      }
+
+      result.name = result.RouteNo + ' ' + result.RouteLabel;
+      result.stopNo = stopNo;
+      result.stopName = data.StopLabel;
+      result.Trips = result.Trips.Trip;
+
+      return result;
     }
   }
 }

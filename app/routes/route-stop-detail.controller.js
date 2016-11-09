@@ -1,15 +1,29 @@
 'use strict';
 
-RouteStopDetailCtrl.$inject = ['routeStopDetails'];
+RouteStopDetailCtrl.$inject = ['details', 'getFaveStatus', 'setFaveStatus'];
 
-function RouteStopDetailCtrl(routeStopDetails) {
+function RouteStopDetailCtrl(details, getFaveStatus, setFaveStatus) {
   
   let vm = this;
   
-  vm.showError = routeStopDetails.Error === '' ? false : true;
-  vm.error = routeStopDetails.Error;
+  vm.showError = details.Error === '' ? false : true;
+  vm.error = details.Error;
+ 
+  vm.stopName = details.stopName;
+  vm.stopNo = details.stopNo;
+  vm.name = details.name;
+  vm.trips = details.Trips;
+  vm.details = details;
 
-  vm.routeStopDetails = routeStopDetails;
+  getFaveStatus(vm.stopNo).then((faveStatus) => {
+    vm.faveStatus = faveStatus;
+  });
+
+  vm.setFaveStatus = function() {
+
+    vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
+    setFaveStatus(vm.stopNo, vm.faveStatus)
+  }
 
 }
 
