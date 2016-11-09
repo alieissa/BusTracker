@@ -77,7 +77,6 @@ function dataService(DATABASE, $q) {
 	var db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
 
 	var dataService = {
-		addFaveStop: addFaveStop,
 		getRouteFaveStatus: getRouteFaveStatus,
 		setRouteFaveStatus: setRouteFaveStatus,
 		getStopFaveStatus: getStopFaveStatus,
@@ -131,15 +130,11 @@ function dataService(DATABASE, $q) {
 		function handleRouteStopsResult(tx) {
 
 			var stops = [];
-			var number = '';
 
 			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], function (tx, result) {
-				console.log(result.rows);
-				var data = result.rows.item(0);
-				//.stops = data.stops.split('\t');
 
-				// number = result.rows.item(0).number;
-				// let stopsString = data.stops;
+				var data = result.rows.item(0);
+
 				stops = data.stops.split('\t');
 
 				// stops number and name are both in a long space separated string
@@ -151,7 +146,7 @@ function dataService(DATABASE, $q) {
 				});
 
 				data.stops = stops;
-				// TODO: return entire result
+				data.favourite = parseInt(data.favourite); //SQLite returns float
 				defer.resolve(data);
 				return;
 			});
@@ -171,7 +166,9 @@ function dataService(DATABASE, $q) {
 		var defer = $q.defer();
 
 		// Add route to db
-		db.transaction(handleFaveRouteResult, handleFaveRouteError);
+		db.transaction(handleFaveRouteResult, function (tx, result) {
+			return defer.reject(error);
+		});
 
 		function handleFaveRouteResult(tx) {
 
@@ -179,10 +176,6 @@ function dataService(DATABASE, $q) {
 				console.log(result);
 				return defer.resolve(result.rows);
 			});
-		}
-
-		function handleFaveRouteError(tx, error) {
-			defer.reject(error);
 		}
 
 		return defer.promise;
@@ -278,21 +271,22 @@ function dataService(DATABASE, $q) {
 		return defer.promise;
 	}
 
-	function addFaveStop(stop) {
-		// Add route to db
-	}
 	function getFaveRoutes() {
 
 		var defer = $q.defer();
 
 		// Get fave route
-		db.transaction(handleFaveRoutesResult, handleFaveRoutesError);
+		db.transaction(handleData, function (tx, error) {
+			return defer.reject(error);
+		});
 
-		function handleFaveRoutesResult(tx) {
+		function handleData(tx) {
 
 			var faves = [];
 
-			tx.executeSql('SELECT * FROM routes WHERE favourite = 1', function (tx, result) {
+			// SQLite storing fav as float because JS doesn't do real ints.
+			tx.executeSql('SELECT * FROM routes WHERE favourite > 0.0', [], function (tx, result) {
+
 				for (var i = 0; i < result.rows.length; i++) {
 					faves.push(result.rows.item(i));
 				}
@@ -302,13 +296,36 @@ function dataService(DATABASE, $q) {
 			});
 		}
 
-		function handleFaveRoutesError(tx, error) {
-			defer.reject(error);
-		}
+		return defer.promise;
 	}
 
 	function getFaveStops() {
 		// Get fave stop
+		var defer = $q.defer();
+
+		var stops = [];
+
+		db.transaction(handleTx, function (tx, error) {
+			return defer.reject(error);
+		});
+
+		function handleTx(tx) {
+
+			tx.executeSql('SELECT * FROM stops WHERE favourite > 0.0', [], function (tx, result) {
+				// let stops = result.rows.item(0);
+				for (var i = 0; i < result.rows.length; i++) {
+					stops.push(result.rows[i]);
+				}
+				console.log(stops);
+				// console.log(result.rows[result.rows.length - 1])
+				// console.log(result.rows);
+				defer.resolve(stops);
+
+				return;
+			});
+		}
+
+		return defer.promise;
 	}
 }
 
