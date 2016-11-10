@@ -8,27 +8,27 @@
  * Controller of the busTrackerApp
  */
 
-StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'faveStatus', 'setFaveStatus'];
+StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
 
-function StopCtrl($routeParams, stopRouteSummary, faveStatus, setFaveStatus) {
-  
-  let vm = this;
+function StopCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
 
-  vm.stopNo = $routeParams.stopNo;
-  vm.showError = stopRouteSummary.Error !== '';
-  vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
-  vm.stopDescription = stopRouteSummary.StopDescription;
+    let vm = this;
 
-  vm.faveStatus = faveStatus;
+    vm.stopNo = $routeParams.stopNo;
+    vm.showError = stopRouteSummary.Error !== '';
+    vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
+    vm.stopDescription = stopRouteSummary.StopDescription;
+    vm.setFaveStatus = _setFaveStatus;
 
-  vm.setFaveStatus = (stopNo) => {
-  	
-  	vm.faveStatus = vm.faveStatus === 1 ? 0 : 1;
-  	setFaveStatus(stopNo, vm.faveStatus);
+    getFaveStatus('number', vm.stopNo).then((faveStatus) => {
+        vm.faveStatus = faveStatus;
+    });
 
-  	console.log(vm.faveStatus);
-  }
-  console.log('Fave Status: ' + vm.faveStatus);
+    function _setFaveStatus(stopNo) {
+
+        vm.faveStatus = vm.faveStatus === 0 ? 1 : 0;
+        setFaveStatus(vm.faveStatus, 'number', stopNo);
+    }
 }
 
 export {StopCtrl};

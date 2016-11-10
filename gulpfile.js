@@ -83,6 +83,10 @@ function es6(done) {
 			presets: ['es2015']
 		})
 		.bundle()
+		.on('error', function(err) {
+            console.log(err.toString());
+            this.emit("end");
+        })
 		.pipe(source('app.js'))
 		.pipe(buffer())
 		.pipe(gulp.dest('dist/'));

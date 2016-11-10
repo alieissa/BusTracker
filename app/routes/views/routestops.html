@@ -1,10 +1,9 @@
-<h2 ng-if='routeStops.showError'> No trips scehdules for routes xxx for this stop</h2>
-<!-- <h2 ng-if='!routeStops.showError'> {{routeStops.routeStopDetails.Route}}</h2> -->
+<h3> {{routeStops.name}}</h3>
+<h3> {{routeStops.stopNo}} {{routeStops.stopName}}</h3>
+<h2 ng-if='routeStops.showError'> No trips scehdules</h2>
 
-<h3 ng-if='!routeStops.showError'> {{routeStops.stopNo}} {{routeStops.stopName}}</h3>
-<div>
-	<h4 ng-if='!routeStops.showError'> {{routeStops.name}}</h4>
-	<ul ng-if='!routeStops.showError' class="list-inline" style="display: inline">
+<div ng-if='!routeStops.showError'>
+	<ul class="list-inline" style="display: inline">
 		<li ng-repeat='trip in routeStops.trips'> {{trip.AdjustedScheduleTime}}</li>
 	</ul>
 </div>
