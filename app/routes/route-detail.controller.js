@@ -11,13 +11,13 @@
 RouteCtrl.$inject = ['details', 'setFaveStatus'];
 
 function RouteCtrl (details, setFaveStatus) {
-  
+
 	let vm = this;
 
-  	vm.faveStatus = details.favourite;
   	vm.name = details.name;
   	vm.number = details.number;
-  	vm.stops = details.stops; 
+  	vm.stops = details.stops;
+	vm.faveStatus = details.favourite;
   	vm.setFaveStatus = _setFaveStatus;
 
   	// Handler of Favourite button click events in route.html template

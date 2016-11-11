@@ -1,4 +1,5 @@
 'use strict';
+
 var stopsList = [
     "1010 TERON",
     "1090 AMBLESIDE",
@@ -13,19 +14,14 @@ describe('Controller: StopsCtrl', function () {
 
     var StopsCtrl;
 
-  // load the controller's module
-  beforeEach(module('stopsMod'));
+    beforeEach(module('stopsMod'));
+    beforeEach(inject(_inject));
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller) {
+    function _inject($controller) {
+        StopsCtrl = $controller('StopsCtrl', { stopsList: stopsList });
+    }
 
-    StopsCtrl = $controller('StopsCtrl', {
-        stopsList: stopsList
-    });
-
-  }));
-
-  it('Should set vm.stopsList to injected stopsList', function() {
+    it('Should set vm.stopsList to injected stopsList', function() {
       expect(StopsCtrl.stopsList).toEqual(stopsList);
-  });
+    });
 });

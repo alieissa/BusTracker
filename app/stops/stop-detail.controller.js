@@ -8,9 +8,9 @@
  * Controller of the busTrackerApp
  */
 
-StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
+StopDetailCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
 
-function StopCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
+function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
 
     let vm = this;
 
@@ -31,4 +31,4 @@ function StopCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) 
     }
 }
 
-export {StopCtrl};
+export {StopDetailCtrl};

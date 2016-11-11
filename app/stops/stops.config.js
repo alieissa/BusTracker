@@ -15,7 +15,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         })
         .when('/stops/:stopNo', {
             templateUrl: 'views/stop.html',
-            controller: 'StopCtrl',
+            controller: 'StopDetailCtrl',
             controllerAs: 'stop',
             resolve: {
                 getFaveStatus: (stopsService) => stopsService.getFaveStatus,

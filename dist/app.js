@@ -216,10 +216,10 @@ function RouteCtrl(details, setFaveStatus) {
 
   var vm = this;
 
-  vm.faveStatus = details.favourite;
   vm.name = details.name;
   vm.number = details.number;
   vm.stops = details.stops;
+  vm.faveStatus = details.favourite;
   vm.setFaveStatus = _setFaveStatus;
 
   // Handler of Favourite button click events in route.html template
@@ -288,6 +288,7 @@ function routesConfig($routeProvider) {
             }
         }
     }).when('/routes/:number', {
+
         templateUrl: 'views/route.html',
         controller: 'RouteCtrl',
         controllerAs: 'route',
@@ -502,9 +503,9 @@ routesService.$inject = ['$http', '$q', 'dbService', 'config'];function routesSe
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-StopCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
+StopDetailCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
 
-function StopCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
+function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
 
     var vm = this;
 
@@ -525,7 +526,7 @@ function StopCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) 
     }
 }
 
-exports.StopCtrl = StopCtrl;
+exports.StopDetailCtrl = StopDetailCtrl;
 
 },{}],10:[function(require,module,exports){
 'use strict';
@@ -548,7 +549,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         }
     }).when('/stops/:stopNo', {
         templateUrl: 'views/stop.html',
-        controller: 'StopCtrl',
+        controller: 'StopDetailCtrl',
         controllerAs: 'stop',
         resolve: {
             getFaveStatus: function getFaveStatus(stopsService) {
@@ -609,7 +610,7 @@ var _stopsService = require('./stops.service.js');
 var _stopsConfig = require('./stops.config.js');
 
 // import {SQLiteMod} from '../common/SQLite.module.js';
-angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopCtrl', _stopDetailController.StopCtrl).service('stopsService', _stopsService.stopsService);
+angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).service('stopsService', _stopsService.stopsService);
 
 exports.default = angular.module('stopsMod');
 
@@ -688,6 +689,7 @@ function stopsService($http, config, dbService) {
             });
 
             //   return OCData.sortRoutesByTrips(result.Routes);
+            console.log(Object.keys(result));
             return result;
         }
     }

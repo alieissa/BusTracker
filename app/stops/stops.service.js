@@ -72,6 +72,7 @@ function stopsService ($http, config, dbService) {
             });
 
             //   return OCData.sortRoutesByTrips(result.Routes);
+            console.log(Object.keys(result));
             return result;
         }
     }

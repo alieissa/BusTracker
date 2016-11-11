@@ -1,80 +1,106 @@
 'use strict';
 
-var routeParams = {};
-var StopCtrl;
-// var stops;
-var mockStops;
+// var routeParams = {};
+// var StopDetailCtrl;
+// // var stops;
+// var mockStops;
 var stopNo = 7659;
 
-describe('Controller: Stop', function () {
-  // load the controller's module
-  beforeEach(module('stopsMod'));
+describe('Controller: StopDetailCtrl', function () {
 
-  var StopCtrl;
+    var $controller;
+    var StopDetailCtrl;
+    var _getFaveStatus;
+    var _setFaveStatus;
+    var mockDeps;
+    var stopRouteSummary;
+    var routeParams = {
+        stopNo:stopNo
+    };
 
-  var routeParams = {
-      stopNo:stopNo
-  };
-  // Initialize the controller
-  beforeEach(inject(function ($controller, $q, _stops_) {
+    beforeEach(module('busTrackerApp'));
+    beforeEach(inject(_inject));
 
-    // mockStops = {
-    //   getRouteSummary: function(stopNo) {
-    //     // resolve with data
-    //     return $q.when(OC_CALL_RES_MOCK.GetRouteSummaryForStopResult);
-    //   }
-    // };
+    function _inject(_$controller_, _$q_) {
 
-    var stops = _stops_;
+        // var stopsService = _stopsService_;
+        _getFaveStatus = function(number, stopNo) {
+            return _$q_.resolve(0);
+        }
 
-    var stopRouteSummary = {
-        Error: "12"
+        _setFaveStatus = function() {
+            StopDetailCtrl.faveStatus = StopDetailCtrl.faveStatus === 1 ? 0 : 0;
+        }
+
+        $controller = _$controller_
+        stopRouteSummary = {
+            Error: "12"
+        }
+        mockDeps = {
+            $routeParams: routeParams,
+            stopRouteSummary: stopRouteSummary,
+            getFaveStatus: _getFaveStatus,
+            setFaveStatus: _setFaveStatus
+        }
+
+
+        StopDetailCtrl = $controller('StopDetailCtrl', mockDeps);
     }
 
-    StopCtrl = $controller('StopCtrl', {
-      $routeParams: routeParams,
-      stopRouteSummary: stopRouteSummary
+    it("should set StopDetailCtrl.routes to details.routes", function() {
+        expect(StopDetailCtrl.routes).toBeDefined();
     });
 
-  }));
+    // TODO: Uncomment and finish test
+    // it('Should set StopDetailCtrl.faveStatus to resolved value of getFaveStatus', function() {
 
+    //     spyOn(mockDeps, 'getFaveStatus');
+    //     var _StopDetailCtrl =  $controller('StopDetailCtrl', mockDeps);
 
-    it("should have vm.routes defined", function() {
-    expect(StopCtrl.routes).toBeDefined();
+    //     expect(mockDeps.getFaveStatus).toHaveBeenCalled();
+
+    // });
+
+    it('Should set StopDetailCtrl.setFaveStatus to injected setFaveStatus function', function() {
+        expect(StopDetailCtrl.setFaveStatus).toEqual(_setFaveStatus);
     });
 
-    it("should set vm.stopNo to $routeParams.stopNo", function() {
-    expect(StopCtrl.stopNo).toEqual(routeParams.stopNo);
+    it("should have StopDetailCtrl.routes defined", function() {
+        expect(StopDetailCtrl.routes).toBeDefined();
     });
 
-    it("should have vm.showError defined", function() {
-      expect(StopCtrl.showError).toBeDefined();
+    it("should set StopDetailCtrl.stopNo to $routeParams.stopNo", function() {
+        expect(StopDetailCtrl.stopNo).toEqual(routeParams.stopNo);
+    });
+
+    it("should have StopDetailCtrl.showError defined", function() {
+      expect(StopDetailCtrl.showError).toBeDefined();
     });
 
     describe("An error in getting the route summary for stop", function() {
 
-        varstopRouteSummary = {
+        stopRouteSummary = {
           Error: "12",
           StopRouteDescription: "Stop description"
         }
 
         beforeEach(inject(function($controller) {
 
-            StopCtrl = $controller('StopCtrl', {
+            StopDetailCtrl = $controller('StopDetailCtrl', {
                 $routeParams: routeParams,
                 stopRouteSummary: stopRouteSummary
             });
 
         }));
 
-        it('Should set vm.showError to true', function() {
-            expect(StopCtrl.showError).toEqual(true);
+        it('Should set StopDetailCtrl.showError to true', function() {
+            expect(StopDetailCtrl.showError).toEqual(true);
         });
-        it("Should set vm.routes to empty array", function() {
-            expect(StopCtrl.routes.length).toEqual(0);
+        it("Should set StopDetailCtrl.routes to empty array", function() {
+            expect(StopDetailCtrl.routes.length).toEqual(0);
         });
-        it("Should set vm.StopDescription to stopRouteSummary.StopDescription", function() {
-            expect(StopCtrl.StopDescription).toEqual(stopRouteSummary.StopDescription);
+        it("Should set StopDetailCtrl.StopDescription to stopRouteSummary.StopDescription", function() {
+            expect(StopDetailCtrl.StopDescription).toEqual(stopRouteSummary.StopDescription);
         })
     });
 
@@ -83,15 +109,15 @@ describe('Controller: Stop', function () {
 
         beforeEach(inject(function() {
 
-            StopCtrl = new $controller("StopCtrl", {
+            StopDetailCtrl = new $controller("StopDetailCtrl", {
                 routeParams: routeParams,
                 stopRouteSummary: stopRouteSummary
             });
 
         }));
 
-        it('Shoud set vm.routes to stopRouteSummary.routes');
-        it("Should set vm.showError to false");
-        it("Should set vm.StopDescription to stopRouteSummary.stopDescription");
+        it('Shoud set StopDetailCtrl.routes to stopRouteSummary.routes');
+        it("Should set StopDetailCtrl.showError to false");
+        it("Should set StopDetailCtrl.StopDescription to stopRouteSummary.stopDescription");
     })
 });

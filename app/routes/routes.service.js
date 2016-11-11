@@ -25,7 +25,7 @@ export function routesService($http, $q, dbService, config) {
     }
 
     return Routes;
-    
+
     /*-------------------Factory function definitions-------------------------*/
 
     function getNextTrips(name, routeNo, stopNo) {
@@ -43,7 +43,6 @@ export function routesService($http, $q, dbService, config) {
 
             let result = {};
             let data = response.data.GetNextTripsForStopResult;
-
 
             if(data.Error !== '') {
                 return data;

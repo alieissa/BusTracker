@@ -11,44 +11,51 @@ var stops = {
 
 describe('Controller: RouteDetailCtrl', function () {
 
-  // load the controller's module
-  beforeEach(module('busTrackerApp'));
-
-  var RouteCtrl;
-  var scope;
-  var routeParams;
-  var routesMock;
-
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
-
-    routesMock = {
-      getStops: function(routeParams) {
-        return stops;
-      }
+    var RouteCtrl;
+    var details = {
+        name: '1 Ottawa-Rockliffe',
+        number: '1',
+        favourite: 1,
+        stops: []
     };
 
-    routeParams = {
-      routename: '1 Ottawa-Rockcliffe'
-    };
+    // load the controller's module
+    beforeEach(module('routesMod'));
+    beforeEach(inject(_inject));
 
-    RouteCtrl = $controller('RouteCtrl', {
-      $routeParams: routeParams,
-      routes: routesMock
+    function _inject($controller, $rootScope) {
+
+        var mocksDeps = {
+            details: details,
+            setFaveStatus: mocksetFaveStatus
+        };
+
+        RouteCtrl = $controller('RouteCtrl', mocksDeps);
+
+        function mocksetFaveStatus() {
+            RouteCtrl.faveStatus = RouteCtrl.faveStatus == 0 ? 1 : 0;
+            // Also calls setFaveStatus to change database favourite field
+        }
+    }
+
+    it('Should set route number to number in route details', function() {
+      expect(RouteCtrl.number).toEqual(details.number);
     });
 
-  }));
+    it('Should route name to name in route details', function() {
+        expect(RouteCtrl.name).toEqual(details.name)
+    });
 
-  it('Should parse route name and set vm.routeNo using parsed data', function() {
-    expect(RouteCtrl.routeNo).toEqual(routeParams.routename.split(" ")[0]);
-  });
+    it('Should set route stops to stops in route details', function() {
+        expect(RouteCtrl.stops).toEqual(details.stops);
+    });
 
-  it('Should set vm.routeName to to $routeParams.routeName', function() {
-      expect(RouteCtrl.routeName).toEqual(routeParams.routename)
-  });
+    it('Should set route fave status, 0/1, to fave status in route details', function() {
+        expect(RouteCtrl.faveStatus).toEqual(details.favourite);
+    });
 
-  it('Should set vm.stops to result of route.getStops(vm.routeName)', function() {
-    expect(RouteCtrl.stops).toEqual(stops);
-  });
+    it('Should set setFaveStatus to injected setFaveStatus function', function() {
+        expect(typeof RouteCtrl.setFaveStatus).toBe('function');
+    })
 
 });

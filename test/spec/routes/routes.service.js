@@ -1,61 +1,66 @@
 'use strict';
-var $httpBackend;
-var routeNo;
-var stopNo;
-var url;
-var data;
-var routes;
+// var $httpBackend;
+// var routeNo;
+// var stopNo;
+// var url;
+// var data;
+// var routes;
 
 window._env = {};
 window._env.OC = OC_CONFIG_MOCK;
 
-describe('Service: routes', function () {
+describe('Service: routesService', function () {
 
-  // load the service's module
-    beforeEach(function() {
-        module('routesMod');
+    var routesService;
+
+    beforeEach(module('busTrackerApp'));
+    beforeEach(inject(function (_routesService_) {
+        routesService = _routesService_;
+    }));
+
+    it('should have routesService.getNextTrips defined', function () {
+        expect(routesService.getNextTrips).toBeDefined();
     });
 
-    beforeEach(inject(function (_routes_) {
-        routes = _routes_;
-    }));
-
-    it('should have .getNextTrips defined', inject(function (_routes_) {
-        expect(routes.getNextTrips).toBeDefined();
-    }));
-
-    it('should have .getAll defined',  inject(function (_routes_) {
-        expect(routes.getAll).toBeDefined();
-    }));
-
-
-  describe('routes.getNextTrips(routeNo, stopNo)', function() {
-
-    beforeEach(inject (function(_$httpBackend_) {
-      $httpBackend = _$httpBackend_;
-    }));
-
-    afterEach(function() {
-
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
+    it('should have routesService.getAll defined',  function () {
+        expect(routesService.getAll).toBeDefined();
     });
 
-    it('should get next trips for stop', function() {
 
-      routeNo = 1;
-      stopNo = 3038;
-      url = "https://api.octranspo1.com/v1.2/GetNextTripsForStop";
-      data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&routeNo=" + routeNo + "&format=json";
+    describe('routes.getNextTrips(routeNo, stopNo)', function() {
 
-      var nextTrips = routes.getNextTrips(routeNo, stopNo);
-      $httpBackend.whenPOST(url, data).respond(NEXT_TRIPS_FOR_STOP);
-      $httpBackend.flush();
+        var $httpBackend;
+        var routeNo;
+        var stopNo;
+        var url;
+        var data;
 
-      nextTrips.then(function(trips) {
-        expect(trips).toEqual(EXPECTED_NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
-      });
+        beforeEach(inject (function(_$httpBackend_) {
+            $httpBackend = _$httpBackend_;
+        }));
 
+        afterEach(function() {
+
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        it('should get next trips for stop', function() {
+
+          routeNo = 1;
+          name = '1 Ottawa-Rockliffe';
+          stopNo = 3038;
+          url = 'http://localhost:3000/v1.2/GetNextTripsForStop';
+          data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&routeNo=" + routeNo + "&format=json";
+
+          var nextTrips = routesService.getNextTrips(name, routeNo, stopNo);
+          $httpBackend.whenPOST(url, data).respond(NEXT_TRIPS_FOR_STOP);
+          $httpBackend.flush();
+
+          nextTrips.then(function(trips) {
+            expect(trips).toEqual(EXPECTED_NEXT_TRIPS_FOR_STOP.GetNextTripsForStopResult);
+          });
+
+        });
     });
-  });
 });

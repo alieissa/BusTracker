@@ -42,7 +42,7 @@ module.exports = function(config) {
 
     port: 8080,
     browsers: [
-        
+
         // 'Chrome',
         'PhantomJS'
     ],
@@ -52,7 +52,7 @@ module.exports = function(config) {
       'karma-mocha-reporter',
       'karma-phantomjs-launcher'
     ],
-   
+
 
     // Continuous Integration mode
     singleRun: true,
