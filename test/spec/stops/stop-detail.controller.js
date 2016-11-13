@@ -1,9 +1,5 @@
 'use strict';
 
-// var routeParams = {};
-// var StopDetailCtrl;
-// // var stops;
-// var mockStops;
 var stopNo = 7659;
 
 describe('Controller: StopDetailCtrl', function () {
@@ -74,7 +70,7 @@ describe('Controller: StopDetailCtrl', function () {
     });
 
     it("should have StopDetailCtrl.showError defined", function() {
-      expect(StopDetailCtrl.showError).toBeDefined();
+        expect(StopDetailCtrl.showError).toBeDefined();
     });
 
     describe("An error in getting the route summary for stop", function() {
@@ -105,7 +101,7 @@ describe('Controller: StopDetailCtrl', function () {
     });
 
     describe("stopRouteSummary contains data", function() {
-        varstopRouteSummary = {}
+        var stopRouteSummary = {}
 
         beforeEach(inject(function() {
 
