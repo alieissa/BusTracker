@@ -20,7 +20,7 @@ function config($routeProvider, $httpProvider) {
 
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.withCredentials = true;
-    delete $httpProvider.defaults.headers.common["X-Requested-With"];
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider.when('/', {
         templateUrl: 'views/main.html',
@@ -64,9 +64,19 @@ function MainCtrl($rootScope) {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+angular.module('dbMod', []).constant('DATABASE', 'octranspo').factory('dbService', dbService).directive('header-search', headerSearch);
 
-angular.module('dbMod', []).constant('DATABASE', 'octranspo').factory('dbService', dbService);
-
+function headerSearch() {
+	return {
+		templateUrl: 'searchHeader.html',
+		scope: {
+			title: '@'
+		},
+		link: function link(scope, elem, attrs) {
+			console.log(attrs);
+		}
+	};
+}
 function dbService($q, DATABASE) {
 
 	var db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
@@ -342,16 +352,16 @@ exports.routesConfig = routesConfig;
  */
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 RoutesCtrl.$inject = ['routesList'];
 
 function RoutesCtrl(routesList) {
 
-    var vm = this;
+  var vm = this;
 
-    vm.routesList = [];
-    vm.routesList = routesList;
+  vm.routesList = [];
+  vm.routesList = routesList;
 }
 
 exports.RoutesCtrl = RoutesCtrl;

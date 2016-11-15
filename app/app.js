@@ -27,7 +27,7 @@ function config($routeProvider, $httpProvider) {
 
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.withCredentials = true;
-    delete $httpProvider.defaults.headers.common["X-Requested-With"];
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider
         .when('/', {

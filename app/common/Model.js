@@ -1,8 +1,21 @@
+'use strict';
 
 angular.module('dbMod', [])
 	.constant('DATABASE', 'octranspo')
-	.factory('dbService', dbService);
+	.factory('dbService', dbService)
+	.directive('header-search', headerSearch);
 
+function headerSearch() {
+	return {
+		templateUrl: 'searchHeader.html',
+		scope: {
+			title: '@'
+		},
+		link: (scope, elem, attrs) => {
+			console.log(attrs);
+		}
+	};
+}
 function dbService($q, DATABASE) {
 
 	let db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
@@ -17,7 +30,7 @@ function dbService($q, DATABASE) {
 	return DB;
 
 	/*-------------------Factory function definitions-------------------------*/
-	
+
 	function getAll(table) {
 		return () => {
 
@@ -45,12 +58,12 @@ function dbService($q, DATABASE) {
 			}
 
 			function handleErr(tx, err) {
-				console.log(err)
+				console.log(err);
 				return defer.reject(err);
 			}
 
 			return defer.promise;
-		}
+		};
 	}
 
 	function getFaves(table) {
@@ -75,12 +88,12 @@ function dbService($q, DATABASE) {
 			}
 
 			function handleErr(tx, err) {
-				console.log(err)
+				console.log(err);
 				return defer.reject(err);
 			}
 
 			return defer.promise;
-		}
+		};
 	}
 
 	function getFaveStatus(table) {
@@ -98,11 +111,11 @@ function dbService($q, DATABASE) {
 			}
 
 			function handleErr(tx, error) {
-				return defer.reject(error)
+				return defer.reject(error);
 			}
 
 			return defer.promise;
-		}
+		};
 	}
 
 	function setFaveStatus(table) {
@@ -123,11 +136,11 @@ function dbService($q, DATABASE) {
 
 			function handleErr(tx, err) {
 				console.log(err);
-				 return defer.reject(err)
+				 return defer.reject(err);
 			}
 
 			return defer.promise;
-		}
+		};
 	}
 }
 export default angular.module('dbMod');

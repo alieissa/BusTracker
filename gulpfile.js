@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const jshint = require('gulp-jshint');
-
 const babelify = require('babelify');
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
@@ -32,11 +31,11 @@ function dist(done) {
 	switch(flag) {
 		case '--production':
 			// move to app.js, views/, assets/, config.xml, database/ to www
-			
+
 			break;
 		case '--development':
 			// move to app.js, views/, assets/, config.xml, database/ to dist
-	
+
 			cpDirFiles(path.join(__dirname, 'env.js'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
@@ -68,9 +67,13 @@ function dist(done) {
 function lint(done) {
 
     return gulp.src('app/**/*.js')
+		.on('error', function(err) {
+			console.log(err.toString());
+			this.emit("end");
+		})
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('jshint-stylish'))
-        .pipe(jshint.reporter('fail'));
+        // .pipe(jshint.reporter('fail'));
 
     done();
 }
