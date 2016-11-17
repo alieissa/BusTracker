@@ -1,7 +1,21 @@
-<h1>Routes</h1>
-    <header-search title="Routes"></header-search>
-<ul>
-  <li data-ng-repeat="route in routes.routesList">
-    <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
-  </li>
-</ul>
+
+<header-search title="Routes"></header-search>
+<div class="container ae-container">
+    <table>
+        <tbody>
+            <tr data-ng-repeat="route in routes.routesList">
+                <td class="ae-route-name">
+                    <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
+                </td>
+                <td class="ae-td">
+                    <i class="material-icons ae-icon">more_vert</i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <ul style="list-style: none">
+        <li data-ng-repeat="route in routes.routesList">
+            <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
+        </li>
+    </ul> -->
+</div>
