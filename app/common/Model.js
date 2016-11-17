@@ -3,16 +3,26 @@
 angular.module('dbMod', [])
 	.constant('DATABASE', 'octranspo')
 	.factory('dbService', dbService)
-	.directive('header-search', headerSearch);
+	.directive('headerSearch', headerSearch);
 
 function headerSearch() {
 	return {
-		templateUrl: 'searchHeader.html',
+		templateUrl: './searchHeader.html',
 		scope: {
 			title: '@'
 		},
 		link: (scope, elem, attrs) => {
-			console.log(attrs);
+			angular.element('.ae-route-name').on('touchstart', function() {
+				angular.element(this).parent().css('background-color', 'yellow');
+			});
+
+			angular.element('.ae-route-name').on('touchend', function() {
+				angular.element(this).parent().css('background-color', 'white');
+			})
+
+			angular.element('.ae-icon').on('touchstart', function() {
+				// Show pop-up menu
+			})
 		}
 	};
 }
@@ -43,7 +53,7 @@ function dbService($q, DATABASE) {
 			----------------------------------------------------------*/
 
 			function handleTx(tx) {
-				tx.executeSql(`SELECT * FROM ${table}`, [], handleRes, handleErr);
+				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
 			}
 
 			function handleRes(tx, result) {
