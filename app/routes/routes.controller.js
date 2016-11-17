@@ -16,7 +16,6 @@ function RoutesCtrl(routesList) {
 
     vm.routesList = [];
     vm.routesList = routesList;
-
 }
 
 export {RoutesCtrl};

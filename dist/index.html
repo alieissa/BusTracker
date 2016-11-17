@@ -34,18 +34,22 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel="stylesheet" type="text/css" href="assets/css/index.css">
+        <!-- <link rel="stylesheet" type="text/css" href="assets/css/index.css"> -->
+        <link rel="stylesheet" href="assets/css/normalize.css" media="screen" title="no title">
+        <link rel="stylesheet" href="assets/css/milligram.css" media="screen" title="no title">
+        <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
         <title>BusTracker</title>
     </head>
     <body ng-app="busTrackerApp">
         <!-- Always shows a header, even in smaller screens. -->
 
-        <div class="container">
-            <div ng-view=""></div>
-        </div>
+        <div ng-view=""></div>
+        <!-- <div class="container">
+        </div> -->
 
         <script type="text/javascript" src="cordova.js"></script>
         <script src="assets/lib/firebase/firebase.js"></script>
+        <script src="assets/lib/jquery/dist/jquery.min.js"></script>
         <script src="assets/lib/angular/angular.min.js"></script>
         <script src="assets/lib/angular-route/angular-route.min.js"></script>
         <script src="assets/lib/angularfire/dist/angularfire.min.js"></script>

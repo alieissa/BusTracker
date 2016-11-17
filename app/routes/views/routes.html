@@ -1,9 +1,27 @@
 
-<header-search title="Routes"></header-search>
+<!-- <header-search title="Routes"></header-search> -->
+<div id="nav-container" >
+    <ul class="nav-list">
+        <li style="float: left">
+            <i class="material-icons nav-icon" style="left:16px">menu</i>
+        </li>
+        <li style="margin-top: 4px; float: left" class='nav-title-container'>
+            <span class="nav-title">Routes</span>
+        </li>
+        <li style="float: right"></li>
+        <li>
+            <i class="material-icons nav-icon" style="right:16px">search</i>
+        </li>
+        <li>
+            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li>
+    </ul>
+</div>
+
 <div class="container ae-container">
     <table>
         <tbody>
-            <tr data-ng-repeat="route in routes.routesList">
+            <tr ng-repeat="route in routes.routesList| filter: {name: search, number: search}">
                 <td class="ae-route-name">
                     <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
                 </td>
@@ -13,9 +31,4 @@
             </tr>
         </tbody>
     </table>
-    <!-- <ul style="list-style: none">
-        <li data-ng-repeat="route in routes.routesList">
-            <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
-        </li>
-    </ul> -->
 </div>

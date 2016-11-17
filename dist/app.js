@@ -64,16 +64,26 @@ function MainCtrl($rootScope) {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-angular.module('dbMod', []).constant('DATABASE', 'octranspo').factory('dbService', dbService).directive('header-search', headerSearch);
+angular.module('dbMod', []).constant('DATABASE', 'octranspo').factory('dbService', dbService).directive('headerSearch', headerSearch);
 
 function headerSearch() {
 	return {
-		templateUrl: 'searchHeader.html',
+		templateUrl: './searchHeader.html',
 		scope: {
 			title: '@'
 		},
 		link: function link(scope, elem, attrs) {
-			console.log(attrs);
+			angular.element('.ae-route-name').on('touchstart', function () {
+				angular.element(this).parent().css('background-color', 'yellow');
+			});
+
+			angular.element('.ae-route-name').on('touchend', function () {
+				angular.element(this).parent().css('background-color', 'white');
+			});
+
+			angular.element('.ae-icon').on('touchstart', function () {
+				// Show pop-up menu
+			});
 		}
 	};
 }
@@ -104,7 +114,7 @@ function dbService($q, DATABASE) {
    ----------------------------------------------------------*/
 
 			function handleTx(tx) {
-				tx.executeSql('SELECT * FROM ' + table, [], handleRes, handleErr);
+				tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, handleErr);
 			}
 
 			function handleRes(tx, result) {
@@ -352,16 +362,16 @@ exports.routesConfig = routesConfig;
  */
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 RoutesCtrl.$inject = ['routesList'];
 
 function RoutesCtrl(routesList) {
 
-  var vm = this;
+    var vm = this;
 
-  vm.routesList = [];
-  vm.routesList = routesList;
+    vm.routesList = [];
+    vm.routesList = routesList;
 }
 
 exports.RoutesCtrl = RoutesCtrl;
