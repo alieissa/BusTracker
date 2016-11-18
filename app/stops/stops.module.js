@@ -3,6 +3,8 @@ import {StopsCtrl} from './stops.controller.js';
 import {StopDetailCtrl} from './stop-detail.controller.js';
 import {stopsService} from './stops.service.js';
 import {stopsConfig} from './stops.config.js';
+import {nextTrips} from './stops.directives.js';
+import {nextTripsError} from './stops.directives.js';
 
 angular.module('stopsMod', [
       'ngRoute',
@@ -12,6 +14,8 @@ angular.module('stopsMod', [
 .config(stopsConfig)
 .controller('StopsCtrl', StopsCtrl)
 .controller('StopDetailCtrl', StopDetailCtrl)
+.directive('nextTrips', nextTrips)
+.directive('nextTripsError', nextTripsError)
 .service('stopsService', stopsService);
 
 export default angular.module('stopsMod');

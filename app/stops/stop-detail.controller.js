@@ -14,12 +14,12 @@ function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveSt
 
     let vm = this;
 
-    vm.stopNo = $routeParams.stopNo;
-    vm.showError = stopRouteSummary.Error !== '';
-    vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
+    vm.stopNo = stopRouteSummary.StopNo;
+    vm.Error = stopRouteSummary.Error;
+    vm.routes = stopRouteSummary.Routes;
     vm.stopDescription = stopRouteSummary.StopDescription;
     vm.setFaveStatus = _setFaveStatus;
-
+    
     getFaveStatus('number', vm.stopNo).then((faveStatus) => {
         vm.faveStatus = faveStatus;
     });

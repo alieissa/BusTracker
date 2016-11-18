@@ -59,20 +59,24 @@ function stopsService ($http, config, dbService) {
                 'StopNo': result.StopNo
             };
 
+            let isTrips = false;
             result.Routes.forEach((route) => {
-                if(Array.isArray(route.Trips)) {
-                    return;
-                }
-                else if(typeof route.Trips === 'undefined') {
+
+                if(typeof route.Trips === 'undefined') {
                     route.Trips = [];
                 }
-                else {
+                else if (!Array.isArray(route.Trips)){
                     route.Trips = [route.Trips];
                 }
+                isTrips = route.Trips.length > 0 || isTrips;
+                console.log(isTrips);
             });
 
-            //   return OCData.sortRoutesByTrips(result.Routes);
-            console.log(Object.keys(result));
+            if(!isTrips) {
+                result.Error = "16";
+                return result;
+            }
+
             return result;
         }
     }

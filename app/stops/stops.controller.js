@@ -11,7 +11,7 @@
 StopsCtrl.$inject = ['stopsList'];
 
 function StopsCtrl(stopsList) {
-	
+
     let vm = this;
 
     vm.stopsList = stopsList;
