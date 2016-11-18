@@ -21,7 +21,7 @@
 <div class="container ae-container">
     <table>
         <tbody>
-            <tr data-ng-repeat="stop in stops.stopsList | filter: {number: search, name: search}">
+            <tr data-ng-repeat="stop in stops.stopsList | limitTo: 100| filter: {number: search}">
                 <td class="ae-route-name">
                     <a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a>
                 </td>
@@ -32,6 +32,3 @@
         </tbody>
     </table>
 </div>
-<!-- <ul>
-  <li ng-repeat="stop in stops.stopsList"> <a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a></li>
-</ul> -->

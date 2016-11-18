@@ -1,12 +1,34 @@
-<h2>{{route.name}}</h2>
+<!-- <h2>{{route.name}}</h2> -->
 
-<ul>
-  <li ng-repeat="stop in route.stops">
-  	<a ng-href="#/routes/{{route.number}}/{{stop.number}}?name={{route.name}}"> {{stop.number}}  {{stop.name}}</a>
-  </li>
-</ul>
-<div>
-	<button style="float: right" ng-click="route.setFaveStatus(route.name)" ng-class="'faveStatusBtn' + route.faveStatus"> Favourite </button>
-	<div style="height: 100px"></div>
+<div id="nav-container" >
+    <ul class="nav-list">
+        <li style="float: left">
+            <i class="material-icons nav-icon" style="left:16px">menu</i>
+        </li>
+        <li style="margin-top: 4px; float: left; width: 75%" class='nav-title-container'>
+            <span class="nav-title">{{route.name}}</span>
+        </li>
+        <li style="float: right"></li>
+        <li>
+            <i class="material-icons nav-icon" style="right:16px">search</i>
+        </li>
+        <li>
+            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li>
+    </ul>
 </div>
 
+<div class="container ae-container">
+    <table>
+        <tbody>
+            <tr  ng-repeat="stop in route.stops| filter: {name: search, number: search}">
+                <td class="ae-route-name">
+                    <a ng-href="#/routes/{{route.number}}/{{stop.number}}?name={{route.name}}"> {{stop.number}}  {{stop.name}}</a>
+                </td>
+                <td class="ae-td">
+                    <i class="material-icons ae-icon">more_vert</i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,15 +1,26 @@
-<h3>{{stop.stopNo}} {{stop.stopDescription}}</h3>
-<h4 ng-if='stop.showError'> No trips scheduled for stop at this time</h4>
-<ul ng-if='!stop.showError' class="list-unstyled">
-  <li ng-repeat="route in stop.routes" > {{route.RouteNo}}  {{route.RouteHeading}}
-    <ul class="list-inline" style="display: inline">
-      <li ng-repeat="trip in route.Trips"> {{trip.AdjustedScheduleTime}}</li>
+<div id="nav-container" >
+    <ul class="nav-list">
+        <li style="float: left">
+            <i class="material-icons nav-icon" style="left:16px">menu</i>
+        </li>
+        <li style="margin-top: 4px; float: left; width: 296px" class='nav-title-container'>
+            <span class="nav-title">{{stop.stopNo}} {{stop.stopDescription| limitTo:10}}{{stop.stopDescription.length>10? " ...": ""}} </span>
+        </li>
+        <!-- <li style="float: right"></li> -->
+        <li>
+            <i class="material-icons nav-icon" style="right:16px">favorite</i>
+        </li>
+        <li>
+            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li>
     </ul>
-</li>
-</ul>
+</div>
+
 
 <div>
-	<button style="float: right" ng-click="stop.setFaveStatus(stop.stopNo)" ng-class="'faveStatusBtn' + stop.faveStatus"> Favourite </button>
-	<div style="height: 100px"></div>
 
+<next-trips ng-repeat="route in stop.routes" route="route" trips="route.Trips" ng-show="route.Trips.length > 0"></next-trips>
+<next-trips-error ng-show="stop.Error !== ''"></next-trips-error>
+<div class="">
+    {{stop.Error}}
 </div>

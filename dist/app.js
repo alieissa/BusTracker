@@ -58,7 +58,7 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./routes/routes.module.js":7,"./stops/stops.module.js":12}],2:[function(require,module,exports){
+},{"./routes/routes.module.js":7,"./stops/stops.module.js":13}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -529,9 +529,9 @@ function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveSt
 
     var vm = this;
 
-    vm.stopNo = $routeParams.stopNo;
-    vm.showError = stopRouteSummary.Error !== '';
-    vm.routes = vm.showError ? [] : stopRouteSummary.Routes;
+    vm.stopNo = stopRouteSummary.StopNo;
+    vm.Error = stopRouteSummary.Error;
+    vm.routes = stopRouteSummary.Routes;
     vm.stopDescription = stopRouteSummary.StopDescription;
     vm.setFaveStatus = _setFaveStatus;
 
@@ -601,20 +601,57 @@ exports.stopsConfig = stopsConfig;
  */
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 StopsCtrl.$inject = ['stopsList'];
 
 function StopsCtrl(stopsList) {
 
-  var vm = this;
+    var vm = this;
 
-  vm.stopsList = stopsList;
+    vm.stopsList = stopsList;
 }
 
 exports.StopsCtrl = StopsCtrl;
 
 },{}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function nextTripsError() {
+
+    var nextTripsError = {
+        templateUrl: '/views/next-trips-error.html'
+    };
+
+    return nextTripsError;
+}
+
+function nextTrips() {
+
+    var nextTrips = {
+        templateUrl: '/views/next-trips.html',
+        scope: {
+            route: '=',
+            trips: '='
+        },
+        link: function link(scope, element, attrs) {
+            angular.element('.material-icons').click(function () {
+                console.log('Clicked icon ');
+            });
+            console.log('Next trips link function');
+        }
+    };
+
+    return nextTrips;
+}
+
+exports.nextTrips = nextTrips;
+exports.nextTripsError = nextTripsError;
+
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -629,12 +666,14 @@ var _stopsService = require('./stops.service.js');
 
 var _stopsConfig = require('./stops.config.js');
 
+var _stopsDirectives = require('./stops.directives.js');
+
 // import {SQLiteMod} from '../common/SQLite.module.js';
-angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).service('stopsService', _stopsService.stopsService);
+angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).service('stopsService', _stopsService.stopsService);
 
 exports.default = angular.module('stopsMod');
 
-},{"./stop-detail.controller.js":9,"./stops.config.js":10,"./stops.controller.js":11,"./stops.service.js":13}],13:[function(require,module,exports){
+},{"./stop-detail.controller.js":9,"./stops.config.js":10,"./stops.controller.js":11,"./stops.directives.js":12,"./stops.service.js":14}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -698,18 +737,23 @@ function stopsService($http, config, dbService) {
                 'StopNo': result.StopNo
             };
 
+            var isTrips = false;
             result.Routes.forEach(function (route) {
-                if (Array.isArray(route.Trips)) {
-                    return;
-                } else if (typeof route.Trips === 'undefined') {
+
+                if (typeof route.Trips === 'undefined') {
                     route.Trips = [];
-                } else {
+                } else if (!Array.isArray(route.Trips)) {
                     route.Trips = [route.Trips];
                 }
+                isTrips = route.Trips.length > 0 || isTrips;
+                console.log(isTrips);
             });
 
-            //   return OCData.sortRoutesByTrips(result.Routes);
-            console.log(Object.keys(result));
+            if (!isTrips) {
+                result.Error = "16";
+                return result;
+            }
+
             return result;
         }
     }
