@@ -14,41 +14,26 @@ var _routesModule = require('./routes/routes.module.js');
 
 var _stopsModule = require('./stops/stops.module.js');
 
-angular.module('busTrackerApp', ['firebase', 'ngRoute', 'routesMod', 'stopsMod', 'dbMod']).config(config).constant('config', { OC_URL: 'http://localhost:3000/v1.2' }).controller('FavesCtrl', FavesCtrl).controller('MainCtrl', MainCtrl);
+var _favouritesModule = require('./favourites/favourites.module.js');
+
+angular.module('busTrackerApp', ['firebase', 'ngRoute',
+
+// 'dbMod',
+'favesMod', 'routesMod', 'stopsMod']).config(config).constant('config', { OC_URL: 'http://localhost:3000/v1.2' }).controller('MainCtrl', MainCtrl);
 
 function config($routeProvider, $httpProvider) {
 
-    $httpProvider.defaults.useXDomain = true;
-    $httpProvider.defaults.withCredentials = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    // $httpProvider.defaults.useXDomain = true;
+    // $httpProvider.defaults.withCredentials = true;
+    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider.when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
-    }).when('/favourites', {
-        templateUrl: 'views/favourites.html',
-        controller: 'FavesCtrl',
-        controllerAs: 'faves',
-        resolve: {
-            faveRoutes: function faveRoutes(routesService) {
-                return routesService.getFaves();
-            },
-            faveStops: function faveStops(stopsService) {
-                return stopsService.getFaves();
-            }
-        }
     }).otherwise({
         redirectTo: '/'
     });
-}
-
-function FavesCtrl(faveRoutes, faveStops) {
-
-    var vm = this;
-
-    vm.routes = faveRoutes;
-    vm.stops = faveStops;
 }
 
 function MainCtrl($rootScope) {
@@ -58,7 +43,7 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./routes/routes.module.js":7,"./stops/stops.module.js":13}],2:[function(require,module,exports){
+},{"./favourites/favourites.module.js":6,"./routes/routes.module.js":11,"./stops/stops.module.js":17}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -219,6 +204,111 @@ exports.default = angular.module('dbMod');
 },{}],3:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function favesConfig($routeProvider) {
+
+    $routeProvider.when('/favourites', {
+        templateUrl: './views/faves.html',
+        controller: 'FavesCtrl',
+        controllerAs: 'faves',
+        resolve: {
+            faveRoutes: function faveRoutes(dbService) {
+                return dbService.getFaves('routes');
+            },
+            faveStops: function faveStops(dbService) {
+                return dbService.getFaves('stops');
+            }
+        }
+    });
+}
+
+exports.favesConfig = favesConfig;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function FavesCtrl(faveRoutes, faveStops) {
+
+    var vm = this;
+
+    vm.routes = faveRoutes;
+    vm.stops = faveStops;
+}
+
+exports.FavesCtrl = FavesCtrl;
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function favesList() {
+
+    var favesList = {
+        templateUrl: './views/faves-list.html',
+        scope: {
+            routes: '=faveRoutes',
+            stops: '=faveStops'
+        },
+        link: link
+    };
+
+    return favesList;
+
+    function link(scope, element, attrs) {
+
+        angular.element('.tab-item').on('touchstart', handleTouch);
+
+        function handleTouch() {
+
+            if (angular.element(this).hasClass('.tab-active')) {
+                return;
+            }
+
+            angular.element('.tab-active').removeClass('tab-active');
+            angular.element(this).addClass('tab-active');
+
+            return;
+        }
+    }
+
+    return;
+}
+
+exports.favesList = favesList;
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _favouritesController = require('./favourites.controller.js');
+
+var _favouritesDirectives = require('./favourites.directives.js');
+
+var _favouritesConfig = require('./favourites.config.js');
+
+var _Model = require('../common/Model.js');
+
+// import {favesService} from './favourites.service.js';
+
+angular.module('favesMod', ['dbMod', 'ngRoute']).config(_favouritesConfig.favesConfig).controller('FavesCtrl', _favouritesController.FavesCtrl).directive('favesList', _favouritesDirectives.favesList);
+
+exports.default = angular.module('favesMod');
+
+},{"../common/Model.js":2,"./favourites.config.js":3,"./favourites.controller.js":4,"./favourites.directives.js":5}],7:[function(require,module,exports){
+'use strict';
+
 /**
  * @ngdoc function
  * @name busTrackerApp.controller:RouteCtrl
@@ -252,7 +342,7 @@ function RouteCtrl(details, setFaveStatus) {
 
 exports.RouteCtrl = RouteCtrl;
 
-},{}],4:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -288,7 +378,7 @@ function RouteStopDetailCtrl(details, getFaveStatus, setFaveStatus) {
 
 exports.RouteStopDetailCtrl = RouteStopDetailCtrl;
 
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -350,7 +440,7 @@ function routesConfig($routeProvider) {
 
 exports.routesConfig = routesConfig;
 
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 /**
@@ -376,7 +466,7 @@ function RoutesCtrl(routesList) {
 
 exports.RoutesCtrl = RoutesCtrl;
 
-},{}],7:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -396,7 +486,7 @@ var _routesConfig = require('./routes.config.js');
 angular.module('routesMod', ['firebase', 'ngRoute', 'dbMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl).controller('RouteStopDetailCtrl', _routeStopDetailController.RouteStopDetailCtrl).factory('routesService', _routesService.routesService); // import {SQLiteMod} from '../common/SQLite.module.js';
 exports.default = angular.module('routesMod');
 
-},{"./route-detail.controller.js":3,"./route-stop-detail.controller.js":4,"./routes.config.js":5,"./routes.controller.js":6,"./routes.service.js":8}],8:[function(require,module,exports){
+},{"./route-detail.controller.js":7,"./route-stop-detail.controller.js":8,"./routes.config.js":9,"./routes.controller.js":10,"./routes.service.js":12}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -509,7 +599,7 @@ routesService.$inject = ['$http', '$q', 'dbService', 'config'];function routesSe
     }
 }
 
-},{"../common/Model.js":2}],9:[function(require,module,exports){
+},{"../common/Model.js":2}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -548,7 +638,7 @@ function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveSt
 
 exports.StopDetailCtrl = StopDetailCtrl;
 
-},{}],10:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -589,7 +679,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
 
 exports.stopsConfig = stopsConfig;
 
-},{}],11:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -614,7 +704,7 @@ function StopsCtrl(stopsList) {
 
 exports.StopsCtrl = StopsCtrl;
 
-},{}],12:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -651,7 +741,7 @@ function nextTrips() {
 exports.nextTrips = nextTrips;
 exports.nextTripsError = nextTripsError;
 
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -673,7 +763,7 @@ angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig
 
 exports.default = angular.module('stopsMod');
 
-},{"./stop-detail.controller.js":9,"./stops.config.js":10,"./stops.controller.js":11,"./stops.directives.js":12,"./stops.service.js":14}],14:[function(require,module,exports){
+},{"./stop-detail.controller.js":13,"./stops.config.js":14,"./stops.controller.js":15,"./stops.directives.js":16,"./stops.service.js":18}],18:[function(require,module,exports){
 'use strict';
 
 /**

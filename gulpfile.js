@@ -39,7 +39,7 @@ function dist(done) {
 			cpDirFiles(path.join(__dirname, 'env.js'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/favourites.html'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/favourites/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/common/*.db'), path.join(__dirname, 'dist/database'));

@@ -62,7 +62,7 @@ function dbService($q, DATABASE) {
 				for(let i = 0; i < result.rows.length; i++) {
 					data.push(result.rows.item(i));
 				}
-				
+
 				defer.resolve(data);
 				return;
 			}

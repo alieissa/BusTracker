@@ -10,51 +10,36 @@
  */
 import {routesMod} from './routes/routes.module.js';
 import {stopsMod} from './stops/stops.module.js';
+import {favesMod} from './favourites/favourites.module.js';
 
 angular.module('busTrackerApp', [
         'firebase',
         'ngRoute',
+
+        // 'dbMod',
+        'favesMod',
         'routesMod',
-        'stopsMod',
-        'dbMod'
+        'stopsMod'
     ])
     .config(config)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
-    .controller('FavesCtrl', FavesCtrl)
     .controller('MainCtrl', MainCtrl);
 
 function config($routeProvider, $httpProvider) {
 
-    $httpProvider.defaults.useXDomain = true;
-    $httpProvider.defaults.withCredentials = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    // $httpProvider.defaults.useXDomain = true;
+    // $httpProvider.defaults.withCredentials = true;
+    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider
         .when('/', {
-      templateUrl: 'views/main.html',
-      controller: 'MainCtrl',
-      controllerAs: 'main'
-    })
-        .when('/favourites', {
-            templateUrl: 'views/favourites.html',
-            controller: 'FavesCtrl',
-            controllerAs: 'faves',
-            resolve: {
-            faveRoutes: (routesService) => routesService.getFaves(),
-            faveStops: (stopsService) => stopsService.getFaves()
-            }
+            templateUrl: 'views/main.html',
+            controller: 'MainCtrl',
+            controllerAs: 'main'
         })
         .otherwise({
             redirectTo: '/'
         });
-}
-
-function FavesCtrl(faveRoutes, faveStops) {
-
-    let vm = this;
-
-    vm.routes =  faveRoutes;
-    vm.stops = faveStops;
 }
 
 function MainCtrl($rootScope) {

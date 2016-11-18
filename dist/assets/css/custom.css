@@ -92,6 +92,14 @@ tr, td, th{
     text-align: right;
     padding-right: 12px;
 }
+
+.trip-card {
+    /*margin: 5px;*/
+    border-bottom: 1px solid cornsilk
+}
+.trip-card-action {
+    border-top: 1px solid
+}
 .trip-card-action li {
     float: left;
     padding: 8px;
@@ -101,3 +109,32 @@ tr, td, th{
 .trip-card-action li i {
     font-size: 20px
 }
+
+.tab-container {
+    float:left;
+    margin-bottom: 0;
+    width: 100%;
+    list-style: none;
+}
+.tab-item {
+    float: left;
+    margin: 0;
+    width: 50%;
+    height: 48px;
+    padding: 10px 12px 20px 12px;
+    text-align: center;
+    background-color: grey;
+    color:  rgba(255, 255, 255, 0.7);
+    font-size: 14px
+}
+/*.tab-item * {
+    color: rgba(255, 255, 255, 0.7)
+}*/
+.tab-active {
+    color: white;
+    border-bottom: 2px solid white;
+}
+
+/*.tab-active * {
+    color: rgba(255, 255, 255, 1)
+}*/
