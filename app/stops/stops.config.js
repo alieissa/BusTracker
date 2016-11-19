@@ -10,7 +10,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             controller: 'StopsCtrl',
             controllerAs: 'stops',
             resolve: {
-                stopsList: (stopsService) => stopsService.getAll()
+                stopsList: (dBService) => dBService.getAll('stops')
             }
         })
         .when('/stops/:stopNo', {

@@ -2,11 +2,11 @@
 import {FavesCtrl} from './favourites.controller.js';
 import {favesList} from './favourites.directives.js';
 import {favesConfig} from './favourites.config.js'
-import {dbMod} from '../common/Model.js'
+import {dBMod} from '../database/database.module.js'
 // import {favesService} from './favourites.service.js';
 
 angular.module('favesMod', [
-        'dbMod',
+        'dBMod',
         'ngRoute'
     ])
     .config(favesConfig)

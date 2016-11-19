@@ -16,16 +16,9 @@ var _stopsModule = require('./stops/stops.module.js');
 
 var _favouritesModule = require('./favourites/favourites.module.js');
 
-angular.module('busTrackerApp', ['firebase', 'ngRoute',
-
-// 'dbMod',
-'favesMod', 'routesMod', 'stopsMod']).config(config).constant('config', { OC_URL: 'http://localhost:3000/v1.2' }).controller('MainCtrl', MainCtrl);
+angular.module('busTrackerApp', ['firebase', 'ngRoute', 'favesMod', 'routesMod', 'stopsMod']).config(config).constant('config', { OC_URL: 'http://localhost:3000/v1.2' }).controller('MainCtrl', MainCtrl);
 
 function config($routeProvider, $httpProvider) {
-
-    // $httpProvider.defaults.useXDomain = true;
-    // $httpProvider.defaults.withCredentials = true;
-    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider.when('/', {
         templateUrl: 'views/main.html',
@@ -43,36 +36,28 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./favourites/favourites.module.js":6,"./routes/routes.module.js":11,"./stops/stops.module.js":17}],2:[function(require,module,exports){
+},{"./favourites/favourites.module.js":7,"./routes/routes.module.js":12,"./stops/stops.module.js":18}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-angular.module('dbMod', []).constant('DATABASE', 'octranspo').factory('dbService', dbService).directive('headerSearch', headerSearch);
 
-function headerSearch() {
-	return {
-		templateUrl: './searchHeader.html',
-		scope: {
-			title: '@'
-		},
-		link: function link(scope, elem, attrs) {
-			angular.element('.ae-route-name').on('touchstart', function () {
-				angular.element(this).parent().css('background-color', 'yellow');
-			});
+var _databaseService = require('./database.service.js');
 
-			angular.element('.ae-route-name').on('touchend', function () {
-				angular.element(this).parent().css('background-color', 'white');
-			});
+angular.module('dBMod', []).constant('DATABASE', 'octranspo').factory('dBService', _databaseService.dBService);
 
-			angular.element('.ae-icon').on('touchstart', function () {
-				// Show pop-up menu
-			});
-		}
-	};
-}
-function dbService($q, DATABASE) {
+exports.default = angular.module('dBMod');
+
+},{"./database.service.js":3}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+dBService.$inject = ['$q', 'DATABASE'];
+
+function dBService($q, DATABASE) {
 
 	var db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 
@@ -88,38 +73,36 @@ function dbService($q, DATABASE) {
 	/*-------------------Factory function definitions-------------------------*/
 
 	function getAll(table) {
-		return function () {
 
-			var defer = $q.defer();
-			db.transaction(handleTx, handleErr);
+		var defer = $q.defer();
+		db.transaction(handleTx, handleErr);
 
-			/*-------------------------------------------------------
-   	Note: Can not insert table name using ? replacement.
-   	This is true for most SQL
-   ----------------------------------------------------------*/
+		/*-------------------------------------------------------
+  	Note: Can not insert table name using ? replacement.
+  	This is true for most SQL
+  ----------------------------------------------------------*/
 
-			function handleTx(tx) {
-				tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, handleErr);
+		function handleTx(tx) {
+			tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, handleErr);
+		}
+
+		function handleRes(tx, result) {
+
+			var data = [];
+			for (var i = 0; i < result.rows.length; i++) {
+				data.push(result.rows.item(i));
 			}
 
-			function handleRes(tx, result) {
+			defer.resolve(data);
+			return;
+		}
 
-				var data = [];
-				for (var i = 0; i < result.rows.length; i++) {
-					data.push(result.rows.item(i));
-				}
+		function handleErr(tx, err) {
+			console.log(err);
+			return defer.reject(err);
+		}
 
-				defer.resolve(data);
-				return;
-			}
-
-			function handleErr(tx, err) {
-				console.log(err);
-				return defer.reject(err);
-			}
-
-			return defer.promise;
-		};
+		return defer.promise;
 	}
 
 	function getFaves(table) {
@@ -199,9 +182,10 @@ function dbService($q, DATABASE) {
 		};
 	}
 }
-exports.default = angular.module('dbMod');
 
-},{}],3:[function(require,module,exports){
+exports.dBService = dBService;
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -215,11 +199,11 @@ function favesConfig($routeProvider) {
         controller: 'FavesCtrl',
         controllerAs: 'faves',
         resolve: {
-            faveRoutes: function faveRoutes(dbService) {
-                return dbService.getFaves('routes');
+            faveRoutes: function faveRoutes(dBService) {
+                return dBService.getFaves('routes');
             },
-            faveStops: function faveStops(dbService) {
-                return dbService.getFaves('stops');
+            faveStops: function faveStops(dBService) {
+                return dBService.getFaves('stops');
             }
         }
     });
@@ -227,7 +211,7 @@ function favesConfig($routeProvider) {
 
 exports.favesConfig = favesConfig;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -244,7 +228,7 @@ function FavesCtrl(faveRoutes, faveStops) {
 
 exports.FavesCtrl = FavesCtrl;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -285,7 +269,7 @@ function favesList() {
 
 exports.favesList = favesList;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -298,15 +282,15 @@ var _favouritesDirectives = require('./favourites.directives.js');
 
 var _favouritesConfig = require('./favourites.config.js');
 
-var _Model = require('../common/Model.js');
+var _databaseModule = require('../database/database.module.js');
 
 // import {favesService} from './favourites.service.js';
 
-angular.module('favesMod', ['dbMod', 'ngRoute']).config(_favouritesConfig.favesConfig).controller('FavesCtrl', _favouritesController.FavesCtrl).directive('favesList', _favouritesDirectives.favesList);
+angular.module('favesMod', ['dBMod', 'ngRoute']).config(_favouritesConfig.favesConfig).controller('FavesCtrl', _favouritesController.FavesCtrl).directive('favesList', _favouritesDirectives.favesList);
 
 exports.default = angular.module('favesMod');
 
-},{"../common/Model.js":2,"./favourites.config.js":3,"./favourites.controller.js":4,"./favourites.directives.js":5}],7:[function(require,module,exports){
+},{"../database/database.module.js":2,"./favourites.config.js":4,"./favourites.controller.js":5,"./favourites.directives.js":6}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -342,7 +326,7 @@ function RouteCtrl(details, setFaveStatus) {
 
 exports.RouteCtrl = RouteCtrl;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -378,7 +362,7 @@ function RouteStopDetailCtrl(details, getFaveStatus, setFaveStatus) {
 
 exports.RouteStopDetailCtrl = RouteStopDetailCtrl;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -393,8 +377,8 @@ function routesConfig($routeProvider) {
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
-            routesList: function routesList(routesService) {
-                return routesService.getAll();
+            routesList: function routesList(dBService) {
+                return dBService.getAll('routes');
             }
         }
     }).when('/routes/:number', {
@@ -440,7 +424,7 @@ function routesConfig($routeProvider) {
 
 exports.routesConfig = routesConfig;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 /**
@@ -466,7 +450,7 @@ function RoutesCtrl(routesList) {
 
 exports.RoutesCtrl = RoutesCtrl;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -483,10 +467,14 @@ var _routesService = require('./routes.service.js');
 
 var _routesConfig = require('./routes.config.js');
 
-angular.module('routesMod', ['firebase', 'ngRoute', 'dbMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl).controller('RouteStopDetailCtrl', _routeStopDetailController.RouteStopDetailCtrl).factory('routesService', _routesService.routesService); // import {SQLiteMod} from '../common/SQLite.module.js';
+var _databaseModule = require('../database/database.module.js');
+
+// import {SQLiteMod} from '../common/SQLite.module.js';
+angular.module('routesMod', ['firebase', 'ngRoute', 'dBMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl).controller('RouteStopDetailCtrl', _routeStopDetailController.RouteStopDetailCtrl).factory('routesService', _routesService.routesService);
+
 exports.default = angular.module('routesMod');
 
-},{"./route-detail.controller.js":7,"./route-stop-detail.controller.js":8,"./routes.config.js":9,"./routes.controller.js":10,"./routes.service.js":12}],12:[function(require,module,exports){
+},{"../database/database.module.js":2,"./route-detail.controller.js":8,"./route-stop-detail.controller.js":9,"./routes.config.js":10,"./routes.controller.js":11,"./routes.service.js":13}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -497,20 +485,22 @@ exports.default = angular.module('routesMod');
  * Factory in the busTrackerApp.
  */
 
+// import {Model} from '../database/database.module.js';
+
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.routesService = routesService;
+routesService.$inject = ['$http', '$q', 'dBService', 'config'];
 
-var _Model = require('../common/Model.js');
-
-routesService.$inject = ['$http', '$q', 'dbService', 'config'];function routesService($http, $q, dbService, config) {
+function routesService($http, $q, dBService, config) {
 
     var Routes = {
-        getAll: dbService.getAll('routes'), // returns function that gets all routes
-        getFaves: dbService.getFaves('routes'), // returns function that get all fave routes
-        getFaveStatus: dbService.getFaveStatus('routes'), // returns a function that takes route name
-        setFaveStatus: dbService.setFaveStatus('routes'), // returns function that set status given name and status
+        getAll: dBService.getAll('routes'), // returns function that gets all routes
+        getFaves: dBService.getFaves('routes'), // returns function that get all fave routes
+        getFaveStatus: dBService.getFaveStatus('routes'), // returns a function that takes route name
+        setFaveStatus: dBService.setFaveStatus('routes'), // returns function that set status given name and status
         getNextTrips: getNextTrips,
         getStops: getStops
     };
@@ -599,7 +589,7 @@ routesService.$inject = ['$http', '$q', 'dbService', 'config'];function routesSe
     }
 }
 
-},{"../common/Model.js":2}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -638,7 +628,7 @@ function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveSt
 
 exports.StopDetailCtrl = StopDetailCtrl;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -653,8 +643,8 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         controller: 'StopsCtrl',
         controllerAs: 'stops',
         resolve: {
-            stopsList: function stopsList(stopsService) {
-                return stopsService.getAll();
+            stopsList: function stopsList(dBService) {
+                return dBService.getAll('stops');
             }
         }
     }).when('/stops/:stopNo', {
@@ -679,7 +669,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
 
 exports.stopsConfig = stopsConfig;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -704,7 +694,7 @@ function StopsCtrl(stopsList) {
 
 exports.StopsCtrl = StopsCtrl;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -741,7 +731,7 @@ function nextTrips() {
 exports.nextTrips = nextTrips;
 exports.nextTripsError = nextTripsError;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -758,12 +748,12 @@ var _stopsConfig = require('./stops.config.js');
 
 var _stopsDirectives = require('./stops.directives.js');
 
-// import {SQLiteMod} from '../common/SQLite.module.js';
-angular.module('stopsMod', ['ngRoute', 'firebase', 'dbMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).service('stopsService', _stopsService.stopsService);
+var _databaseModule = require('../database/database.module.js');
 
+angular.module('stopsMod', ['ngRoute', 'firebase', 'dBMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).service('stopsService', _stopsService.stopsService); // import {SQLiteMod} from '../common/SQLite.module.js';
 exports.default = angular.module('stopsMod');
 
-},{"./stop-detail.controller.js":13,"./stops.config.js":14,"./stops.controller.js":15,"./stops.directives.js":16,"./stops.service.js":18}],18:[function(require,module,exports){
+},{"../database/database.module.js":2,"./stop-detail.controller.js":14,"./stops.config.js":15,"./stops.controller.js":16,"./stops.directives.js":17,"./stops.service.js":19}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -779,15 +769,15 @@ exports.default = angular.module('stopsMod');
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-stopsService.$inject = ['$http', 'config', 'dbService'];
+stopsService.$inject = ['$http', 'config', 'dBService'];
 
-function stopsService($http, config, dbService) {
+function stopsService($http, config, dBService) {
 
     var Stops = {
-        getAll: dbService.getAll('stops'), // returns function that gets all routes
-        getFaves: dbService.getFaves('stops'), // returns function that get all fave routes
-        getFaveStatus: dbService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        setFaveStatus: dbService.setFaveStatus('stops'), // returns function that set status given name and status
+        getAll: dBService.getAll('stops'), // returns function that gets all routes
+        getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
+        getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
+        setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
         getRouteSummary: getRouteSummary
     };
 

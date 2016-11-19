@@ -6,8 +6,8 @@ function favesConfig($routeProvider) {
         controller: 'FavesCtrl',
         controllerAs: 'faves',
         resolve: {
-            faveRoutes: (dbService) => dbService.getFaves('routes'),
-            faveStops: (dbService) => dbService.getFaves('stops')
+            faveRoutes: (dBService) => dBService.getFaves('routes'),
+            faveStops: (dBService) => dBService.getFaves('stops')
         }
     })
 }

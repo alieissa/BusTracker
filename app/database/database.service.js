@@ -1,32 +1,8 @@
 'use strict';
 
-angular.module('dbMod', [])
-	.constant('DATABASE', 'octranspo')
-	.factory('dbService', dbService)
-	.directive('headerSearch', headerSearch);
+dBService.$inject = ['$q', 'DATABASE'];
 
-function headerSearch() {
-	return {
-		templateUrl: './searchHeader.html',
-		scope: {
-			title: '@'
-		},
-		link: (scope, elem, attrs) => {
-			angular.element('.ae-route-name').on('touchstart', function() {
-				angular.element(this).parent().css('background-color', 'yellow');
-			});
-
-			angular.element('.ae-route-name').on('touchend', function() {
-				angular.element(this).parent().css('background-color', 'white');
-			})
-
-			angular.element('.ae-icon').on('touchstart', function() {
-				// Show pop-up menu
-			})
-		}
-	};
-}
-function dbService($q, DATABASE) {
+function dBService($q, DATABASE) {
 
 	let db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 
@@ -42,38 +18,37 @@ function dbService($q, DATABASE) {
 	/*-------------------Factory function definitions-------------------------*/
 
 	function getAll(table) {
-		return () => {
 
-			let defer = $q.defer();
-			db.transaction(handleTx, handleErr);
 
-			/*-------------------------------------------------------
-				Note: Can not insert table name using ? replacement.
-				This is true for most SQL
-			----------------------------------------------------------*/
+		let defer = $q.defer();
+		db.transaction(handleTx, handleErr);
 
-			function handleTx(tx) {
-				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
+		/*-------------------------------------------------------
+			Note: Can not insert table name using ? replacement.
+			This is true for most SQL
+		----------------------------------------------------------*/
+
+		function handleTx(tx) {
+			tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
+		}
+
+		function handleRes(tx, result) {
+
+			let data = [];
+			for(let i = 0; i < result.rows.length; i++) {
+				data.push(result.rows.item(i));
 			}
 
-			function handleRes(tx, result) {
+			defer.resolve(data);
+			return;
+		}
 
-				let data = [];
-				for(let i = 0; i < result.rows.length; i++) {
-					data.push(result.rows.item(i));
-				}
+		function handleErr(tx, err) {
+			console.log(err);
+			return defer.reject(err);
+		}
 
-				defer.resolve(data);
-				return;
-			}
-
-			function handleErr(tx, err) {
-				console.log(err);
-				return defer.reject(err);
-			}
-
-			return defer.promise;
-		};
+		return defer.promise;
 	}
 
 	function getFaves(table) {
@@ -153,4 +128,5 @@ function dbService($q, DATABASE) {
 		};
 	}
 }
-export default angular.module('dbMod');
+
+export {dBService};

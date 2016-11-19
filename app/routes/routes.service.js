@@ -8,18 +8,18 @@
  * Factory in the busTrackerApp.
  */
 
-import {Model} from '../common/Model.js';
+// import {Model} from '../database/database.module.js';
 
 
-routesService.$inject = ['$http', '$q','dbService', 'config'];
+routesService.$inject = ['$http', '$q','dBService', 'config'];
 
-export function routesService($http, $q, dbService, config) {
+export function routesService($http, $q, dBService, config) {
 
     let Routes = {
-        getAll: dbService.getAll('routes'), // returns function that gets all routes
-        getFaves: dbService.getFaves('routes'), // returns function that get all fave routes
-        getFaveStatus: dbService.getFaveStatus('routes'), // returns a function that takes route name
-        setFaveStatus: dbService.setFaveStatus('routes'), // returns function that set status given name and status
+        getAll: dBService.getAll('routes'), // returns function that gets all routes
+        getFaves: dBService.getFaves('routes'), // returns function that get all fave routes
+        getFaveStatus: dBService.getFaveStatus('routes'), // returns a function that takes route name
+        setFaveStatus: dBService.setFaveStatus('routes'), // returns function that set status given name and status
         getNextTrips: getNextTrips,
         getStops: getStops
     }

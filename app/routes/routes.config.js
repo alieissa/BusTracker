@@ -10,7 +10,7 @@ function routesConfig($routeProvider) {
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
-          routesList: (routesService) => routesService.getAll()
+          routesList: (dBService) => dBService.getAll('routes')
         }
     })
     .when('/routes/:number', {

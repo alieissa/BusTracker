@@ -4,11 +4,12 @@ import {RouteCtrl} from './route-detail.controller.js';
 import {RouteStopDetailCtrl} from './route-stop-detail.controller.js';
 import {routesService} from './routes.service.js';
 import {routesConfig} from './routes.config.js';
+import {dBMod} from '../database/database.module.js';
 
 angular.module('routesMod', [
         'firebase',
         'ngRoute',
-        'dbMod'
+        'dBMod'
     ])
     .config(routesConfig)
     .controller('RoutesCtrl', RoutesCtrl)

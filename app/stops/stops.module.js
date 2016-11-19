@@ -5,11 +5,12 @@ import {stopsService} from './stops.service.js';
 import {stopsConfig} from './stops.config.js';
 import {nextTrips} from './stops.directives.js';
 import {nextTripsError} from './stops.directives.js';
+import {dBMod} from '../database/database.module.js';
 
 angular.module('stopsMod', [
       'ngRoute',
       'firebase',
-      'dbMod'
+      'dBMod'
 ])
 .config(stopsConfig)
 .controller('StopsCtrl', StopsCtrl)

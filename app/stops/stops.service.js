@@ -10,15 +10,15 @@
 
 // import {OCData} from '../../util/OCData.js';
 
-stopsService.$inject = ['$http', 'config', 'dbService'];
+stopsService.$inject = ['$http', 'config', 'dBService'];
 
-function stopsService ($http, config, dbService) {
+function stopsService ($http, config, dBService) {
 
     let Stops = {
-        getAll: dbService.getAll('stops'), // returns function that gets all routes
-        getFaves: dbService.getFaves('stops'), // returns function that get all fave routes
-        getFaveStatus: dbService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        setFaveStatus: dbService.setFaveStatus('stops'), // returns function that set status given name and status
+        getAll: dBService.getAll('stops'), // returns function that gets all routes
+        getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
+        getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
+        setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
         getRouteSummary: getRouteSummary
     }
 
