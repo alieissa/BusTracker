@@ -18,12 +18,12 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             controller: 'StopDetailCtrl',
             controllerAs: 'stop',
             resolve: {
-                getFaveStatus: (stopsService) => stopsService.getFaveStatus,
-                setFaveStatus: (stopsService) => stopsService.setFaveStatus,
-                stopRouteSummary: ($route, stopsService) => {
+                getFaveStatus: (dBService) => dBService.getFaveStatus,
+                setFaveStatus: (dBService) => dBService.setFaveStatus,
+                nextTrips: ($route, stopsService) => {
 
                     let stopNo = $route.current.params.stopNo;
-                    return stopsService.getRouteSummary(stopNo);
+                    return stopsService.getNextTrips(stopNo);
                 }
             }
         });

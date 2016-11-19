@@ -10,7 +10,8 @@ function dBService($q, DATABASE) {
 		getAll: getAll,
 		getFaves: getFaves,
 		getFaveStatus: getFaveStatus,
-		setFaveStatus: setFaveStatus
+		setFaveStatus: setFaveStatus,
+		getStops: getStops
 	};
 
 	return DB;
@@ -52,7 +53,6 @@ function dBService($q, DATABASE) {
 	}
 
 	function getFaves(table) {
-		return () => {
 
 			let defer= $q.defer();
 			db.transaction(handleTx, handleErr);
@@ -78,7 +78,7 @@ function dBService($q, DATABASE) {
 			}
 
 			return defer.promise;
-		};
+
 	}
 
 	function getFaveStatus(table) {
@@ -127,6 +127,47 @@ function dBService($q, DATABASE) {
 			return defer.promise;
 		};
 	}
+
+	function getStops(name) {
+
+        let defer = $q.defer();
+
+        // let db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
+
+        db.transaction(handleTx, handleErr);
+
+        function handleTx(tx) {
+          tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], handleRes, handleErr);
+        }
+
+        function handleRes(tx, result) {
+
+            let data = result.rows.item(0);
+
+            let stops = data.stops.split('\t');
+
+            // stops number and name are both in a long space separated string
+            stops = stops.map((stop) => {
+                return {
+                    number: stop.split(' ')[0],
+                    name: stop.split(' ').slice(1).join(' ')
+                }
+
+            });
+
+            data.stops = stops;
+            data.favourite = parseInt(data.favourite);
+            defer.resolve(data);
+            return;
+        }
+
+        function handleErr(tx, error) {
+          console.log(error);
+          return defer.reject(error);
+        }
+
+        return defer.promise;
+    }
 }
 
 export {dBService};

@@ -15,28 +15,27 @@ stopsService.$inject = ['$http', 'config', 'dBService'];
 function stopsService ($http, config, dBService) {
 
     let Stops = {
-        getAll: dBService.getAll('stops'), // returns function that gets all routes
-        getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
-        getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
-        getRouteSummary: getRouteSummary
+        // getAll: dBService.getAll('stops'), // returns function that gets all routes
+        // getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
+        // getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
+        // setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
+        getNextTrips: getNextTrips
     }
 
     return Stops;
 
     /*-------------------Factory function definitions-------------------------*/
 
-    function getRouteSummary(stopNo) {
+    function getNextTrips(stopNo) {
 
         const OCCONFIG = window._env.OC;
         const headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}}; // Content-Type must be x-www-form-urlencoded.
         const url = `${config.OC_URL}/GetNextTripsForStopAllRoutes`;
         const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
 
-        return $http.post(url, data, headers)
-            .then(getRouteSummaryComplete);
+        return $http.post(url, data, headers).then(handleRes);
 
-        function getRouteSummaryComplete(response) {
+        function handleRes(response) {
 
             let result = response.data.GetRouteSummaryForStopResult;
 

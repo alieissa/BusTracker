@@ -36,7 +36,7 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./favourites/favourites.module.js":7,"./routes/routes.module.js":12,"./stops/stops.module.js":18}],2:[function(require,module,exports){
+},{"./favourites/favourites.module.js":7,"./routes/routes.module.js":11,"./stops/stops.module.js":16}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -65,7 +65,8 @@ function dBService($q, DATABASE) {
 		getAll: getAll,
 		getFaves: getFaves,
 		getFaveStatus: getFaveStatus,
-		setFaveStatus: setFaveStatus
+		setFaveStatus: setFaveStatus,
+		getStops: getStops
 	};
 
 	return DB;
@@ -106,33 +107,31 @@ function dBService($q, DATABASE) {
 	}
 
 	function getFaves(table) {
-		return function () {
 
-			var defer = $q.defer();
-			db.transaction(handleTx, handleErr);
+		var defer = $q.defer();
+		db.transaction(handleTx, handleErr);
 
-			function handleTx(tx) {
-				tx.executeSql('SELECT * FROM ' + table + ' WHERE favourite = 1', [], handleRes, handleErr);
+		function handleTx(tx) {
+			tx.executeSql('SELECT * FROM ' + table + ' WHERE favourite = 1', [], handleRes, handleErr);
+		}
+
+		function handleRes(tx, result) {
+
+			var data = [];
+			for (var i = 0; i < result.rows.length; i++) {
+				data.push(result.rows.item(i));
 			}
 
-			function handleRes(tx, result) {
+			defer.resolve(data);
+			return;
+		}
 
-				var data = [];
-				for (var i = 0; i < result.rows.length; i++) {
-					data.push(result.rows.item(i));
-				}
+		function handleErr(tx, err) {
+			console.log(err);
+			return defer.reject(err);
+		}
 
-				defer.resolve(data);
-				return;
-			}
-
-			function handleErr(tx, err) {
-				console.log(err);
-				return defer.reject(err);
-			}
-
-			return defer.promise;
-		};
+		return defer.promise;
 	}
 
 	function getFaveStatus(table) {
@@ -180,6 +179,46 @@ function dBService($q, DATABASE) {
 
 			return defer.promise;
 		};
+	}
+
+	function getStops(name) {
+
+		var defer = $q.defer();
+
+		// let db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
+
+		db.transaction(handleTx, handleErr);
+
+		function handleTx(tx) {
+			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], handleRes, handleErr);
+		}
+
+		function handleRes(tx, result) {
+
+			var data = result.rows.item(0);
+
+			var stops = data.stops.split('\t');
+
+			// stops number and name are both in a long space separated string
+			stops = stops.map(function (stop) {
+				return {
+					number: stop.split(' ')[0],
+					name: stop.split(' ').slice(1).join(' ')
+				};
+			});
+
+			data.stops = stops;
+			data.favourite = parseInt(data.favourite);
+			defer.resolve(data);
+			return;
+		}
+
+		function handleErr(tx, error) {
+			console.log(error);
+			return defer.reject(error);
+		}
+
+		return defer.promise;
 	}
 }
 
@@ -304,65 +343,29 @@ exports.default = angular.module('favesMod');
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-RouteCtrl.$inject = ['details', 'setFaveStatus'];
+RouteCtrl.$inject = ['routeDetails', 'setFaveStatus'];
 
-function RouteCtrl(details, setFaveStatus) {
+function RouteCtrl(routeDetails, setFaveStatus) {
 
   var vm = this;
 
-  vm.name = details.name;
-  vm.number = details.number;
-  vm.stops = details.stops;
-  vm.faveStatus = details.favourite;
-  vm.setFaveStatus = _setFaveStatus;
+  vm.name = routeDetails.name;
+  vm.number = routeDetails.number;
+  vm.stops = routeDetails.stops;
+  vm.faveStatus = routeDetails.favourite;
+  vm.setFaveStatus = setFaveStatus;
 
   // Handler of Favourite button click events in route.html template
-  function _setFaveStatus(name) {
-
-    vm.faveStatus = vm.faveStatus === 0 ? 1 : 0;
-    setFaveStatus(vm.faveStatus, 'name', vm.name);
-  }
+  // function _setFaveStatus(name) {
+  //
+  //    	vm.faveStatus = vm.faveStatus === 0 ? 1: 0;
+  // 	setFaveStatus(vm.faveStatus, 'name', vm.name);
+  // }
 }
 
 exports.RouteCtrl = RouteCtrl;
 
 },{}],9:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-RouteStopDetailCtrl.$inject = ['details', 'getFaveStatus', 'setFaveStatus'];
-
-function RouteStopDetailCtrl(details, getFaveStatus, setFaveStatus) {
-
-	var vm = this;
-
-	vm.showError = details.Error === '' ? false : true;
-	vm.error = details.Error;
-
-	vm.stopName = details.stopName;
-	vm.stopNo = details.stopNo;
-	vm.name = details.name;
-	vm.trips = details.Trips;
-	vm.details = details;
-	vm.setFaveStatus = _setFaveStatus;
-
-	// details doesn't include stop faveStatus
-	getFaveStatus('number', vm.stopNo).then(function (faveStatus) {
-		vm.faveStatus = faveStatus;
-	});
-
-	function _setFaveStatus() {
-
-		vm.faveStatus = vm.faveStatus === 0 ? 1 : 0;
-		setFaveStatus(vm.faveStatus, 'number', vm.stopNo);
-	}
-}
-
-exports.RouteStopDetailCtrl = RouteStopDetailCtrl;
-
-},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -387,44 +390,21 @@ function routesConfig($routeProvider) {
         controller: 'RouteCtrl',
         controllerAs: 'route',
         resolve: {
-            setFaveStatus: function setFaveStatus(routesService) {
-                return routesService.setFaveStatus;
+            setFaveStatus: function setFaveStatus(dBService) {
+                return dBService.setFaveStatus;
             },
-            details: function details($location, routesService) {
+            routeDetails: function routeDetails($location, dBService) {
 
-                var name = $location.search().name;
-                return routesService.getStops(name);
+                var name = $location.search().name; //from query string
+                return dBService.getStops(name);
             }
         }
-    }).when('/routes/:number/:stopNo', {
-        templateUrl: 'views/routestops.html',
-        controller: 'RouteStopDetailCtrl',
-        controllerAs: 'routeStops',
-        resolve: {
-            getFaveStatus: function getFaveStatus(stopsService) {
-                return stopsService.getFaveStatus;
-            },
-            setFaveStatus: function setFaveStatus(stopsService) {
-                return stopsService.setFaveStatus;
-            },
-            details: function details($route, $location, routesService) {
-
-                var name = $location.search().name;
-                var number = $route.current.params.number;
-                var stopNo = $route.current.params.stopNo;
-                return routesService.getNextTrips(name, number, stopNo);
-            }
-        }
-    }).when('/routes/:routeNo/:stopNo/error', {
-        templateUrl: 'views/error.html',
-        controller: 'ErrorCtrl',
-        controllerAs: 'error'
     });
 }
 
 exports.routesConfig = routesConfig;
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 /**
@@ -450,7 +430,7 @@ function RoutesCtrl(routesList) {
 
 exports.RoutesCtrl = RoutesCtrl;
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -461,135 +441,15 @@ var _routesController = require('./routes.controller.js');
 
 var _routeDetailController = require('./route-detail.controller.js');
 
-var _routeStopDetailController = require('./route-stop-detail.controller.js');
-
-var _routesService = require('./routes.service.js');
-
 var _routesConfig = require('./routes.config.js');
 
 var _databaseModule = require('../database/database.module.js');
 
-// import {SQLiteMod} from '../common/SQLite.module.js';
-angular.module('routesMod', ['firebase', 'ngRoute', 'dBMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl).controller('RouteStopDetailCtrl', _routeStopDetailController.RouteStopDetailCtrl).factory('routesService', _routesService.routesService);
+angular.module('routesMod', ['firebase', 'ngRoute', 'dBMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl);
 
 exports.default = angular.module('routesMod');
 
-},{"../database/database.module.js":2,"./route-detail.controller.js":8,"./route-stop-detail.controller.js":9,"./routes.config.js":10,"./routes.controller.js":11,"./routes.service.js":13}],13:[function(require,module,exports){
-'use strict';
-
-/**
- * @ngdoc service
- * @name busTrackerApp.routes
- * @description
- * # routes
- * Factory in the busTrackerApp.
- */
-
-// import {Model} from '../database/database.module.js';
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.routesService = routesService;
-routesService.$inject = ['$http', '$q', 'dBService', 'config'];
-
-function routesService($http, $q, dBService, config) {
-
-    var Routes = {
-        getAll: dBService.getAll('routes'), // returns function that gets all routes
-        getFaves: dBService.getFaves('routes'), // returns function that get all fave routes
-        getFaveStatus: dBService.getFaveStatus('routes'), // returns a function that takes route name
-        setFaveStatus: dBService.setFaveStatus('routes'), // returns function that set status given name and status
-        getNextTrips: getNextTrips,
-        getStops: getStops
-    };
-
-    return Routes;
-
-    /*-------------------Factory function definitions-------------------------*/
-
-    function getNextTrips(name, routeNo, stopNo) {
-
-        var OCCONFIG = window._env.OC;
-
-        var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-        var url = config.OC_URL + '/GetNextTripsForStop';
-        var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&routeNo=' + routeNo + '&format=json';
-
-        return $http.post(url, data, headers).then(getNextTripsComplete);
-
-        function getNextTripsComplete(response) {
-
-            var result = {};
-            var data = response.data.GetNextTripsForStopResult;
-
-            if (data.Error !== '') {
-                return data;
-            }
-
-            if (!Array.isArray(data.Route.RouteDirection)) {
-                result = data.Route.RouteDirection;
-            } else {
-                result = data.Route.RouteDirection.find(function (route) {
-                    var _name = route.RouteNo + ' ' + route.RouteLabel;
-                    if (_name === name) {
-                        return route;
-                    }
-                });
-            }
-
-            result.name = result.RouteNo + ' ' + result.RouteLabel;
-            result.stopNo = stopNo;
-            result.stopName = data.StopLabel;
-            result.Trips = result.Trips.Trip;
-
-            return result;
-        }
-    }
-
-    function getStops(name) {
-
-        var defer = $q.defer();
-
-        var db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
-
-        db.transaction(handleTx, handleErr);
-
-        function handleTx(tx) {
-            tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], handleRes, handleErr);
-        }
-
-        function handleRes(tx, result) {
-
-            var data = result.rows.item(0);
-
-            var stops = data.stops.split('\t');
-
-            // stops number and name are both in a long space separated string
-            stops = stops.map(function (stop) {
-                return {
-                    number: stop.split(' ')[0],
-                    name: stop.split(' ').slice(1).join(' ')
-                };
-            });
-
-            data.stops = stops;
-            data.favourite = parseInt(data.favourite);
-            defer.resolve(data);
-            return;
-        }
-
-        function handleErr(tx, error) {
-            console.log(error);
-            return defer.reject(error);
-        }
-
-        return defer.promise;
-    }
-}
-
-},{}],14:[function(require,module,exports){
+},{"../database/database.module.js":2,"./route-detail.controller.js":8,"./routes.config.js":9,"./routes.controller.js":10}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -603,16 +463,17 @@ function routesService($http, $q, dBService, config) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-StopDetailCtrl.$inject = ['$routeParams', 'stopRouteSummary', 'getFaveStatus', 'setFaveStatus'];
+StopDetailCtrl.$inject = ['$routeParams', 'nextTrips', 'getFaveStatus', 'setFaveStatus'];
 
-function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveStatus) {
+function StopDetailCtrl($routeParams, nextTrips, getFaveStatus, setFaveStatus) {
 
     var vm = this;
 
-    vm.stopNo = stopRouteSummary.StopNo;
-    vm.Error = stopRouteSummary.Error;
-    vm.routes = stopRouteSummary.Routes;
-    vm.stopDescription = stopRouteSummary.StopDescription;
+    vm = nextTrips;
+    // vm.stopNo = nextTrips.StopNo;
+    // vm.Error = nextTrips.Error;
+    // vm.routes = nextTrips.Routes;
+    // vm.stopDescription = nextTrips.StopDescription;
     vm.setFaveStatus = _setFaveStatus;
 
     getFaveStatus('number', vm.stopNo).then(function (faveStatus) {
@@ -628,7 +489,7 @@ function StopDetailCtrl($routeParams, stopRouteSummary, getFaveStatus, setFaveSt
 
 exports.StopDetailCtrl = StopDetailCtrl;
 
-},{}],15:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -652,16 +513,16 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         controller: 'StopDetailCtrl',
         controllerAs: 'stop',
         resolve: {
-            getFaveStatus: function getFaveStatus(stopsService) {
-                return stopsService.getFaveStatus;
+            getFaveStatus: function getFaveStatus(dBService) {
+                return dBService.getFaveStatus;
             },
-            setFaveStatus: function setFaveStatus(stopsService) {
-                return stopsService.setFaveStatus;
+            setFaveStatus: function setFaveStatus(dBService) {
+                return dBService.setFaveStatus;
             },
-            stopRouteSummary: function stopRouteSummary($route, stopsService) {
+            nextTrips: function nextTrips($route, stopsService) {
 
                 var stopNo = $route.current.params.stopNo;
-                return stopsService.getRouteSummary(stopNo);
+                return stopsService.getNextTrips(stopNo);
             }
         }
     });
@@ -669,7 +530,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
 
 exports.stopsConfig = stopsConfig;
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -694,7 +555,7 @@ function StopsCtrl(stopsList) {
 
 exports.StopsCtrl = StopsCtrl;
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -731,7 +592,7 @@ function nextTrips() {
 exports.nextTrips = nextTrips;
 exports.nextTripsError = nextTripsError;
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -753,7 +614,7 @@ var _databaseModule = require('../database/database.module.js');
 angular.module('stopsMod', ['ngRoute', 'firebase', 'dBMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).service('stopsService', _stopsService.stopsService); // import {SQLiteMod} from '../common/SQLite.module.js';
 exports.default = angular.module('stopsMod');
 
-},{"../database/database.module.js":2,"./stop-detail.controller.js":14,"./stops.config.js":15,"./stops.controller.js":16,"./stops.directives.js":17,"./stops.service.js":19}],19:[function(require,module,exports){
+},{"../database/database.module.js":2,"./stop-detail.controller.js":12,"./stops.config.js":13,"./stops.controller.js":14,"./stops.directives.js":15,"./stops.service.js":17}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -774,27 +635,27 @@ stopsService.$inject = ['$http', 'config', 'dBService'];
 function stopsService($http, config, dBService) {
 
     var Stops = {
-        getAll: dBService.getAll('stops'), // returns function that gets all routes
-        getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
-        getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
-        getRouteSummary: getRouteSummary
+        // getAll: dBService.getAll('stops'), // returns function that gets all routes
+        // getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
+        // getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
+        // setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
+        getNextTrips: getNextTrips
     };
 
     return Stops;
 
     /*-------------------Factory function definitions-------------------------*/
 
-    function getRouteSummary(stopNo) {
+    function getNextTrips(stopNo) {
 
         var OCCONFIG = window._env.OC;
         var headers = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }; // Content-Type must be x-www-form-urlencoded.
         var url = config.OC_URL + '/GetNextTripsForStopAllRoutes';
         var data = 'appID=' + OCCONFIG.APP_ID + '&apiKey=' + OCCONFIG.API_KEY + '&stopNo=' + stopNo + '&format=json';
 
-        return $http.post(url, data, headers).then(getRouteSummaryComplete);
+        return $http.post(url, data, headers).then(handleRes);
 
-        function getRouteSummaryComplete(response) {
+        function handleRes(response) {
 
             var result = response.data.GetRouteSummaryForStopResult;
 

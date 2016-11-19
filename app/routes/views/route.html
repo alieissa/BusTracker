@@ -23,7 +23,7 @@
         <tbody>
             <tr  ng-repeat="stop in route.stops| filter: {name: search, number: search}">
                 <td class="ae-route-name">
-                    <a ng-href="#/routes/{{route.number}}/{{stop.number}}?name={{route.name}}"> {{stop.number}}  {{stop.name}}</a>
+                    <a ng-href="#/stops/{{stop.number}}"> {{stop.number}}  {{stop.name}}</a>
                 </td>
                 <td class="ae-td">
                     <i class="material-icons ae-icon">more_vert</i>
