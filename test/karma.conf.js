@@ -32,6 +32,7 @@ module.exports = function(config) {
       // My Code
       'dist/app.js',
       'test/constants.js',
+      'test/spec/database/*.js',
       'test/spec/routes/*.js',
       'test/spec/stops/*.js'
     ],
