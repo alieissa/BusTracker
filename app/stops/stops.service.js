@@ -15,10 +15,6 @@ stopsService.$inject = ['$http', 'config', 'dBService'];
 function stopsService ($http, config, dBService) {
 
     let Stops = {
-        // getAll: dBService.getAll('stops'), // returns function that gets all routes
-        // getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
-        // getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        // setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
         getNextTrips: getNextTrips
     }
 
@@ -43,42 +39,44 @@ function stopsService ($http, config, dBService) {
                 return result;
             }
 
-            if(Array.isArray(result.Routes) && result.Routes.length === 0) {
-                result.Error = '15';
-                return result;
-            }
-            if(typeof result.Routes.Route !== 'undefined' && !Array.isArray(result.Routes.Route) ) {
-                result.Routes.Route = [result.Routes.Route];
-            }
-
-            result = {
-                'Error':result.Error,
-                'Routes': result.Routes.Route,
-                'StopDescription': result.StopDescription,
-                'StopNo': result.StopNo
-            };
-
-            let isTrips = false;
-            result.Routes.forEach((route) => {
-
-                if(typeof route.Trips === 'undefined') {
-                    route.Trips = [];
-                }
-                else if (!Array.isArray(route.Trips)){
-                    route.Trips = [route.Trips];
-                }
-                isTrips = route.Trips.length > 0 || isTrips;
-                console.log(isTrips);
+            let _routes = parseRoutes(result.Routes);
+            _routes.forEach((route) => {
+                route.Trips = parseTrips(route.Trips);
             });
 
-            if(!isTrips) {
-                result.Error = "16";
-                return result;
-            }
-
-            return result;
+            return {'error': result.Error, 'routes': _routes};
         }
     }
 }
 
+function parseTrips(trips) {
+
+    let _trips;
+    if(typeof trips === 'undefined') {
+        _trips = [];
+    }
+    else if(typeof trips.Trip !== 'undefined') {
+        _trips = [trips.Trips];
+    }
+    else {
+        _trips = trips;
+    }
+
+    return _trips;
+}
+
+function parseRoutes(routes) {
+
+    let _routes;
+    if(typeof routes.Route !== 'undefined') {
+
+        // if route.Route is not an array return it as an array, else return as is
+        _routes = Array.isArray(routes.Route) ? routes.Route : [routes.Route];
+    }
+    else {
+        _routes = routes;
+    }
+
+    return _routes;
+}
 export {stopsService};

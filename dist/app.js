@@ -55,25 +55,21 @@ exports.default = angular.module('dBMod');
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 dBService.$inject = ['$q', 'DATABASE'];
 
 function dBService($q, DATABASE) {
 
 	var db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 
-	var DB = {
-		getAll: getAll,
-		getFaves: getFaves,
-		getFaveStatus: getFaveStatus,
-		setFaveStatus: setFaveStatus,
-		getStops: getStops
-	};
-
+	var DB = { get: get, set: set, getStops: getStops };
 	return DB;
 
 	/*-------------------Factory function definitions-------------------------*/
 
-	function getAll(table) {
+	function get(table, filter) {
 
 		var defer = $q.defer();
 		db.transaction(handleTx, handleErr);
@@ -84,18 +80,22 @@ function dBService($q, DATABASE) {
   ----------------------------------------------------------*/
 
 		function handleTx(tx) {
-			tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, handleErr);
+
+			if (typeof filter === 'undefined') {
+				tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, handleErr);
+			} else {
+				var _Object$keys = Object.keys(filter),
+				    _Object$keys2 = _slicedToArray(_Object$keys, 1),
+				    key = _Object$keys2[0];
+
+				var value = filter[key];
+
+				tx.executeSql('SELECT * FROM ' + table + ' WHERE ' + key + ' = ?', [value], handleRes, handleErr);
+			}
 		}
 
 		function handleRes(tx, result) {
-
-			var data = [];
-			for (var i = 0; i < result.rows.length; i++) {
-				data.push(result.rows.item(i));
-			}
-
-			defer.resolve(data);
-			return;
+			return defer.resolve(parseRes(result));
 		}
 
 		function handleErr(tx, err) {
@@ -106,24 +106,29 @@ function dBService($q, DATABASE) {
 		return defer.promise;
 	}
 
-	function getFaves(table) {
+	function set(table, setting, filter) {
+		var _Object$keys3 = Object.keys(setting),
+		    _Object$keys4 = _slicedToArray(_Object$keys3, 1),
+		    setKey = _Object$keys4[0];
+
+		var setValue = setting[setKey];
+
+		var _Object$keys5 = Object.keys(filter),
+		    _Object$keys6 = _slicedToArray(_Object$keys5, 1),
+		    filterKey = _Object$keys6[0];
+
+		var filterValue = filter[filterKey];
 
 		var defer = $q.defer();
+
 		db.transaction(handleTx, handleErr);
 
-		function handleTx(tx) {
-			tx.executeSql('SELECT * FROM ' + table + ' WHERE favourite = 1', [], handleRes, handleErr);
+		function handleTx(tx, result) {
+			tx.executeSql('UPDATE ' + table + ' SET ' + setKey + ' = ? WHERE ' + filterKey + ' = ?', [setValue, filterValue], handleRes, handleErr);
 		}
 
 		function handleRes(tx, result) {
-
-			var data = [];
-			for (var i = 0; i < result.rows.length; i++) {
-				data.push(result.rows.item(i));
-			}
-
-			defer.resolve(data);
-			return;
+			return defer.resolve(result.rows);
 		}
 
 		function handleErr(tx, err) {
@@ -134,63 +139,14 @@ function dBService($q, DATABASE) {
 		return defer.promise;
 	}
 
-	function getFaveStatus(table) {
-		return function (key, value) {
-
-			var defer = $q.defer();
-			db.transaction(handleTx, handleErr);
-
-			function handleTx(tx, result) {
-				tx.executeSql('SELECT favourite FROM ' + table + ' WHERE ' + key + ' = ?', [value], handleRes, handleErr);
-			}
-
-			function handleRes(tx, result) {
-				return defer.resolve(result.rows.item(0).favourite);
-			}
-
-			function handleErr(tx, error) {
-				return defer.reject(error);
-			}
-
-			return defer.promise;
-		};
-	}
-
-	function setFaveStatus(table) {
-		return function (status, key, value) {
-
-			var defer = $q.defer();
-
-			db.transaction(handleTx, handleErr);
-
-			function handleTx(tx, result) {
-				tx.executeSql('UPDATE ' + table + ' SET favourite = ? WHERE ' + key + ' = ?', [status, value], handleRes, handleErr);
-			}
-
-			function handleRes(tx, result) {
-				defer.resolve(result.rows);
-				return;
-			}
-
-			function handleErr(tx, err) {
-				console.log(err);
-				return defer.reject(err);
-			}
-
-			return defer.promise;
-		};
-	}
-
-	function getStops(name) {
+	function getStops(route) {
 
 		var defer = $q.defer();
-
-		// let db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
 
 		db.transaction(handleTx, handleErr);
 
 		function handleTx(tx) {
-			tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], handleRes, handleErr);
+			tx.executeSql('SELECT * FROM routes WHERE name = ?', [route.name], handleRes, handleErr);
 		}
 
 		function handleRes(tx, result) {
@@ -209,8 +165,7 @@ function dBService($q, DATABASE) {
 
 			data.stops = stops;
 			data.favourite = parseInt(data.favourite);
-			defer.resolve(data);
-			return;
+			return defer.resolve(data);
 		}
 
 		function handleErr(tx, error) {
@@ -220,6 +175,16 @@ function dBService($q, DATABASE) {
 
 		return defer.promise;
 	}
+}
+
+function parseRes(result) {
+
+	var data = [];
+	for (var i = 0; i < result.rows.length; i++) {
+		data.push(result.rows.item(i));
+	}
+
+	return data;
 }
 
 exports.dBService = dBService;
@@ -353,14 +318,16 @@ function RouteCtrl(routeDetails, setFaveStatus) {
   vm.number = routeDetails.number;
   vm.stops = routeDetails.stops;
   vm.faveStatus = routeDetails.favourite;
-  vm.setFaveStatus = setFaveStatus;
+  vm.setFaveStatus = _setFaveStatus;
 
-  // Handler of Favourite button click events in route.html template
-  // function _setFaveStatus(name) {
-  //
-  //    	vm.faveStatus = vm.faveStatus === 0 ? 1: 0;
-  // 	setFaveStatus(vm.faveStatus, 'name', vm.name);
-  // }
+  //  	Handler of Favourite button click events in route.html template
+  function _setFaveStatus(name) {
+
+    var _favourite = vm.favourite === 0 ? 1 : 0;
+    setFaveStatus('routes', { 'favourite': _favourite }, { 'name': vm.name }).then(function () {
+      vm.favourite = _favourite;
+    });
+  }
 }
 
 exports.RouteCtrl = RouteCtrl;
@@ -381,7 +348,7 @@ function routesConfig($routeProvider) {
         controllerAs: 'routes',
         resolve: {
             routesList: function routesList(dBService) {
-                return dBService.getAll('routes');
+                return dBService.get('routes');
             }
         }
     }).when('/routes/:number', {
@@ -391,12 +358,12 @@ function routesConfig($routeProvider) {
         controllerAs: 'route',
         resolve: {
             setFaveStatus: function setFaveStatus(dBService) {
-                return dBService.setFaveStatus;
+                return dBService.set;
             },
             routeDetails: function routeDetails($location, dBService) {
 
                 var name = $location.search().name; //from query string
-                return dBService.getStops(name);
+                return dBService.getStops({ name: name });
             }
         }
     });
@@ -454,36 +421,39 @@ exports.default = angular.module('routesMod');
 
 /**
  * @ngdoc function
- * @name busTrackerApp.controller:StopCtrl
+ * @name busTrackerApp.controller:StopDetailCtrl
  * @description
- * # StopCtrl
+ * # StopDetailCtrl
  * Controller of the busTrackerApp
  */
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-StopDetailCtrl.$inject = ['$routeParams', 'nextTrips', 'getFaveStatus', 'setFaveStatus'];
+StopDetailCtrl.$inject = ['$routeParams', 'routeDetails', 'stopDetails', 'setFaveStatus'];
 
-function StopDetailCtrl($routeParams, nextTrips, getFaveStatus, setFaveStatus) {
+function StopDetailCtrl($routeParams, routeDetails, stopDetails, setFaveStatus) {
 
     var vm = this;
 
-    vm = nextTrips;
-    // vm.stopNo = nextTrips.StopNo;
-    // vm.Error = nextTrips.Error;
-    // vm.routes = nextTrips.Routes;
-    // vm.stopDescription = nextTrips.StopDescription;
+    vm.name = stopDetails[0].name;
+    vm.number = stopDetails[0].number;
+    vm.code = stopDetails[0].code;
+    vm.lat = stopDetails[0].lat;
+    vm.lon = stopDetails[0].lon;
+    vm.favourite = stopDetails[0].favourite;
+
+    vm.error = routeDetails.error;
+    vm.routes = routeDetails.routes;
     vm.setFaveStatus = _setFaveStatus;
 
-    getFaveStatus('number', vm.stopNo).then(function (faveStatus) {
-        vm.faveStatus = faveStatus;
-    });
+    function _setFaveStatus(number) {
 
-    function _setFaveStatus(stopNo) {
-
-        vm.faveStatus = vm.faveStatus === 0 ? 1 : 0;
-        setFaveStatus(vm.faveStatus, 'number', stopNo);
+        var _favourite = vm.favourite === 0 ? 1 : 0;
+        setFaveStatus('stops', { 'favourite': _favourite }, { 'number': number }).then(function () {
+            vm.favourite = _favourite;
+            console.log(_favourite);
+        });
     }
 }
 
@@ -505,7 +475,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         controllerAs: 'stops',
         resolve: {
             stopsList: function stopsList(dBService) {
-                return dBService.getAll('stops');
+                return dBService.get('stops');
             }
         }
     }).when('/stops/:stopNo', {
@@ -513,13 +483,15 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
         controller: 'StopDetailCtrl',
         controllerAs: 'stop',
         resolve: {
-            getFaveStatus: function getFaveStatus(dBService) {
-                return dBService.getFaveStatus;
-            },
             setFaveStatus: function setFaveStatus(dBService) {
-                return dBService.setFaveStatus;
+                return dBService.set;
             },
-            nextTrips: function nextTrips($route, stopsService) {
+            stopDetails: function stopDetails($route, dBService) {
+
+                var stopNo = $route.current.params.stopNo;
+                return dBService.get('stops', { number: stopNo });
+            },
+            routeDetails: function routeDetails($route, stopsService) {
 
                 var stopNo = $route.current.params.stopNo;
                 return stopsService.getNextTrips(stopNo);
@@ -635,10 +607,6 @@ stopsService.$inject = ['$http', 'config', 'dBService'];
 function stopsService($http, config, dBService) {
 
     var Stops = {
-        // getAll: dBService.getAll('stops'), // returns function that gets all routes
-        // getFaves: dBService.getFaves('stops'), // returns function that get all fave routes
-        // getFaveStatus: dBService.getFaveStatus('stops'), // returns a function that gets fave staus given stop no
-        // setFaveStatus: dBService.setFaveStatus('stops'), // returns function that set status given name and status
         getNextTrips: getNextTrips
     };
 
@@ -663,43 +631,43 @@ function stopsService($http, config, dBService) {
                 return result;
             }
 
-            if (Array.isArray(result.Routes) && result.Routes.length === 0) {
-                result.Error = '15';
-                return result;
-            }
-            if (typeof result.Routes.Route !== 'undefined' && !Array.isArray(result.Routes.Route)) {
-                result.Routes.Route = [result.Routes.Route];
-            }
-
-            result = {
-                'Error': result.Error,
-                'Routes': result.Routes.Route,
-                'StopDescription': result.StopDescription,
-                'StopNo': result.StopNo
-            };
-
-            var isTrips = false;
-            result.Routes.forEach(function (route) {
-
-                if (typeof route.Trips === 'undefined') {
-                    route.Trips = [];
-                } else if (!Array.isArray(route.Trips)) {
-                    route.Trips = [route.Trips];
-                }
-                isTrips = route.Trips.length > 0 || isTrips;
-                console.log(isTrips);
+            var _routes = parseRoutes(result.Routes);
+            _routes.forEach(function (route) {
+                route.Trips = parseTrips(route.Trips);
             });
 
-            if (!isTrips) {
-                result.Error = "16";
-                return result;
-            }
-
-            return result;
+            return { 'error': result.Error, 'routes': _routes };
         }
     }
 }
 
+function parseTrips(trips) {
+
+    var _trips = void 0;
+    if (typeof trips === 'undefined') {
+        _trips = [];
+    } else if (typeof trips.Trip !== 'undefined') {
+        _trips = [trips.Trips];
+    } else {
+        _trips = trips;
+    }
+
+    return _trips;
+}
+
+function parseRoutes(routes) {
+
+    var _routes = void 0;
+    if (typeof routes.Route !== 'undefined') {
+
+        // if route.Route is not an array return it as an array, else return as is
+        _routes = Array.isArray(routes.Route) ? routes.Route : [routes.Route];
+    } else {
+        _routes = routes;
+    }
+
+    return _routes;
+}
 exports.stopsService = stopsService;
 
 },{}]},{},[1]);

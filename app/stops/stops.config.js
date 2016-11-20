@@ -10,7 +10,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             controller: 'StopsCtrl',
             controllerAs: 'stops',
             resolve: {
-                stopsList: (dBService) => dBService.getAll('stops')
+                stopsList: (dBService) => dBService.get('stops')
             }
         })
         .when('/stops/:stopNo', {
@@ -18,9 +18,13 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             controller: 'StopDetailCtrl',
             controllerAs: 'stop',
             resolve: {
-                getFaveStatus: (dBService) => dBService.getFaveStatus,
-                setFaveStatus: (dBService) => dBService.setFaveStatus,
-                nextTrips: ($route, stopsService) => {
+                setFaveStatus: (dBService) => dBService.set,
+                stopDetails: ($route, dBService) => {
+
+                    let stopNo = $route.current.params.stopNo;
+                    return dBService.get('stops', {number: stopNo});
+                },
+                routeDetails: ($route, stopsService) => {
 
                     let stopNo = $route.current.params.stopNo;
                     return stopsService.getNextTrips(stopNo);

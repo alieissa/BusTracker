@@ -8,6 +8,7 @@
  * Controller of the busTrackerApp
  */
 
+
 RouteCtrl.$inject = ['routeDetails', 'setFaveStatus'];
 
 function RouteCtrl (routeDetails, setFaveStatus) {
@@ -18,14 +19,17 @@ function RouteCtrl (routeDetails, setFaveStatus) {
   	vm.number = routeDetails.number;
   	vm.stops = routeDetails.stops;
 	vm.faveStatus = routeDetails.favourite;
-  	vm.setFaveStatus = setFaveStatus;
+  	vm.setFaveStatus = _setFaveStatus;
 
-  	// Handler of Favourite button click events in route.html template
-	// function _setFaveStatus(name) {
-	//
-	//    	vm.faveStatus = vm.faveStatus === 0 ? 1: 0;
-	// 	setFaveStatus(vm.faveStatus, 'name', vm.name);
-	// }
+ //  	Handler of Favourite button click events in route.html template
+	function _setFaveStatus(name) {
+
+	   let 	_favourite = vm.favourite === 0 ? 1: 0;
+		setFaveStatus('routes', {'favourite': _favourite}, {'name': vm.name})
+			.then(() => {
+				vm.favourite = _favourite;
+			});
+	}
 }
 
 export {RouteCtrl};

@@ -6,20 +6,12 @@ function dBService($q, DATABASE) {
 
 	let db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 
-	let DB = {
-		getAll: getAll,
-		getFaves: getFaves,
-		getFaveStatus: getFaveStatus,
-		setFaveStatus: setFaveStatus,
-		getStops: getStops
-	};
-
+	let DB = { get, set, getStops };
 	return DB;
 
 	/*-------------------Factory function definitions-------------------------*/
 
-	function getAll(table) {
-
+	function get(table, filter) {
 
 		let defer = $q.defer();
 		db.transaction(handleTx, handleErr);
@@ -30,18 +22,21 @@ function dBService($q, DATABASE) {
 		----------------------------------------------------------*/
 
 		function handleTx(tx) {
-			tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
+
+			if(typeof filter === 'undefined') {
+				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
+			}
+			else {
+
+				let [key] = Object.keys(filter);
+				let value = filter[key];
+
+				tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes, handleErr);
+			}
 		}
 
 		function handleRes(tx, result) {
-
-			let data = [];
-			for(let i = 0; i < result.rows.length; i++) {
-				data.push(result.rows.item(i));
-			}
-
-			defer.resolve(data);
-			return;
+			return defer.resolve(parseRes(result));
 		}
 
 		function handleErr(tx, err) {
@@ -52,92 +47,43 @@ function dBService($q, DATABASE) {
 		return defer.promise;
 	}
 
-	function getFaves(table) {
 
-			let defer= $q.defer();
-			db.transaction(handleTx, handleErr);
+	function set(table, setting, filter) {
 
-			function handleTx(tx) {
-				tx.executeSql(`SELECT * FROM ${table} WHERE favourite = 1`, [], handleRes, handleErr);
-			}
+		let [setKey] = Object.keys(setting);
+		let setValue = setting[setKey];
 
-			function handleRes(tx, result) {
+		let [filterKey] = Object.keys(filter);
+		let filterValue = filter[filterKey];
 
-				let data = [];
-				for(let i = 0; i < result.rows.length; i++) {
-					data.push(result.rows.item(i));
-				}
+		let defer = $q.defer();
 
-				defer.resolve(data);
-				return;
-			}
+		db.transaction(handleTx, handleErr);
 
-			function handleErr(tx, err) {
-				console.log(err);
-				return defer.reject(err);
-			}
+		function handleTx(tx, result) {
+			tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`, [setValue, filterValue], handleRes, handleErr);
+		}
 
-			return defer.promise;
+		function handleRes(tx, result) {
+			return	defer.resolve(result.rows);
+		}
 
+		function handleErr(tx, err) {
+			console.log(err);
+			 return defer.reject(err);
+		}
+
+		return defer.promise;
 	}
 
-	function getFaveStatus(table) {
-		return (key, value) => {
-
-			let defer= $q.defer();
-			db.transaction(handleTx, handleErr);
-
-			function handleTx(tx, result) {
-				tx.executeSql(`SELECT favourite FROM ${table} WHERE ${key} = ?`, [value], handleRes, handleErr);
-			}
-
-			function handleRes(tx, result) {
-				return defer.resolve(result.rows.item(0).favourite);
-			}
-
-			function handleErr(tx, error) {
-				return defer.reject(error);
-			}
-
-			return defer.promise;
-		};
-	}
-
-	function setFaveStatus(table) {
-		return (status, key, value) => {
-
-			let defer = $q.defer();
-
-			db.transaction(handleTx, handleErr);
-
-			function handleTx(tx, result) {
-				tx.executeSql(`UPDATE ${table} SET favourite = ? WHERE ${key} = ?`, [status, value], handleRes, handleErr);
-			}
-
-			function handleRes(tx, result) {
-				defer.resolve(result.rows);
-				return;
-			}
-
-			function handleErr(tx, err) {
-				console.log(err);
-				 return defer.reject(err);
-			}
-
-			return defer.promise;
-		};
-	}
-
-	function getStops(name) {
+	function getStops(route) {
 
         let defer = $q.defer();
-
-        // let db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB
 
         db.transaction(handleTx, handleErr);
 
         function handleTx(tx) {
-          tx.executeSql('SELECT * FROM routes WHERE name = ?', [name], handleRes, handleErr);
+          tx.executeSql('SELECT * FROM routes WHERE name = ?', [route.name], handleRes, handleErr);
         }
 
         function handleRes(tx, result) {
@@ -157,8 +103,7 @@ function dBService($q, DATABASE) {
 
             data.stops = stops;
             data.favourite = parseInt(data.favourite);
-            defer.resolve(data);
-            return;
+            return defer.resolve(data);
         }
 
         function handleErr(tx, error) {
@@ -168,6 +113,16 @@ function dBService($q, DATABASE) {
 
         return defer.promise;
     }
+}
+
+function parseRes(result) {
+
+	let data = [];
+	for(let i = 0; i < result.rows.length; i++) {
+		data.push(result.rows.item(i));
+	}
+
+	return data;
 }
 
 export {dBService};

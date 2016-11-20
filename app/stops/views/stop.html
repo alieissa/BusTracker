@@ -4,7 +4,7 @@
             <i class="material-icons nav-icon" style="left:16px">menu</i>
         </li>
         <li style="margin-top: 4px; float: left; width: 296px" class='nav-title-container'>
-            <span class="nav-title">{{stop.stopNo}} {{stop.stopDescription| limitTo:10}}{{stop.stopDescription.length>10? " ...": ""}} </span>
+            <span class="nav-title">{{stop.number}} {{stop.name| limitTo:10}}{{stop.name.length>10? " ...": ""}} </span>
         </li>
         <!-- <li style="float: right"></li> -->
         <li>
@@ -19,8 +19,5 @@
 
 <div>
 
-<next-trips ng-repeat="route in stop.routes" route="route" trips="route.Trips" ng-show="route.Trips.length > 0"></next-trips>
-<next-trips-error ng-show="stop.Error !== ''"></next-trips-error>
-<div class="">
-    {{stop.Error}}
-</div>
+<next-trips ng-repeat="route in stop.routes" route="route" trips="route.Trips"></next-trips>
+<next-trips-error ng-show="stop.routes.length < 1"></next-trips-error>

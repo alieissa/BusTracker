@@ -9,7 +9,7 @@ function routesConfig($routeProvider) {
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
-          routesList: (dBService) => dBService.getAll('routes')
+          routesList: (dBService) => dBService.get('routes')
         }
     })
     .when('/routes/:number', {
@@ -18,11 +18,11 @@ function routesConfig($routeProvider) {
         controller: 'RouteCtrl',
         controllerAs: 'route',
         resolve: {
-            setFaveStatus: (dBService) => dBService.setFaveStatus,
+            setFaveStatus: (dBService) => dBService.set,
             routeDetails: ($location, dBService) => {
 
                 let name = ($location.search()).name; //from query string
-                return dBService.getStops(name);
+                return dBService.getStops({name: name});
             }
         }
     })

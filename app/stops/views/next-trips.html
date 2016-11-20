@@ -8,7 +8,7 @@
         </div>
         <div class="" style="float:right">
             <ul style="list-style:none; color: white">
-                <li  style="font-size: 20px; line-height: 1"> {{trips[0].AdjustedScheduleTime}} min</li>
+                <li  style="font-size: 20px; line-height: 1" ng-show="trips.length > 0"> {{trips[0].AdjustedScheduleTime}} min</li>
                 <li class="trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 1"> {{trips[1].AdjustedScheduleTime}} min</li>
                 <li class="trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 2"> {{trips[2].AdjustedScheduleTime}} min</li>
             </ul>

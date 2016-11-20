@@ -2,33 +2,39 @@
 
 /**
  * @ngdoc function
- * @name busTrackerApp.controller:StopCtrl
+ * @name busTrackerApp.controller:StopDetailCtrl
  * @description
- * # StopCtrl
+ * # StopDetailCtrl
  * Controller of the busTrackerApp
  */
 
-StopDetailCtrl.$inject = ['$routeParams', 'nextTrips', 'getFaveStatus', 'setFaveStatus'];
 
-function StopDetailCtrl($routeParams, nextTrips, getFaveStatus, setFaveStatus) {
+StopDetailCtrl.$inject = ['$routeParams', 'routeDetails', 'stopDetails', 'setFaveStatus'];
+
+function StopDetailCtrl($routeParams, routeDetails, stopDetails, setFaveStatus) {
 
     let vm = this;
 
-    vm = nextTrips;
-    // vm.stopNo = nextTrips.StopNo;
-    // vm.Error = nextTrips.Error;
-    // vm.routes = nextTrips.Routes;
-    // vm.stopDescription = nextTrips.StopDescription;
+    vm.name = stopDetails[0].name;
+    vm.number = stopDetails[0].number;
+    vm.code = stopDetails[0].code;
+    vm.lat = stopDetails[0].lat;
+    vm.lon = stopDetails[0].lon;
+    vm.favourite = stopDetails[0].favourite;
+
+    vm.error = routeDetails.error;
+    vm.routes = routeDetails.routes;
     vm.setFaveStatus = _setFaveStatus;
 
-    getFaveStatus('number', vm.stopNo).then((faveStatus) => {
-        vm.faveStatus = faveStatus;
-    });
+    function _setFaveStatus(number) {
 
-    function _setFaveStatus(stopNo) {
+        let _favourite = vm.favourite === 0 ? 1 : 0;
+        setFaveStatus('stops', {'favourite': _favourite}, {'number': number})
+            .then(() => {
+                vm.favourite = _favourite;
+                console.log(_favourite);
+            });
 
-        vm.faveStatus = vm.faveStatus === 0 ? 1 : 0;
-        setFaveStatus(vm.faveStatus, 'number', stopNo);
     }
 }
 
