@@ -204,10 +204,10 @@ function favesConfig($routeProvider) {
         controllerAs: 'faves',
         resolve: {
             faveRoutes: function faveRoutes(dBService) {
-                return dBService.getFaves('routes');
+                return dBService.get('routes', { 'favourite': 1 });
             },
             faveStops: function faveStops(dBService) {
-                return dBService.getFaves('stops');
+                return dBService.get('stops', { 'favourite': 1 });
             }
         }
     });
@@ -225,7 +225,8 @@ Object.defineProperty(exports, "__esModule", {
 function FavesCtrl(faveRoutes, faveStops) {
 
     var vm = this;
-
+    console.log(faveRoutes);
+    console.log(faveStops);
     vm.routes = faveRoutes;
     vm.stops = faveStops;
 }
@@ -243,8 +244,8 @@ function favesList() {
     var favesList = {
         templateUrl: './views/faves-list.html',
         scope: {
-            routes: '=faveRoutes',
-            stops: '=faveStops'
+            routes: '=',
+            stops: '='
         },
         link: link
     };
@@ -254,6 +255,14 @@ function favesList() {
     function link(scope, element, attrs) {
 
         angular.element('.tab-item').on('touchstart', handleTouch);
+        angular.element('.tab-item').on('click', function () {
+            var targetDiv = angular.element(this).attr('id');
+            var contentDiv = targetDiv + '-content';
+            var otherDiv = contentDiv === 'stops-tab-content' ? 'routes-tab-content' : 'stops-tab-content';
+
+            angular.element('#' + contentDiv).css('display', 'block');
+            angular.element('#' + otherDiv).css('display', 'none');
+        });
 
         function handleTouch() {
 
