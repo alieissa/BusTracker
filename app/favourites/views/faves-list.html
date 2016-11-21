@@ -1,10 +1,27 @@
 <div id="tab-wrapper" >
     <ul class="tab-container">
-        <li class="tab-item tab-active">
+        <li class="tab-item tab-active" id="routes-tab">
             ROUTES
         </li>
-        <li class="tab-item">
+        <li class="tab-item" id="stops-tab">
             STOPS
         </li>
     </ul>
+</div>
+
+<div id='routes-tab-content' style="display: none">
+	<h2> Routes</h2>
+	<ul style="list-style: none">
+		<li  ng-repeat="route in routes">
+			<a ng-href="#/routes/{{route.number}}">{{route.name}}</a>
+		</li>
+	</ul>
+</div>
+<div id='stops-tab-content'>
+	<h2> Stops</h2>
+	<ul style="list-style: none">
+		<li  ng-repeat="stop in stops">
+			<a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a>
+		</li>
+	</ul>
 </div>
