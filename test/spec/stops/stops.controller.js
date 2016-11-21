@@ -13,13 +13,12 @@ var stopsList = [
 describe('Controller: StopsCtrl', function () {
 
     var StopsCtrl;
+    var _inject = function ($controller) {
+        StopsCtrl = $controller('StopsCtrl', { stopsList: stopsList });
+    }
 
     beforeEach(module('stopsMod'));
     beforeEach(inject(_inject));
-
-    function _inject($controller) {
-        StopsCtrl = $controller('StopsCtrl', { stopsList: stopsList });
-    }
 
     it('Should set vm.stopsList to injected stopsList', function() {
       expect(StopsCtrl.stopsList).toEqual(stopsList);

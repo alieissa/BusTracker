@@ -16,40 +16,31 @@ describe('Service: stops', function () {
         stopsService = _stopsService_;
     }
 
-    it('should have stopsService.getAll() defined', function() {
-        expect(stopsService.getAll).toBeDefined();
+    it('should have stopsService.getNextTrips defined', function() {
+        expect(typeof stopsService.getNextTrips).toBe('function');
     });
 
-    it('should have stopsService.getRouteSummary() defined', function() {
-        expect(stopsService.getRouteSummary()).toBeDefined();
-    });
-
-    describe("stops.getAll", function() {
-        it('should return entire stops table');
-    });
-
-    describe("stops.getRouteSummary()", function() {
+    describe("stops.getNextTrips", function() {
 
         var $httpBackend;
         var url = "http://localhost:3000/v1.2/GetNextTripsForStopAllRoutes";
         // var url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
+        var _inject = function (_$httpBackend_) {
+            $httpBackend = _$httpBackend_;
+        }
 
-        beforeEach(inject(function(_$httpBackend_) {
-          $httpBackend = _$httpBackend_;
-        }));
+        var _afterEach = function() {
 
-        afterEach(function() {
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();
-        });
+        }
 
-        // it("should have getRouteSummary() defined", function() {
-        //   expect(stops.getRouteSummary).toBeDefined();
-        // });
+        beforeEach(inject(_inject));
+        afterEach(_afterEach);
 
         it("XHR should have correct headers for CORS call",function() {
 
-            var nextRouteTrips = stopsService.getRouteSummary(stopNo);
+            var nextRouteTrips = stopsService.getNextTrips(stopNo);
 
             $httpBackend.expectPOST(url, undefined, function(headers) {
                 return headers['Content-Type'] === header.headers['Content-Type'];
@@ -61,7 +52,6 @@ describe('Service: stops', function () {
         it('should return upcoming trips for bus stop via XHR', function() {
 
             stopNo = 1314;
-            // url = "https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes";
             data = "appID=" + OC_CONFIG_MOCK.APP_ID + "&apiKey=" + OC_CONFIG_MOCK.API_KEY + "&stopNo=" + stopNo + "&format=json";
 
             var nextRouteTrips = stopsService.getRouteSummary(stopNo);
@@ -72,7 +62,7 @@ describe('Service: stops', function () {
             nextRouteTrips.then(function(routeTrips) {
                 expect(Array.isArray(routeTrips.Routes)).toBe(true);
                 expect(Array.isArray(routeTrips.Routes[0].Trips)).toBe(true);
-                expect(Object.keys(routeTrips)).toEqual(["Error", "Routes", "StopDescription", "StopNo"]);
+                expect(Object.keys(routeTrips)).toEqual(["error", "routes"]);
                 // expect(routeTrips).toEqual(GET_STOP_SUMMARY_RESULT.GetRouteSummaryForStopResult.Routes);
             });
         });
