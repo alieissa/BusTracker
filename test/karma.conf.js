@@ -33,7 +33,8 @@ module.exports = function(config) {
       'dist/app.js',
       'test/constants.js',
       'test/spec/database/*.js',
-      'test/spec/routes/*.js',
+      'test/spec/favourites/*.js',
+    //   'test/spec/routes/*.js',
       'test/spec/stops/*.js'
     ],
 
@@ -44,14 +45,15 @@ module.exports = function(config) {
     port: 8080,
     browsers: [
 
-        // 'Chrome',
-        'PhantomJS'
+        'Chrome',
+        // 'PhantomJS'
     ],
 
     plugins: [
       'karma-jasmine',
       'karma-mocha-reporter',
-      'karma-phantomjs-launcher'
+      'karma-phantomjs-launcher',
+      'karma-chrome-launcher'
     ],
 
 
