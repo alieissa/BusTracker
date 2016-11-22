@@ -1,0 +1,20 @@
+<div id="nav-container" >
+    <ul class="nav-list">
+        <li style="float: left">
+            <i class="material-icons nav-icon" style="left:16px">menu</i>
+        </li>
+        <li style="margin-top: 4px; float: left; width: 296px" class='nav-title-container'>
+            <span class="nav-title">{{stop.number}} {{stop.name| limitTo:10}}{{stop.name.length>10? " ...": ""}} </span>
+        </li>
+        <!-- <li style="float: right"></li> -->
+        <li>
+            <i class="material-icons nav-icon" style="right:16px">favorite</i>
+        </li>
+        <li>
+            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li>
+    </ul>
+</div>
+
+<next-trips ng-repeat="route in stop.routes" route="route" trips="route.Trips"></next-trips>
+<next-trips-error ng-show="stop.routes.length < 1"></next-trips-error>

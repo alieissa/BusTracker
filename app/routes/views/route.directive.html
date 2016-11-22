@@ -1,6 +1,6 @@
 <!-- <h2>{{route.name}}</h2> -->
 
-<div id="nav-container" >
+<!-- <div id="nav-container" >
     <ul class="nav-list">
         <li style="float: left">
             <i class="material-icons nav-icon" style="left:16px">menu</i>
@@ -16,19 +16,13 @@
             <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
         </li>
     </ul>
-</div>
+</div> -->
 
-<div class="container ae-container">
-    <table>
-        <tbody>
-            <tr  ng-repeat="stop in route.stops| filter: {name: search, number: search}">
-                <td class="ae-route-name">
-                    <a ng-href="#/stops/{{stop.number}}"> {{stop.number}}  {{stop.name}}</a>
-                </td>
-                <td class="ae-td">
-                    <i class="material-icons ae-icon">more_vert</i>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div class="route-container" style="height: 48px; padding-left: 16px; padding-right: 16px; padding-bottom: 20px; padding-top: 10px">
+    <div class="ae-route-name" style="float: left; width: 75%">
+        <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
+    </div>
+    <div style="float: left; width: 25%; position: relative">
+    	<i class="material-icons star" style="font-size: 18px; float:right"> {{route.favourite === 1 ? 'star' : 'star_border'}}</i>
+    </div>
 </div>

@@ -18,17 +18,5 @@
     </ul>
 </div>
 
-<div class="container ae-container">
-    <table>
-        <tbody>
-            <tr ng-repeat="route in routes.routesList| filter: {name: search, number: search}">
-                <td class="ae-route-name">
-                    <a ng-href="#/routes/{{route.number}}?name={{route.name}}">{{route.name}}</a>
-                </td>
-                <td class="ae-td">
-                    <i class="material-icons ae-icon">more_vert</i>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<ae-route ng-repeat="route in routes.routesList| filter: {name: search, number: search}"
+    data-route="route" ></ae-route>

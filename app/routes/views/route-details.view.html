@@ -1,13 +1,10 @@
-
-<!-- <header-search title="Stops"></header-search> -->
-
 <div id="nav-container" >
     <ul class="nav-list">
         <li style="float: left">
             <i class="material-icons nav-icon" style="left:16px">menu</i>
         </li>
-        <li style="margin-top: 4px; float: left" class='nav-title-container'>
-            <span class="nav-title">Stops</span>
+        <li style="margin-top: 4px; float: left; width: 75%" class='nav-title-container'>
+            <span class="nav-title">{{route.name}}</span>
         </li>
         <li style="float: right"></li>
         <li>
@@ -19,4 +16,4 @@
     </ul>
 </div>
 
-<ae-stop ng-repeat="stop in stops.stopsList | limitTo: 100| filter: {number: search}" data-stop='stop'></ae-stop>
+<ae-stop ng-repeat="stop in route.stops | filter: {number: search}" data-stop="stop"></ae-stop>

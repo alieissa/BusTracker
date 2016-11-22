@@ -1,23 +1,15 @@
-<div id="nav-container" >
-    <ul class="nav-list">
-        <li style="float: left">
-            <i class="material-icons nav-icon" style="left:16px">menu</i>
-        </li>
-        <li style="margin-top: 4px; float: left; width: 296px" class='nav-title-container'>
-            <span class="nav-title">{{stop.number}} {{stop.name| limitTo:10}}{{stop.name.length>10? " ...": ""}} </span>
-        </li>
-        <!-- <li style="float: right"></li> -->
-        <li>
-            <i class="material-icons nav-icon" style="right:16px">favorite</i>
-        </li>
-        <li>
-            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
-        </li>
-    </ul>
+
+<div style="height: 48px; padding-left: 16px; padding-right: 16px; padding-bottom: 20px; padding-top: 10px">
+    <div class="ae-route-name" style="float: left; width: 75%">
+        <a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a>
+    </div>
+    <div style="float: left; width: 25%; position: relative">
+    	<i class="material-icons star" style="font-size: 18px; float:right"> {{stop.favourite === 1? 'star': 'star_border'}}</i>
+        <!-- <i class="material-icons" ng-click="route.setFave()">more_vert</i>
+         <ul class="route-menu">
+            <li class = "route-menu-item">Save</li>
+            <li class = "route-menu-item">Delete</li>
+            <li class = "route-menu-item">Info</li>
+        </ul> -->
+    </div>
 </div>
-
-
-<div>
-
-<next-trips ng-repeat="route in stop.routes" route="route" trips="route.Trips"></next-trips>
-<next-trips-error ng-show="stop.routes.length < 1"></next-trips-error>

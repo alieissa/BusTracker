@@ -5,7 +5,7 @@ routesConfig.$inject = ['$routeProvider'];
 function routesConfig($routeProvider) {
 
     $routeProvider.when('/routes', {
-        templateUrl: 'views/routes.html',
+        templateUrl: 'views/routes.view.html',
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
@@ -14,7 +14,7 @@ function routesConfig($routeProvider) {
     })
     .when('/routes/:number', {
 
-        templateUrl: 'views/route.html',
+        templateUrl: 'views/route-details.view.html',
         controller: 'RouteCtrl',
         controllerAs: 'route',
         resolve: {

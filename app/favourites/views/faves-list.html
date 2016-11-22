@@ -9,19 +9,9 @@
     </ul>
 </div>
 
-<div id='routes-tab-content' style="display: none">
-	<h2> Routes</h2>
-	<ul style="list-style: none">
-		<li  ng-repeat="route in routes">
-			<a ng-href="#/routes/{{route.number}}">{{route.name}}</a>
-		</li>
-	</ul>
+<div id='routes-tab-content' >
+    <ae-route  ng-repeat="route in routes" data-route="route"></ae-route>
 </div>
-<div id='stops-tab-content'>
-	<h2> Stops</h2>
-	<ul style="list-style: none">
-		<li  ng-repeat="stop in stops">
-			<a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a>
-		</li>
-	</ul>
+<div id='stops-tab-content' style="display: none">
+    <ae-stop ng-repeat="stop in stops" data-stop="stop"></ae-stop>
 </div>

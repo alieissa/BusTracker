@@ -36,7 +36,7 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./favourites/favourites.module.js":7,"./routes/routes.module.js":11,"./stops/stops.module.js":16}],2:[function(require,module,exports){
+},{"./favourites/favourites.module.js":7,"./routes/routes.module.js":12,"./stops/stops.module.js":17}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -152,15 +152,19 @@ function dBService($q, DATABASE) {
 		function handleRes(tx, result) {
 
 			var data = result.rows.item(0);
-
-			var stops = data.stops.split('\t');
+			var stops = [];
+			var _stops = data.stops.split('\t');
 
 			// stops number and name are both in a long space separated string
-			stops = stops.map(function (stop) {
-				return {
-					number: stop.split(' ')[0],
-					name: stop.split(' ').slice(1).join(' ')
-				};
+			_stops.forEach(function (stop) {
+				var number = _stop.split(' ')[0];
+				get('stop', { number: number }).then(function (stopInfo) {
+					return stops.push(stopInfo);
+				});
+				// return {
+				//     number: stop.split(' ')[0],
+				//     name: stop.split(' ').slice(1).join(' ')
+				// }
 			});
 
 			data.stops = stops;
@@ -225,8 +229,7 @@ Object.defineProperty(exports, "__esModule", {
 function FavesCtrl(faveRoutes, faveStops) {
 
     var vm = this;
-    console.log(faveRoutes);
-    console.log(faveStops);
+
     vm.routes = faveRoutes;
     vm.stops = faveStops;
 }
@@ -239,9 +242,9 @@ exports.FavesCtrl = FavesCtrl;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function favesList() {
+function aeFavesList() {
 
-    var favesList = {
+    var aeFavesList = {
         templateUrl: './views/faves-list.html',
         scope: {
             routes: '=',
@@ -250,12 +253,12 @@ function favesList() {
         link: link
     };
 
-    return favesList;
+    return aeFavesList;
 
     function link(scope, element, attrs) {
 
-        angular.element('.tab-item').on('touchstart', handleTouch);
         angular.element('.tab-item').on('click', function () {
+
             var targetDiv = angular.element(this).attr('id');
             var contentDiv = targetDiv + '-content';
             var otherDiv = contentDiv === 'stops-tab-content' ? 'routes-tab-content' : 'stops-tab-content';
@@ -263,24 +266,12 @@ function favesList() {
             angular.element('#' + contentDiv).css('display', 'block');
             angular.element('#' + otherDiv).css('display', 'none');
         });
-
-        function handleTouch() {
-
-            if (angular.element(this).hasClass('.tab-active')) {
-                return;
-            }
-
-            angular.element('.tab-active').removeClass('tab-active');
-            angular.element(this).addClass('tab-active');
-
-            return;
-        }
     }
 
     return;
 }
 
-exports.favesList = favesList;
+exports.aeFavesList = aeFavesList;
 
 },{}],7:[function(require,module,exports){
 'use strict';
@@ -297,13 +288,17 @@ var _favouritesConfig = require('./favourites.config.js');
 
 var _databaseModule = require('../database/database.module.js');
 
+var _routesModule = require('../routes/routes.module.js');
+
+var _stopsModule = require('../stops/stops.module.js');
+
 // import {favesService} from './favourites.service.js';
 
-angular.module('favesMod', ['dBMod', 'ngRoute']).config(_favouritesConfig.favesConfig).controller('FavesCtrl', _favouritesController.FavesCtrl).directive('favesList', _favouritesDirectives.favesList);
+angular.module('favesMod', ['dBMod', 'ngRoute', 'routesMod', 'stopsMod']).config(_favouritesConfig.favesConfig).controller('FavesCtrl', _favouritesController.FavesCtrl).directive('aeFavesList', _favouritesDirectives.aeFavesList);
 
 exports.default = angular.module('favesMod');
 
-},{"../database/database.module.js":2,"./favourites.config.js":4,"./favourites.controller.js":5,"./favourites.directives.js":6}],8:[function(require,module,exports){
+},{"../database/database.module.js":2,"../routes/routes.module.js":12,"../stops/stops.module.js":17,"./favourites.config.js":4,"./favourites.controller.js":5,"./favourites.directives.js":6}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -352,7 +347,7 @@ routesConfig.$inject = ['$routeProvider'];
 function routesConfig($routeProvider) {
 
     $routeProvider.when('/routes', {
-        templateUrl: 'views/routes.html',
+        templateUrl: 'views/routes.view.html',
         controller: 'RoutesCtrl',
         controllerAs: 'routes',
         resolve: {
@@ -362,7 +357,7 @@ function routesConfig($routeProvider) {
         }
     }).when('/routes/:number', {
 
-        templateUrl: 'views/route.html',
+        templateUrl: 'views/route-details.view.html',
         controller: 'RouteCtrl',
         controllerAs: 'route',
         resolve: {
@@ -400,13 +395,63 @@ function RoutesCtrl(routesList) {
 
     var vm = this;
 
-    vm.routesList = [];
     vm.routesList = routesList;
 }
 
 exports.RoutesCtrl = RoutesCtrl;
 
 },{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+aeRoute.inject = ['dBService'];
+
+function aeRoute(dBService) {
+
+    var aeRoute = {
+        templateUrl: 'views/route.html',
+        controller: controller,
+        controllerAs: 'route',
+        scope: {
+            route: '='
+        },
+        link: link
+    };
+
+    return aeRoute;
+
+    function controller() {}
+
+    function link(scope, element, attrs) {
+
+        var star = element.find('i.star');
+
+        star.on('click', handleStarTouch);
+
+        function handleStarTouch() {
+
+            var _favourite = scope.route.favourite === 0 ? 1 : 0;
+            dBService.set('routes', { favourite: _favourite }, { name: scope.route.name }).then(updateStop);
+        }
+
+        function updateStop(result) {
+
+            // toggle favourite status
+            scope.route.favourite = scope.route.favourite === 0 ? 1 : 0;
+
+            // Set the favourite status indicator
+            var starType = scope.route.favourite === 0 ? 'star_border' : 'star';
+            star.text(starType);
+        }
+    }
+}
+
+exports.aeRoute = aeRoute;
+
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -421,11 +466,13 @@ var _routesConfig = require('./routes.config.js');
 
 var _databaseModule = require('../database/database.module.js');
 
-angular.module('routesMod', ['firebase', 'ngRoute', 'dBMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).controller('RouteCtrl', _routeDetailController.RouteCtrl);
+var _routesDirectives = require('./routes.directives.js');
+
+angular.module('routesMod', ['firebase', 'ngRoute', 'dBMod']).config(_routesConfig.routesConfig).controller('RoutesCtrl', _routesController.RoutesCtrl).directive('aeRoute', _routesDirectives.aeRoute).controller('RouteCtrl', _routeDetailController.RouteCtrl);
 
 exports.default = angular.module('routesMod');
 
-},{"../database/database.module.js":2,"./route-detail.controller.js":8,"./routes.config.js":9,"./routes.controller.js":10}],12:[function(require,module,exports){
+},{"../database/database.module.js":2,"./route-detail.controller.js":8,"./routes.config.js":9,"./routes.controller.js":10,"./routes.directives.js":11}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -468,7 +515,7 @@ function StopDetailCtrl($routeParams, routeDetails, stopDetails, setFaveStatus) 
 
 exports.StopDetailCtrl = StopDetailCtrl;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -488,7 +535,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             }
         }
     }).when('/stops/:stopNo', {
-        templateUrl: 'views/stop.html',
+        templateUrl: 'views/stop-details.html',
         controller: 'StopDetailCtrl',
         controllerAs: 'stop',
         resolve: {
@@ -511,7 +558,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
 
 exports.stopsConfig = stopsConfig;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -536,12 +583,56 @@ function StopsCtrl(stopsList) {
 
 exports.StopsCtrl = StopsCtrl;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+aeStop.inject = ['dBService'];
+
+function aeStop(dBService) {
+
+    var aeStop = {
+        templateUrl: 'views/stop.html',
+        scope: {
+            stop: '='
+        },
+        controller: controller,
+        controllerAs: 'stop',
+        link: link
+    };
+
+    return aeStop;
+
+    function controller() {}
+
+    function link(scope, element, attrs) {
+
+        var star = element.find('i.star');
+
+        star.on('click', handleStarTouch);
+
+        function handleStarTouch() {
+
+            var _favourite = scope.stop.favourite === 0 ? 1 : 0;
+            dBService.set('stops', { favourite: _favourite }, { number: scope.stop.number }).then(updateStop);
+        }
+
+        function updateStop(result) {
+
+            // toggle favourite status
+            scope.stop.favourite = scope.stop.favourite === 0 ? 1 : 0;
+
+            // Set the favourite status indicator
+            var starType = scope.stop.favourite === 0 ? 'star_border' : 'star';
+            star.text(starType);
+        }
+
+        console.log('Stop directive');
+    }
+}
+
 function nextTripsError() {
 
     var nextTripsError = {
@@ -570,10 +661,11 @@ function nextTrips() {
     return nextTrips;
 }
 
+exports.aeStop = aeStop;
 exports.nextTrips = nextTrips;
 exports.nextTripsError = nextTripsError;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -592,10 +684,10 @@ var _stopsDirectives = require('./stops.directives.js');
 
 var _databaseModule = require('../database/database.module.js');
 
-angular.module('stopsMod', ['ngRoute', 'firebase', 'dBMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).service('stopsService', _stopsService.stopsService); // import {SQLiteMod} from '../common/SQLite.module.js';
+angular.module('stopsMod', ['ngRoute', 'firebase', 'dBMod']).config(_stopsConfig.stopsConfig).controller('StopsCtrl', _stopsController.StopsCtrl).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).directive('aeStop', _stopsDirectives.aeStop).service('stopsService', _stopsService.stopsService); // import {SQLiteMod} from '../common/SQLite.module.js';
 exports.default = angular.module('stopsMod');
 
-},{"../database/database.module.js":2,"./stop-detail.controller.js":12,"./stops.config.js":13,"./stops.controller.js":14,"./stops.directives.js":15,"./stops.service.js":17}],17:[function(require,module,exports){
+},{"../database/database.module.js":2,"./stop-detail.controller.js":13,"./stops.config.js":14,"./stops.controller.js":15,"./stops.directives.js":16,"./stops.service.js":18}],18:[function(require,module,exports){
 'use strict';
 
 /**

@@ -89,15 +89,17 @@ function dBService($q, DATABASE) {
         function handleRes(tx, result) {
 
             let data = result.rows.item(0);
-
-            let stops = data.stops.split('\t');
+			let stops = [];
+            let _stops = data.stops.split('\t');
 
             // stops number and name are both in a long space separated string
-            stops = stops.map((stop) => {
-                return {
-                    number: stop.split(' ')[0],
-                    name: stop.split(' ').slice(1).join(' ')
-                }
+            _stops.forEach((stop) => {
+				let number =  _stop.split(' ')[0];
+				get('stop', {number: number}).then((stopInfo) => stops.push(stopInfo));
+                // return {
+                //     number: stop.split(' ')[0],
+                //     name: stop.split(' ').slice(1).join(' ')
+                // }
 
             });
 

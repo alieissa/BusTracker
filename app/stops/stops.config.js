@@ -14,7 +14,7 @@ function stopsConfig($routeProvider, $firebaseRefProvider) {
             }
         })
         .when('/stops/:stopNo', {
-            templateUrl: 'views/stop.html',
+            templateUrl: 'views/stop-details.html',
             controller: 'StopDetailCtrl',
             controllerAs: 'stop',
             resolve: {

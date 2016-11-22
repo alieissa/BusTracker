@@ -18,17 +18,5 @@
         </li>
     </ul>
 </div>
-<div class="container ae-container">
-    <table>
-        <tbody>
-            <tr data-ng-repeat="stop in stops.stopsList | limitTo: 100| filter: {number: search}">
-                <td class="ae-route-name">
-                    <a ng-href="#/stops/{{stop.number}}">{{stop.number}} {{stop.name}}</a>
-                </td>
-                <td class="ae-td">
-                    <i class="material-icons ae-icon">more_vert</i>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+
+<ae-stop ng-repeat="stop in stops.stopsList | limitTo: 100| filter: {number: search}" data-stop='stop'></ae-stop>

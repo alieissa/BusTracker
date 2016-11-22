@@ -14,7 +14,6 @@ function RoutesCtrl(routesList) {
 
     let vm = this;
 
-    vm.routesList = [];
     vm.routesList = routesList;
 }
 
