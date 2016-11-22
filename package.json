@@ -4,7 +4,8 @@
   "description": "OC Transpo App",
   "main": "app/app.js",
   "scripts": {
-    "dev:start": "gulp build --development",
+    "dev:build": "gulp build --development",
+    "dev:start": "http-server dist/ -p 3000",
     "dev:deploy": "gulp deploy --development",
     "build": "gulp default && npm test",
     "deploy": "gulp deploy --production",

@@ -88,6 +88,9 @@ tr, td, th{
     padding: 0 0 0 16px;
 }
 
+.ae-route-name {
+    width: 296px
+}
 .ae-td {
     text-align: right;
     padding-right: 12px;
@@ -135,6 +138,38 @@ tr, td, th{
     border-bottom: 2px solid white;
 }
 
+.landing-page-item {
+    float: left;
+    width: 25%;
+    height: 72px;
+    margin-bottom: 0px;
+    padding-bottom: 16px;
+    /*padding: 0 16px 8px;*/
+    text-align: center;
+    background-color: grey;
+    font-size: 14px
+}
+.landing-page-item a {
+    color: white
+}
 /*.tab-active * {
     color: rgba(255, 255, 255, 1)
 }*/
+
+.route-menu {
+	position: absolute;
+	list-style: none;
+	font-size: 14px;
+	border: 1px solid #f1eaea;
+	right: 15px;
+	top: 24px;
+	text-align: left;
+	margin-bottom: 0px;
+    z-index: 1
+}
+
+.route-menu-item {
+	height: 48px;
+	padding: 10px 16px 20px 16px;
+	margin-bottom: 0px;
+}
