@@ -6,12 +6,14 @@ const buffer = require('vinyl-buffer');
 const source = require('vinyl-source-stream');
 const path = require('path');
 
+let flag = process.argv[3];
 let shell = require('shelljs');
 shell.config.fatal = true;
 
 gulp.task('lint', lint);
 gulp.task('es6', es6);
 gulp.task('dist', dist);
+gulp.task('clean', clean);
 gulp.task('build', gulp.series('es6', 'dist', (done) => {
 	gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series('es6', 'dist'))
 	done()
@@ -24,9 +26,15 @@ gulp.task('default', gulp.series('lint', 'es6', (done) => {
 	done();
 }));
 
+function clean(flag) {
 
+
+	if(flag === 'development') {
+		shell.rm('-r', 'dist/');
+	}
+}
 function dist(done) {
-	let flag = process.argv[3];
+
 
 	switch(flag) {
 		case '--production':
@@ -39,7 +47,7 @@ function dist(done) {
 			cpDirFiles(path.join(__dirname, 'env.js'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/favourites/views/*'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/favourites/partials/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/util/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
 			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
