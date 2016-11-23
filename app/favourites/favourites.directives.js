@@ -1,17 +1,28 @@
 'use strict';
 
-function aeFavesList() {
+function aeFaves(dBService) {
 
-    let aeFavesList = {
-        templateUrl: './views/faves-list.html',
-        scope: {
-            routes: '=',
-            stops: '='
-        },
+    let aeFaves = {
+        templateUrl: './views/faves.html',
+        controller: controller,
+        controllerAs: 'faves',
+        scope: true,
         link: link
     }
 
-    return aeFavesList;
+    return aeFaves;
+
+    function controller(dBService) {
+
+        let vm = this;
+
+        vm.routes = [];
+        vm.stops = [];
+
+        dBService.get('routes', {'favourite': 1}).then((routes) => {vm.routes = routes});
+        dBService.get('stops', {'favourite': 1}).then((stops) => {vm.stops = stops});
+
+    }
 
     function link(scope, element, attrs) {
 
@@ -29,4 +40,4 @@ function aeFavesList() {
     return;
 }
 
-export {aeFavesList}
+export {aeFaves}
