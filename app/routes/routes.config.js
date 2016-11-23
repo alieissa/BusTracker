@@ -5,12 +5,7 @@ routesConfig.$inject = ['$routeProvider'];
 function routesConfig($routeProvider) {
 
     $routeProvider.when('/routes', {
-        templateUrl: 'views/routes.view.html',
-        controller: 'RoutesCtrl',
-        controllerAs: 'routes',
-        resolve: {
-          routesList: (dBService) => dBService.get('routes')
-        }
+        template: '<ae-routes></ae-routes>'
     })
     .when('/routes/:number', {
 

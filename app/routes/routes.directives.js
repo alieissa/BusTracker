@@ -1,10 +1,11 @@
 
 aeRoute.inject = ['dBService'];
+aeRoutes.inject = ['dBService'];
 
 function aeRoute(dBService) {
 
     let aeRoute = {
-        templateUrl: 'views/route.html',
+        templateUrl: 'views/route.directive.html',
         controller: controller,
         controllerAs: 'route',
         scope: {
@@ -15,8 +16,10 @@ function aeRoute(dBService) {
 
     return aeRoute;
 
-    function controller() {
+    function controller(dBService) {
 
+        let vm = this;
+        dBService.get('routes').then((routes) => vm.routes = routes);
     }
 
     function link(scope, element, attrs) {
@@ -43,4 +46,27 @@ function aeRoute(dBService) {
     }
 }
 
-export {aeRoute};
+function aeRoutes(dBService) {
+
+    let aeRoutes = {
+        templateUrl: 'views/routes.directive.html',
+        controller: controller,
+        controllerAs: 'routes',
+        scope: true,
+        link: link
+    };
+
+    return aeRoutes;
+
+    function controller(dBService) {
+
+        let vm = this;
+        dBService.get('routes').then((routes) => vm.routes = routes);
+    }
+
+    function link(scope, element, attrs) {
+
+    }
+}
+
+export {aeRoute, aeRoutes};
