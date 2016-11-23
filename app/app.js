@@ -8,17 +8,21 @@
  *
  * Main module of the application.
  */
+
+ import {dBMod} from './database/database.module.js';
 import {routesMod} from './routes/routes.module.js';
 import {stopsMod} from './stops/stops.module.js';
 import {favesMod} from './favourites/favourites.module.js';
+import {appUtil} from './util/util.module.js';
 
 angular.module('busTrackerApp', [
-        'firebase',
         'ngRoute',
 
+        'dBMod',
         'favesMod',
         'routesMod',
-        'stopsMod'
+        'stopsMod',
+        'appUtil'
     ])
     .config(config)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
@@ -32,9 +36,9 @@ function config($routeProvider, $httpProvider) {
             controller: 'MainCtrl',
             controllerAs: 'main'
         })
-        .otherwise({
-            redirectTo: '/'
-        });
+        // .otherwise({
+        //     redirectTo: '/'
+        // });
 }
 
 function MainCtrl($rootScope) {

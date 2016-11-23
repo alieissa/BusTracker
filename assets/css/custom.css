@@ -1,3 +1,7 @@
+body {
+    margin: 0
+}
+
 input[type="text"] {
     height: 21px;
     font-size: 16px;
@@ -95,6 +99,19 @@ tr, td, th{
     text-align: right;
     padding-right: 12px;
 }
+.ae-sidenav a {
+	color: white;
+	padding-left: 32px;
+	vertical-align: sub
+}
+.ae-sidenav i {
+	color: white;
+	vertical-align: middle
+}
+.ae-sidenav-item {
+	height: 48px;
+	margin-bottom: 0px;
+}
 
 .trip-card {
     /*margin: 5px;*/
@@ -164,12 +181,15 @@ tr, td, th{
 	right: 15px;
 	top: 24px;
 	text-align: left;
-	margin-bottom: 0px;
-    z-index: 1
+	margin-bottom: 0px
 }
 
 .route-menu-item {
 	height: 48px;
 	padding: 10px 16px 20px 16px;
 	margin-bottom: 0px;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
 }

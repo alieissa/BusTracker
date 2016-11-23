@@ -1,8 +1,8 @@
 'use strict';
 
-stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
+stopsConfig.$inject = ['$routeProvider'];
 
-function stopsConfig($routeProvider, $firebaseRefProvider) {
+function stopsConfig($routeProvider) {
 
     $routeProvider
         .when('/stops', {

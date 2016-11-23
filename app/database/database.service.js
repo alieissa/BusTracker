@@ -13,6 +13,7 @@ function dBService($q, DATABASE) {
 
 	function get(table, filter) {
 
+		console.log('Getting routes...')
 		let defer = $q.defer();
 		db.transaction(handleTx, handleErr);
 
@@ -94,13 +95,8 @@ function dBService($q, DATABASE) {
 
             // stops number and name are both in a long space separated string
             _stops.forEach((stop) => {
-				let number =  _stop.split(' ')[0];
-				get('stop', {number: number}).then((stopInfo) => stops.push(stopInfo));
-                // return {
-                //     number: stop.split(' ')[0],
-                //     name: stop.split(' ').slice(1).join(' ')
-                // }
-
+				let number =  stop.split(' ')[0];
+				get('stops', {number: number}).then((result) => stops.push(result[0]));
             });
 
             data.stops = stops;

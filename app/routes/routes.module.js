@@ -1,14 +1,9 @@
 import {RoutesCtrl} from './routes.controller.js';
 import {RouteCtrl} from './route-detail.controller.js';
 import {routesConfig} from './routes.config.js';
-import {dBMod} from '../database/database.module.js';
 import {aeRoute} from './routes.directives.js';
 
-angular.module('routesMod', [
-        'firebase',
-        'ngRoute',
-        'dBMod'
-    ])
+angular.module('routesMod', [])
     .config(routesConfig)
     .controller('RoutesCtrl', RoutesCtrl)
     .directive('aeRoute', aeRoute)

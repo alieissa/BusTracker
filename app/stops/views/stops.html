@@ -1,22 +1,3 @@
 
-<!-- <header-search title="Stops"></header-search> -->
-
-<div id="nav-container" >
-    <ul class="nav-list">
-        <li style="float: left">
-            <i class="material-icons nav-icon" style="left:16px">menu</i>
-        </li>
-        <li style="margin-top: 4px; float: left" class='nav-title-container'>
-            <span class="nav-title">Stops</span>
-        </li>
-        <li style="float: right"></li>
-        <li>
-            <i class="material-icons nav-icon" style="right:16px">search</i>
-        </li>
-        <li>
-            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
-        </li>
-    </ul>
-</div>
-
+<ae-menu-bar title="Stops" ng-cloak></ae-menu-bar>
 <ae-stop ng-repeat="stop in stops.stopsList | limitTo: 100| filter: {number: search}" data-stop='stop'></ae-stop>
