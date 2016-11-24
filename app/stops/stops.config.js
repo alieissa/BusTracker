@@ -6,12 +6,7 @@ function stopsConfig($routeProvider) {
 
     $routeProvider
         .when('/stops', {
-            templateUrl: 'views/stops.html',
-            controller: 'StopsCtrl',
-            controllerAs: 'stops',
-            resolve: {
-                stopsList: (dBService) => dBService.get('stops')
-            }
+            template: '<ae-stops></ae-stops>',
         })
         .when('/stops/:stopNo', {
             templateUrl: 'views/stop-details.html',

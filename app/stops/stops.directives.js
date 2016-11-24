@@ -1,10 +1,11 @@
 'use strict';
 aeStop.inject = ['dBService'];
+aeStops.inject = ['dBService'];
 
 function aeStop(dBService) {
 
     let aeStop = {
-        templateUrl: 'views/stop.html',
+        templateUrl: 'views/stop.directive.html',
         scope: {
             stop: '='
         },
@@ -45,6 +46,32 @@ function aeStop(dBService) {
     }
 }
 
+function aeStops(dBService) {
+
+    let aeStops = {
+        template: '<ae-menu-bar title="Stops" ng-cloak></ae-menu-bar>' +
+                  '<ae-stop ng-repeat="stop in stops.stops | limitTo: 100 | filter: {number: search}" ' +
+                    'data-stop="stop"></ae-stop>',
+        scope: {},
+        controller: controller,
+        controllerAs: 'stops',
+        link: link
+    };
+
+    return aeStops;
+
+    function controller() {
+
+        let vm = this;
+        dBService.get('stops').then((stops) => vm.stops = stops);
+        // vm.stopsList = stopsList;
+    }
+
+    function link() {
+
+    }
+
+}
 function nextTripsError() {
 
     let nextTripsError = {
@@ -73,4 +100,4 @@ function nextTrips() {
     return nextTrips;
 }
 
-export {aeStop, nextTrips, nextTripsError};
+export {aeStop, aeStops, nextTrips, nextTripsError};
