@@ -2,7 +2,7 @@
 function aeMenuBar() {
 
     let aeMenuBar = {
-        templateUrl: './views/menu-bar.html',
+        templateUrl: 'views/menu-bar.html',
         link: link
     };
 

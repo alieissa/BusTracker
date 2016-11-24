@@ -26,17 +26,29 @@ module.exports = function(config) {
       'assets/lib/angular/angular.js',
       'assets/lib/angular-route/angular-route.js',
       'assets/lib/angular-mocks/angular-mocks.js',
-      'assets/lib/firebase/firebase.js',
-      'assets/lib/angularfire/dist/angularfire.js',
 
       // My Code
       'dist/app.js',
       'test/constants.js',
       'test/spec/database/*.js',
       'test/spec/favourites/*.js',
-    //   'test/spec/routes/*.js',
-      'test/spec/stops/*.js'
+      'test/spec/routes/routes.directives.js',
+      'test/spec/stops/stops.directives.js',
+
+        // Templates
+        'dist/**/*.html',
     ],
+
+    // generate js files from html templates
+    preprocessors: {
+        'dist/views/*.html': 'ng-html2js'
+    },
+
+    ngHtml2JsPreprocessor: {
+      // strip this from the file path
+      stripPrefix: 'dist/',
+      stripSuffix: '.ext'
+    },
 
     // list of files / patterns to exclude
     exclude: [
@@ -53,12 +65,13 @@ module.exports = function(config) {
       'karma-jasmine',
       'karma-mocha-reporter',
       'karma-phantomjs-launcher',
-      'karma-chrome-launcher'
+      'karma-chrome-launcher',
+      'karma-ng-html2js-preprocessor'
     ],
 
 
     // Continuous Integration mode
-    singleRun: true,
+    singleRun: false,
     colors: true,
 
     // LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
