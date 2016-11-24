@@ -6,8 +6,8 @@ function aeRoute(dBService) {
 
     let aeRoute = {
         templateUrl: 'views/route.directive.html',
-        controller: controller,
-        controllerAs: 'route',
+        // controller: controller,
+        // controllerAs: 'route',
         scope: {
             route: '='
         },
@@ -16,11 +16,11 @@ function aeRoute(dBService) {
 
     return aeRoute;
 
-    function controller(dBService) {
-
-        let vm = this;
-        dBService.get('routes').then((routes) => vm.routes = routes);
-    }
+    // function controller(dBService) {
+    //
+    //     let vm = this;
+    //     dBService.get('routes').then((routes) => vm.routes = routes);
+    // }
 
     function link(scope, element, attrs) {
 
@@ -49,10 +49,13 @@ function aeRoute(dBService) {
 function aeRoutes(dBService) {
 
     let aeRoutes = {
-        templateUrl: 'views/routes.directive.html',
+        template: '<ae-menu-bar title="Routes" ng-cloak></ae-menu-bar>' +
+                  '<ae-route ng-repeat="route in routes.routes | limitTo: 100 |filter: {name: search, number: search}"' +
+                        'data-route="route" ></ae-route>',
+
         controller: controller,
         controllerAs: 'routes',
-        scope: true,
+        scope: {},
         link: link
     };
 
