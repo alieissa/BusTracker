@@ -1,12 +1,13 @@
+'use strict';
 
-import {RouteCtrl} from './route-detail.controller.js';
 import {routesConfig} from './routes.config.js';
-import {aeRoute, aeRoutes} from './routes.directives.js';
+import {aeRoute, aeRoutes, aeRouteDetails, aeRouteTripsCard} from './routes.directives.js';
 
 angular.module('routesMod', [])
     .config(routesConfig)
     .directive('aeRoute', aeRoute)
     .directive('aeRoutes', aeRoutes)
-    .controller('RouteCtrl', RouteCtrl)
+    .directive('aeRouteTripsCard', aeRouteTripsCard)
+    .directive('aeRouteDetails', aeRouteDetails);
 
 export default angular.module('routesMod');
