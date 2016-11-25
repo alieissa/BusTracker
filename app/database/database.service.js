@@ -13,7 +13,6 @@ function dBService($q, DATABASE) {
 
 	function get(table, filter) {
 
-		console.log('Getting routes...')
 		let defer = $q.defer();
 		db.transaction(handleTx, handleErr);
 

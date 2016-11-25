@@ -49,14 +49,16 @@ tr, td, th{
     letter-spacing: 0.02em;
     line-height: 1
 }
-.nav-title-container {
-    padding: 13px 0;
-}
 
  ul.nav-list li {
     width: 48px;
     height: 48px;
     margin: 0 4px 4px 4px;
+}
+
+#nav-title-container {
+    padding: 13px 0;
+    width: auto
 }
 
 .nav-list {

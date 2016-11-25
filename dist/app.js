@@ -41,7 +41,7 @@ function MainCtrl($rootScope) {
     });
 }
 
-},{"./database/database.module.js":2,"./favourites/favourites.module.js":6,"./routes/routes.module.js":10,"./stops/stops.module.js":14,"./util/util.module.js":17}],2:[function(require,module,exports){
+},{"./database/database.module.js":2,"./favourites/favourites.module.js":6,"./routes/routes.module.js":9,"./stops/stops.module.js":12,"./util/util.module.js":15}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -76,7 +76,6 @@ function dBService($q, DATABASE) {
 
 	function get(table, filter) {
 
-		console.log('Getting routes...');
 		var defer = $q.defer();
 		db.transaction(handleTx, handleErr);
 
@@ -280,44 +279,6 @@ exports.default = angular.module('favesMod');
 },{"./favourites.config.js":4,"./favourites.directives.js":5}],7:[function(require,module,exports){
 'use strict';
 
-/**
- * @ngdoc function
- * @name busTrackerApp.controller:RouteCtrl
- * @description
- * # RouteCtrl
- * Controller of the busTrackerApp
- */
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-RouteCtrl.$inject = ['routeDetails', 'setFaveStatus'];
-
-function RouteCtrl(routeDetails, setFaveStatus) {
-
-  var vm = this;
-
-  vm.name = routeDetails.name;
-  vm.number = routeDetails.number;
-  vm.stops = routeDetails.stops;
-  vm.faveStatus = routeDetails.favourite;
-  vm.setFaveStatus = _setFaveStatus;
-
-  //  	Handler of Favourite button click events in route.html template
-  function _setFaveStatus(name) {
-
-    var _favourite = vm.favourite === 0 ? 1 : 0;
-    setFaveStatus('routes', { 'favourite': _favourite }, { 'name': vm.name }).then(function () {
-      vm.favourite = _favourite;
-    });
-  }
-}
-
-exports.RouteCtrl = RouteCtrl;
-
-},{}],8:[function(require,module,exports){
-'use strict';
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -325,57 +286,45 @@ routesConfig.$inject = ['$routeProvider'];
 
 function routesConfig($routeProvider) {
 
-    $routeProvider.when('/routes', {
+    $routeProvider
+    // Get all routes
+    .when('/routes', {
         template: '<ae-routes></ae-routes>'
-    }).when('/routes/:number', {
+    })
 
-        templateUrl: 'views/route-details.view.html',
-        controller: 'RouteCtrl',
-        controllerAs: 'route',
-        resolve: {
-            setFaveStatus: function setFaveStatus(dBService) {
-                return dBService.set;
-            },
-            routeDetails: function routeDetails($location, dBService) {
-
-                var name = $location.search().name; //from query string
-                return dBService.getStops({ name: name });
-            }
-        }
+    // Get all stops for bus number 'number'
+    .when('/routes/:number', {
+        template: '<ae-route-details></ae-route-details>'
     });
 }
 
 exports.routesConfig = routesConfig;
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
 aeRoute.inject = ['dBService'];
 aeRoutes.inject = ['dBService'];
+aeRouteDetails.inject = ['$location', 'dBService'];
+aeRouteTripsCard.inject = ['dBService'];
 
 function aeRoute(dBService) {
 
     var aeRoute = {
         templateUrl: 'views/route.directive.html',
-        // controller: controller,
-        // controllerAs: 'route',
         scope: {
             route: '='
         },
+        // controller: controller
         link: link
     };
 
     return aeRoute;
 
-    // function controller(dBService) {
-    //
-    //     let vm = this;
-    //     dBService.get('routes').then((routes) => vm.routes = routes);
-    // }
+    // function controller() {}
 
     function link(scope, element, attrs) {
 
@@ -404,12 +353,11 @@ function aeRoute(dBService) {
 function aeRoutes(dBService) {
 
     var aeRoutes = {
-        template: '<ae-menu-bar title="Routes" ng-cloak></ae-menu-bar>' + '<ae-route ng-repeat="route in routes.routes | limitTo: 100 |filter: {name: search, number: search}"' + 'data-route="route" ></ae-route>',
+        template: '<ae-menu-bar icon="menu" title="Routes" ng-cloak></ae-menu-bar>' + '<ae-route ng-repeat="route in routes.routes | limitTo: 100 |filter: {name: search, number: search}"' + 'data-route="route" ></ae-route>',
 
         controller: controller,
         controllerAs: 'routes',
-        scope: {},
-        link: link
+        scope: {}
     };
 
     return aeRoutes;
@@ -422,73 +370,83 @@ function aeRoutes(dBService) {
         });
     }
 
+    // function link() {}
+}
+
+function aeRouteDetails($location, dBService) {
+
+    var aeRouteDetails = {
+        template: '<ae-menu-bar icon="arrow_back" title={{route.title}}></ae-menu-bar>' + '<ae-stop ng-repeat="stop in route.routeDetails.stops | limitTo: 100 | filter: {number: search}" ' + 'data-stop="stop"></ae-stop>',
+        scope: {},
+        controller: controller,
+        controllerAs: 'route',
+        link: link
+    };
+
+    return aeRouteDetails;
+
+    function controller() {
+
+        var vm = this;
+
+        // Get route name from query string
+        var name = $location.search().name;
+        vm.title = name;
+
+        // Get route details from database
+        dBService.getStops({ 'name': name }).then(function (details) {
+            vm.routeDetails = details;
+            // console.log(details);
+        });
+    }
+
     function link(scope, element, attrs) {}
 }
 
+function aeRouteTripsCard(dBService) {
+
+    var aeRouteTripsCard = {
+        templateUrl: '/views/route-trips-card.html',
+        scope: {
+            route: '=',
+            trips: '='
+        },
+        // controller: controller,
+        link: link
+    };
+
+    return aeRouteTripsCard;
+
+    // function controller() {}
+
+    function link(scope, element, attrs) {
+        angular.element('.material-icons').click(function () {
+            console.log('Clicked icon ');
+        });
+        console.log('Route card link function');
+    }
+}
 exports.aeRoute = aeRoute;
 exports.aeRoutes = aeRoutes;
+exports.aeRouteDetails = aeRouteDetails;
+exports.aeRouteTripsCard = aeRouteTripsCard;
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _routeDetailController = require('./route-detail.controller.js');
 
 var _routesConfig = require('./routes.config.js');
 
 var _routesDirectives = require('./routes.directives.js');
 
-angular.module('routesMod', []).config(_routesConfig.routesConfig).directive('aeRoute', _routesDirectives.aeRoute).directive('aeRoutes', _routesDirectives.aeRoutes).controller('RouteCtrl', _routeDetailController.RouteCtrl);
+angular.module('routesMod', []).config(_routesConfig.routesConfig).directive('aeRoute', _routesDirectives.aeRoute).directive('aeRoutes', _routesDirectives.aeRoutes).directive('aeRouteTripsCard', _routesDirectives.aeRouteTripsCard).directive('aeRouteDetails', _routesDirectives.aeRouteDetails);
 
 exports.default = angular.module('routesMod');
 
-},{"./route-detail.controller.js":7,"./routes.config.js":8,"./routes.directives.js":9}],11:[function(require,module,exports){
-'use strict';
-
-/**
- * @ngdoc function
- * @name busTrackerApp.controller:StopDetailCtrl
- * @description
- * # StopDetailCtrl
- * Controller of the busTrackerApp
- */
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-StopDetailCtrl.$inject = ['$routeParams', 'routeDetails', 'stopDetails', 'setFaveStatus'];
-
-function StopDetailCtrl($routeParams, routeDetails, stopDetails, setFaveStatus) {
-
-    var vm = this;
-
-    vm.name = stopDetails[0].name;
-    vm.number = stopDetails[0].number;
-    vm.code = stopDetails[0].code;
-    vm.lat = stopDetails[0].lat;
-    vm.lon = stopDetails[0].lon;
-    vm.favourite = stopDetails[0].favourite;
-
-    vm.error = routeDetails.error;
-    vm.routes = routeDetails.routes;
-    vm.setFaveStatus = _setFaveStatus;
-
-    function _setFaveStatus(number) {
-
-        var _favourite = vm.favourite === 0 ? 1 : 0;
-        setFaveStatus('stops', { 'favourite': _favourite }, { 'number': number }).then(function () {
-            vm.favourite = _favourite;
-            console.log(_favourite);
-        });
-    }
-}
-
-exports.StopDetailCtrl = StopDetailCtrl;
-
-},{}],12:[function(require,module,exports){
+},{"./routes.config.js":7,"./routes.directives.js":8}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -498,33 +456,21 @@ stopsConfig.$inject = ['$routeProvider'];
 
 function stopsConfig($routeProvider) {
 
-    $routeProvider.when('/stops', {
+    $routeProvider
+    // Get all stops
+    .when('/stops', {
         template: '<ae-stops></ae-stops>'
-    }).when('/stops/:stopNo', {
-        templateUrl: 'views/stop-details.html',
-        controller: 'StopDetailCtrl',
-        controllerAs: 'stop',
-        resolve: {
-            setFaveStatus: function setFaveStatus(dBService) {
-                return dBService.set;
-            },
-            stopDetails: function stopDetails($route, dBService) {
+    })
 
-                var stopNo = $route.current.params.stopNo;
-                return dBService.get('stops', { number: stopNo });
-            },
-            routeDetails: function routeDetails($route, stopsService) {
-
-                var stopNo = $route.current.params.stopNo;
-                return stopsService.getNextTrips(stopNo);
-            }
-        }
+    // Show next 3 next trips for all routes serving stop number 'stopNo'
+    .when('/stops/:stopNo', {
+        template: '<ae-stop-next-trips></ae-stop-next-trips>'
     });
 }
 
 exports.stopsConfig = stopsConfig;
 
-},{}],13:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -532,6 +478,29 @@ Object.defineProperty(exports, "__esModule", {
 });
 aeStop.inject = ['dBService'];
 aeStops.inject = ['dBService'];
+aeStopNextTrips.inject = ['$route', 'dBService', 'stopsService'];
+
+function aeStops(dBService) {
+
+    var aeStops = {
+        template: '<ae-menu-bar icon="menu" title="Stops" ng-cloak></ae-menu-bar>' + '<ae-stop ng-repeat="stop in stops.stops | limitTo: 100 | filter: {number: search}" ' + 'data-stop="stop"></ae-stop>',
+        scope: {},
+        controller: controller,
+        controllerAs: 'stops'
+    };
+
+    return aeStops;
+
+    function controller() {
+
+        var vm = this;
+        dBService.get('stops').then(function (stops) {
+            return vm.stops = stops;
+        });
+    }
+
+    // function link() {}
+}
 
 function aeStop(dBService) {
 
@@ -540,14 +509,14 @@ function aeStop(dBService) {
         scope: {
             stop: '='
         },
-        controller: controller,
+        // controller: controller,
         controllerAs: 'stop',
         link: link
     };
 
     return aeStop;
 
-    function controller() {}
+    // function controller() {}
 
     function link(scope, element, attrs) {
 
@@ -570,34 +539,46 @@ function aeStop(dBService) {
             var starType = scope.stop.favourite === 0 ? 'star_border' : 'star';
             star.text(starType);
         }
-
-        console.log('Stop directive');
     }
 }
 
-function aeStops(dBService) {
+function aeStopNextTrips($route, dBService, stopsService) {
 
-    var aeStops = {
-        template: '<ae-menu-bar title="Stops" ng-cloak></ae-menu-bar>' + '<ae-stop ng-repeat="stop in stops.stops | limitTo: 100 | filter: {number: search}" ' + 'data-stop="stop"></ae-stop>',
+    var aeStopNextTrips = {
+        template: '<ae-tall-menu-bar title-heading="{{stopNextTrips.stop.number}}" title={{stopNextTrips.stop.name}} icon="arrow_back"></ae-tall-menu-bar>' + '<ae-route-trips-card ng-repeat="route in stopNextTrips.routes" data-route="route" trips="route.Trips"></ae-route-trips-card>',
         scope: {},
         controller: controller,
-        controllerAs: 'stops',
-        link: link
+        controllerAs: 'stopNextTrips'
     };
 
-    return aeStops;
+    return aeStopNextTrips;
 
     function controller() {
 
         var vm = this;
-        dBService.get('stops').then(function (stops) {
-            return vm.stops = stops;
+
+        // stop number from the URL
+        var stopNo = $route.current.params.stopNo;
+
+        // Get stop information from database in an array
+        dBService.get('stops', { number: stopNo }).then(function (stop) {
+            return vm.stop = stop[0];
         });
-        // vm.stopsList = stopsList;
+
+        // Get next 3 trips for routes serving stop
+        stopsService.getNextTrips(stopNo).then(function (result) {
+
+            // An error field is always present in trip information
+            vm.error = result.error;
+
+            // Array of routes with each route containing array of 3 trips
+            vm.routes = result.routes;
+        });
     }
 
-    function link() {}
+    // function link() {}
 }
+
 function nextTripsError() {
 
     var nextTripsError = {
@@ -607,38 +588,17 @@ function nextTripsError() {
     return nextTripsError;
 }
 
-function nextTrips() {
-
-    var nextTrips = {
-        templateUrl: '/views/next-trips.html',
-        scope: {
-            route: '=',
-            trips: '='
-        },
-        link: function link(scope, element, attrs) {
-            angular.element('.material-icons').click(function () {
-                console.log('Clicked icon ');
-            });
-            console.log('Next trips link function');
-        }
-    };
-
-    return nextTrips;
-}
-
 exports.aeStop = aeStop;
 exports.aeStops = aeStops;
-exports.nextTrips = nextTrips;
+exports.aeStopNextTrips = aeStopNextTrips;
 exports.nextTripsError = nextTripsError;
 
-},{}],14:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
-
-var _stopDetailController = require('./stop-detail.controller.js');
 
 var _stopsService = require('./stops.service.js');
 
@@ -646,13 +606,11 @@ var _stopsConfig = require('./stops.config.js');
 
 var _stopsDirectives = require('./stops.directives.js');
 
-// import {dBMod} from '../database/database.module.js';
-
-angular.module('stopsMod', []).config(_stopsConfig.stopsConfig).controller('StopDetailCtrl', _stopDetailController.StopDetailCtrl).directive('nextTrips', _stopsDirectives.nextTrips).directive('nextTripsError', _stopsDirectives.nextTripsError).directive('aeStop', _stopsDirectives.aeStop).directive('aeStops', _stopsDirectives.aeStops).service('stopsService', _stopsService.stopsService);
+angular.module('stopsMod', []).config(_stopsConfig.stopsConfig).directive('nextTripsError', _stopsDirectives.nextTripsError).directive('aeStop', _stopsDirectives.aeStop).directive('aeStops', _stopsDirectives.aeStops).directive('aeStopNextTrips', _stopsDirectives.aeStopNextTrips).service('stopsService', _stopsService.stopsService);
 
 exports.default = angular.module('stopsMod');
 
-},{"./stop-detail.controller.js":11,"./stops.config.js":12,"./stops.directives.js":13,"./stops.service.js":15}],15:[function(require,module,exports){
+},{"./stops.config.js":10,"./stops.directives.js":11,"./stops.service.js":13}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -736,7 +694,7 @@ function parseRoutes(routes) {
 }
 exports.stopsService = stopsService;
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -754,8 +712,9 @@ function aeMenuBar() {
 
     function link(scope, element, attrs) {
 
-        // console.log(attrs.title);
         scope.title = attrs.title;
+        scope.icon = attrs.icon;
+
         angular.element(document).on('click', handleTouch);
 
         function handleTouch(event) {
@@ -765,22 +724,64 @@ function aeMenuBar() {
             var isNavIcon = angular.element(event.target).hasClass('nav-icon');
             var isDisplayed = angular.element('#sidenav-container').css('display');
 
-            // console.log(parents)
+            // Clicks outside a visible nav bar close the nav bar
             if (!inSidenav && isDisplayed) {
                 angular.element('#sidenav-container').css('display', 'none');
             }
 
+            // Click on menu icon to open nav bar
             if (isNavIcon) {
                 angular.element('#sidenav-container').css('display', 'block');
             }
         }
-        console.log('Route directive link fn');
     }
 }
 
-exports.aeMenuBar = aeMenuBar;
+function aeTallMenuBar() {
 
-},{}],17:[function(require,module,exports){
+    var aeTallMenuBar = {
+        templateUrl: 'views/tall-menu-bar.html',
+        scope: {
+            title: '@',
+            titleHeading: '@'
+        },
+        link: link
+    };
+
+    return aeTallMenuBar;
+
+    function link(scope, element, attrs) {
+
+        console.log(attrs);
+        // scope.title = attrs.title;
+        // scope.icon = attrs.icon;
+        // scope.titleHeading = attrs.titleHeading;
+
+        // angular.element(document).on('click', handleTouch);
+
+        function handleTouch(event) {
+
+            var parents = angular.element(event.target).parents('#sidenav-container');
+            var inSidenav = parents.length;
+            var isNavIcon = angular.element(event.target).hasClass('nav-icon');
+            var isDisplayed = angular.element('#sidenav-container').css('display');
+
+            // Clicks outside a visible nav bar close the nav bar
+            if (!inSidenav && isDisplayed) {
+                angular.element('#sidenav-container').css('display', 'none');
+            }
+
+            // Click on menu icon to open nav bar
+            if (isNavIcon) {
+                angular.element('#sidenav-container').css('display', 'block');
+            }
+        }
+    }
+}
+exports.aeMenuBar = aeMenuBar;
+exports.aeTallMenuBar = aeTallMenuBar;
+
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -789,8 +790,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _utilDirectives = require('./util.directives.js');
 
-angular.module('appUtil', []).directive('aeMenuBar', _utilDirectives.aeMenuBar);
+angular.module('appUtil', []).directive('aeMenuBar', _utilDirectives.aeMenuBar).directive('aeTallMenuBar', _utilDirectives.aeTallMenuBar);
 
 exports.default = angular.module('appUtil');
 
-},{"./util.directives.js":16}]},{},[1]);
+},{"./util.directives.js":14}]},{},[1]);
