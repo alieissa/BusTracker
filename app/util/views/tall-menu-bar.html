@@ -1,17 +1,22 @@
-<div id="nav-container" >
+<div id="nav-container" style="height: 128px; padding: 0 16px 20px; margin-bottom: 5px" >
     <ul class="nav-list">
         <li style="float: left">
-            <i class="material-icons nav-icon" style="left:16px">{{icon}}</i>
+            <i class="material-icons nav-icon" style="left:16px">arrow_back</i>
         </li>
-        <li style="margin-top: 4px; float: left" id='nav-title-container'>
-            <span class="nav-title">{{title}}</span>
-        </li>
+        <!-- <li style="margin-top: 4px; float: left; width: auto" id='nav-title-container'>
+            <span class="nav-title">4221 Bank & South Keys Walkway</span>
+        </li> -->
         <!-- <li style="float: right"></li> -->
         <li>
             <i class="material-icons nav-icon" style="right:16px">search</i>
         </li>
-        <li>
+         <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+<!--         <li>
             <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li> -->
+        <li style="margin-top: 4px; float: left; width: auto; margin-left: 56px; padding-top: 16px; padding-bottom: 16px; color: white" id='nav-title-container'>
+        	<div>{{titleHeading}}</div>
+            <span class="nav-title">{{title}}</span>
         </li>
     </ul>
 </div>
