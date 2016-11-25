@@ -5,28 +5,15 @@ stopsConfig.$inject = ['$routeProvider'];
 function stopsConfig($routeProvider) {
 
     $routeProvider
+        // Get all stops
         .when('/stops', {
             template: '<ae-stops></ae-stops>',
         })
+        
+        // Show next 3 next trips for all routes serving stop number 'stopNo'
         .when('/stops/:stopNo', {
-            templateUrl: 'views/stop-details.html',
-            controller: 'StopDetailCtrl',
-            controllerAs: 'stop',
-            resolve: {
-                setFaveStatus: (dBService) => dBService.set,
-                stopDetails: ($route, dBService) => {
-
-                    let stopNo = $route.current.params.stopNo;
-                    return dBService.get('stops', {number: stopNo});
-                },
-                routeDetails: ($route, stopsService) => {
-
-                    let stopNo = $route.current.params.stopNo;
-                    return stopsService.getNextTrips(stopNo);
-                }
-            }
+            template: '<ae-stop-next-trips></ae-stop-next-trips>'
         });
-
 }
 
 export {stopsConfig};
