@@ -7,9 +7,11 @@ aeStopNextTrips.inject = ['$route', 'dBService', 'stopsService'];
 function aeStops(dBService) {
 
     let aeStops = {
-        template: '<ae-menu-bar icon="menu" title="Stops" search="stops.search"></ae-menu-bar>' +
-        '<ae-stop ng-repeat="stop in stops.stops  | limitTo: stops.limit | filter: {number: stops.search}" track by stop.number ' +
-        'data-stop="stop"></ae-stop>',
+        template:
+            '<ae-menu-bar icon="menu" title="Stops" search="stops.search"></ae-menu-bar>' +
+            '<ae-stop ng-repeat="stop in stops.stops  | limitTo: stops.displayLimit | filter: {number: stops.search}" track by stop.number ' +
+            'data-stop="stop"></ae-stop>',
+
         scope: {},
         controller: controller,
         bindToController: true,
@@ -22,27 +24,26 @@ function aeStops(dBService) {
     function controller($scope, $window) {
 
         let vm = this;
-        vm.limit = 90;
-        vm.display = [];
-        angular.element($window).scroll(() => {
-            // vm.limit = vm.limit + 50;
-            // alert('Scrolling')
-            if(vm.display.length < vm.stops.length) {
-                let nextPage = vm.stops.slice(vm.display.length, vm.display.length + 20);
-                // console.log(nextPage);
-                vm.display = [...vm.display, ...nextPage];
-                vm.limit = vm.limit + 10;
-                // console.log(vm.display.length);
-                $scope.$apply();
+
+        // Number of stops to display
+        vm.displayLimit = 90;
+
+        // Get all stops
+        dBService.get('stops').then((stops) => vm.stops = stops);
+
+        // Look for user scrolling
+        angular.element($window).scroll(handleScroll);
+
+        // When user scrolls increase displayed stops by 10
+        function handleScroll() {
+
+            if(vm.displayLimit > vm.stops.length) {
+                return;
             }
-
-            // console.log('Scrolling');
-        });
-        dBService.get('stops').then((stops) => {
-            vm.stops = stops;
-            vm.display = vm.stops.slice(0, 20);
-        });
-
+            vm.displayLimit = vm.displayLimit + 10;
+            // I know, tried very hard to get rid of $scope
+            $scope.$apply();
+        }
     }
 
     function link(scope, element, attrs) {
@@ -57,7 +58,7 @@ function aeStops(dBService) {
 function aeStop(dBService) {
 
     let aeStop = {
-        templateUrl: 'views/stop.directive.html',
+        templateUrl: 'partials/stop.directive.html',
         scope: {
             stop: '='
         },
@@ -97,8 +98,10 @@ function aeStop(dBService) {
 function aeStopNextTrips($route, dBService, stopsService) {
 
     let aeStopNextTrips = {
-        template: '<ae-tall-menu-bar title-heading="{{stopNextTrips.stop.number}}" title={{stopNextTrips.stop.name}} icon="arrow_back"></ae-tall-menu-bar>' +
-        '<ae-route-trips-card ng-repeat="route in stopNextTrips.routes" data-route="route" trips="route.Trips"></ae-route-trips-card>',
+        template:
+            '<ae-tall-menu-bar title-heading="{{stopNextTrips.stop.number}}" title={{stopNextTrips.stop.name}} icon="arrow_back"></ae-tall-menu-bar>' +
+            '<ae-route-trips-card ng-repeat="route in stopNextTrips.routes" data-route="route" trips="route.Trips"></ae-route-trips-card>',
+
         scope: {},
         controller: controller,
         controllerAs: 'stopNextTrips',
@@ -134,7 +137,7 @@ function aeStopNextTrips($route, dBService, stopsService) {
 function nextTripsError() {
 
     let nextTripsError = {
-        templateUrl: '/views/next-trips-error.html',
+        templateUrl: 'partials/next-trips-error.html',
     }
 
     return nextTripsError;

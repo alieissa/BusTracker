@@ -32,7 +32,7 @@ function aeRoutes(dBService) {
 function aeRoute(dBService) {
 
     let aeRoute = {
-        templateUrl: 'views/route.directive.html',
+        templateUrl: 'partials/route.directive.html',
         scope: {
             route: '='
         },
@@ -106,7 +106,7 @@ function aeRouteDetails($location, $route, dBService) {
 function aeRouteTripsCard(dBService) {
 
     let aeRouteTripsCard = {
-        templateUrl: '/views/route-trips-card.html',
+        templateUrl: 'partials/route-trips-card.html',
         scope: {
             route: '=',
             trips: '=',

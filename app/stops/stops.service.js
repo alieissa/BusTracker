@@ -31,10 +31,11 @@ function stopsService ($http, config, dBService) {
         const url = `${baseUrl}/GetNextTripsForStopAllRoutes`;
         const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
         console.log(url + "?" +data)
-        return $http.post(url, data, headers).then(handleRes);
+        return $http.post(url, data, headers).then(handleRes, handleErr);
 
         function handleRes(response) {
-
+            // console.log(response);
+            alert(response.status);
             let result = response.data.GetRouteSummaryForStopResult;
 
             if(result.Error !== '') {
@@ -48,6 +49,10 @@ function stopsService ($http, config, dBService) {
 
             return {'error': result.Error, 'routes': _routes};
         }
+    }
+
+    function handleErr() {
+        alert('Unable to call ' + url);
     }
 }
 
