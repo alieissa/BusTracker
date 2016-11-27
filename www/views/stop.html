@@ -1,9 +1,0 @@
-<h3>{{stop.stopNo}} {{stop.stopDescription}}</h3>
-<h4 ng-if='stop.showError'> No trips scheduled for stop at this time</h4>
-<ul ng-if='!stop.showError' class="list-unstyled">
-  <li ng-repeat="route in stop.routes" > {{route.RouteNo}}  {{route.RouteHeading}}
-    <ul class="list-inline" style="display: inline">
-      <li ng-repeat="trip in route.Trips"> {{trip.AdjustedScheduleTime}}</li>
-    </ul>
-</li>
-</ul>
