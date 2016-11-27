@@ -23,17 +23,68 @@
 
         <title>BusTracker</title>
     </head>
-    <body ng-app="busTrackerApp">
-
+    <body>
         <div ng-view=""></div>
 
-        <!-- <script type="text/javascript" src="cordova.js"></script> -->
-        <!-- <script src="assets/lib/firebase/firebase.js"></script> -->
+        <script type="text/javascript" src="cordova.js"></script>
         <script src="assets/lib/jquery/dist/jquery.min.js"></script>
         <script src="assets/lib/angular/angular.min.js"></script>
         <script src="assets/lib/angular-route/angular-route.min.js"></script>
-        <!-- <script src="assets/lib/angularfire/dist/angularfire.min.js"></script> -->
         <script src="env.js"></script>
         <script src="app.js"></script>
+        <script type="text/javascript">
+
+			var _handleSuccess = function() {
+				bootstrapApp();
+                return;
+			}
+
+			var _handleErr = function (err) {
+
+                alert("Error Code = "+ JSON.stringify(err));
+
+				//db already exists or problem in copying the db file. Check the Log.
+				if(err.code === 516) {
+					bootstrapApp();
+				}
+				return;
+			}
+
+	        function bootstrapApp() {
+	        	var element = document.getElementsByTagName('body')[0];
+	           	angular.bootstrap(element, ["busTrackerApp"]);
+
+                return;
+	        }
+
+	        function copyDb() {
+
+	        	window.plugins.sqlDB.remove("octranspo.db", 0, function() {
+	        		window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+			      },function(err) {
+			      	alert("Error when trying to remove db " + JSON.stringify(err));
+			      	window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+			      });
+
+                  return;
+			}
+
+			$('document').ready(function() {
+
+				window.isphone = false;
+			    if(document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
+			        window.isphone = true;
+			    }
+
+	            if(window.isphone) {
+	            	 document.addEventListener("deviceready", copyDb, false);
+	            }
+	            else {
+	                bootstrapApp();
+	            }
+
+                return;
+		    });
+        </script>
     </body>
 </html>

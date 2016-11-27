@@ -1,4 +1,4 @@
-<ae-menu-bar title="Favourites"></ae-menu-bar>
+<ae-menu-bar icon="menu" title="Favourites"></ae-menu-bar>
 
 <div id="tab-wrapper" >
     <ul class="tab-container">
@@ -12,8 +12,8 @@
 </div>
 
 <div id='routes-tab-content' >
-    <ae-route  ng-repeat="route in faves.routes" data-route="route"></ae-route>
+    <ae-route  ng-repeat="route in faves.routes" data-route="route" ng-show="route.favourite"></ae-route>
 </div>
 <div id='stops-tab-content' style="display: none">
-    <ae-stop ng-repeat="stop in faves.stops" data-stop="stop"></ae-stop>
+    <ae-stop ng-repeat="stop in faves.stops" data-stop="stop" ng-show="stop.favourite"></ae-stop>
 </div>

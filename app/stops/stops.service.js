@@ -14,6 +14,7 @@ stopsService.$inject = ['$http', 'config', 'dBService'];
 
 function stopsService ($http, config, dBService) {
 
+
     let Stops = {
         getNextTrips: getNextTrips
     }
@@ -24,11 +25,12 @@ function stopsService ($http, config, dBService) {
 
     function getNextTrips(stopNo) {
 
+        const baseUrl = window.isphone ? 'https://api.octranspo1.com/v1.2': 'http://localhost:3000/v1.2'
         const OCCONFIG = window._env.OC;
         const headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}}; // Content-Type must be x-www-form-urlencoded.
-        const url = `${config.OC_URL}/GetNextTripsForStopAllRoutes`;
+        const url = `${baseUrl}/GetNextTripsForStopAllRoutes`;
         const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
-
+        console.log(url + "?" +data)
         return $http.post(url, data, headers).then(handleRes);
 
         function handleRes(response) {

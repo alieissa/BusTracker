@@ -25,6 +25,18 @@ function aeFaves(dBService) {
     }
 
     function link(scope, element, attrs) {
+        // angular.element('.tab-item').click(handleClick);
+        // function handleClick() {
+        //
+        //     if(angular.element(this).hasClass('tab-active')) {
+        //         return;
+        //     }
+        //
+        //     angular.element('.tab-active').removeClass('tab-active');
+        //     angular.element(this).addClass('tab-active');
+        //
+        //     // console.log('Click on tab');
+        // }
 
         angular.element('.tab-item').on('click', function() {
 

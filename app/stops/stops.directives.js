@@ -7,24 +7,51 @@ aeStopNextTrips.inject = ['$route', 'dBService', 'stopsService'];
 function aeStops(dBService) {
 
     let aeStops = {
-        template: '<ae-menu-bar icon="menu" title="Stops" ng-cloak></ae-menu-bar>' +
-        '<ae-stop ng-repeat="stop in stops.stops | limitTo: 100 | filter: {number: search}" ' +
+        template: '<ae-menu-bar icon="menu" title="Stops" search="stops.search"></ae-menu-bar>' +
+        '<ae-stop ng-repeat="stop in stops.stops  | limitTo: stops.limit | filter: {number: stops.search}" track by stop.number ' +
         'data-stop="stop"></ae-stop>',
         scope: {},
         controller: controller,
+        bindToController: true,
         controllerAs: 'stops',
-        // link: link
+        link: link
     };
 
     return aeStops;
 
-    function controller() {
+    function controller($scope, $window) {
 
         let vm = this;
-        dBService.get('stops').then((stops) => vm.stops = stops);
+        vm.limit = 90;
+        vm.display = [];
+        angular.element($window).scroll(() => {
+            // vm.limit = vm.limit + 50;
+            // alert('Scrolling')
+            if(vm.display.length < vm.stops.length) {
+                let nextPage = vm.stops.slice(vm.display.length, vm.display.length + 20);
+                // console.log(nextPage);
+                vm.display = [...vm.display, ...nextPage];
+                vm.limit = vm.limit + 10;
+                // console.log(vm.display.length);
+                $scope.$apply();
+            }
+
+            // console.log('Scrolling');
+        });
+        dBService.get('stops').then((stops) => {
+            vm.stops = stops;
+            vm.display = vm.stops.slice(0, 20);
+        });
+
     }
 
-    // function link() {}
+    function link(scope, element, attrs) {
+        // angular.element(window).scroll(() => {
+        //     scope.stops.limit = scope.stops.limit + 50;
+        //     console.log(scope.stops.limit);
+        //     console.log('Scrolling');
+        // });
+    }
 }
 
 function aeStop(dBService) {

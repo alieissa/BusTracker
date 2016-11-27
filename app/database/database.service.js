@@ -4,7 +4,23 @@ dBService.$inject = ['$q', 'DATABASE'];
 
 function dBService($q, DATABASE) {
 
-	let db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
+	let db;
+
+	if(!window.isphone) {
+		db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
+	}
+	else {
+		let handleDb = (dbb) => {
+			alert('Opened db using sqlite plugin');
+		}
+
+		let handleErr = (err) => {
+			alert("Sqlite plugin can't open db " + JSON.stringify(err));
+		}
+
+		let options = {name: "octranspo.db", location: 0};
+		db = window.sqlitePlugin.openDatabase(options, handleDb, handleErr);
+	}
 
 	let DB = { get, set, getStops };
 	return DB;
@@ -79,11 +95,10 @@ function dBService($q, DATABASE) {
 	function getStops(route) {
 
         let defer = $q.defer();
-
         db.transaction(handleTx, handleErr);
 
         function handleTx(tx) {
-          tx.executeSql('SELECT * FROM routes WHERE name = ?', [route.name], handleRes, handleErr);
+          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, handleErr);
         }
 
         function handleRes(tx, result) {
