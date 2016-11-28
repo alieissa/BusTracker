@@ -25,27 +25,26 @@ function aeFaves(dBService) {
     }
 
     function link(scope, element, attrs) {
-        // angular.element('.tab-item').click(handleClick);
-        // function handleClick() {
-        //
-        //     if(angular.element(this).hasClass('tab-active')) {
-        //         return;
-        //     }
-        //
-        //     angular.element('.tab-active').removeClass('tab-active');
-        //     angular.element(this).addClass('tab-active');
-        //
-        //     // console.log('Click on tab');
-        // }
-
+        
         angular.element('.tab-item').on('click', function() {
 
-        	let targetDiv = angular.element(this).attr('id');
-        	let contentDiv = `${targetDiv}-content`;
-        	let otherDiv = contentDiv === 'stops-tab-content' ? 'routes-tab-content' : 'stops-tab-content'
+            // Target is already the active tab
+            if(angular.element(this).hasClass('tab-active')) {
+                return;
+            }
 
-        	angular.element(`#${contentDiv}`).css('display', 'block');
-        	angular.element(`#${otherDiv}`).css('display', 'none');
+        	let targetTab = angular.element(this).attr('id');
+        	let targetTabContent = `${targetTab}-content`;
+        	let otherTab = targetTab === 'stops-tab' ? 'routes-tab' : 'stops-tab'
+            let otherTabContent = `${otherTab}-content`;
+
+            // Show clicked tab content
+        	angular.element(`#${targetTabContent}`).css('display', 'block');
+            angular.element(this).addClass('tab-active');
+
+            // Hide other content
+        	angular.element(`#${otherTabContent}`).css('display', 'none');
+            angular.element(`#${otherTab}`).removeClass('tab-active')
         });
     }
 

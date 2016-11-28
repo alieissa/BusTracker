@@ -149,9 +149,6 @@ tr, td, th{
     color:  rgba(255, 255, 255, 0.7);
     font-size: 14px
 }
-/*.tab-item * {
-    color: rgba(255, 255, 255, 0.7)
-}*/
 .tab-active {
     color: white;
     border-bottom: 2px solid white;
