@@ -32,7 +32,16 @@ function config($routeProvider, $httpProvider) {
 
     $routeProvider
         .when('/', {
-            templateUrl: 'views/main.html',
+            template:
+                '<ul class="list-unstyled" style="list-style: none; background-color: grey; height: auto; margin-bottom: 0">' +
+                    '<span style="color: white">' +
+                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/routes">Routes</a></li> ' +
+                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/stops">Stops</a></li>' +
+                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/favourites">Favourites</a></li>' +
+                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/nearby">Nearby</a></li>' +
+                    '</span>' +
+                '</ul>',
+
             controller: 'MainCtrl',
             controllerAs: 'main'
         })

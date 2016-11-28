@@ -3,7 +3,7 @@
 function aeMenuBar() {
 
     let aeMenuBar = {
-        templateUrl: 'views/menu-bar.html',
+        templateUrl: 'partials/menu-bar.html',
         scope: {
             title: '@',
             icon: '@',
@@ -16,7 +16,7 @@ function aeMenuBar() {
     return aeMenuBar;
 
     // function controller() {}
-    
+
     function link(scope, element, attrs) {
 
         angular.element(document).on('click', handleTouch);
@@ -44,7 +44,7 @@ function aeMenuBar() {
 function aeTallMenuBar() {
 
         let aeTallMenuBar = {
-            templateUrl: 'views/tall-menu-bar.html',
+            templateUrl: 'partials/tall-menu-bar.html',
             scope: {
                 title: '@',
                 titleHeading: '@'

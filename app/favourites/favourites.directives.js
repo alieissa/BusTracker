@@ -3,7 +3,7 @@
 function aeFaves(dBService) {
 
     let aeFaves = {
-        templateUrl: './views/faves.html',
+        templateUrl: 'partials/faves.html',
         controller: controller,
         controllerAs: 'faves',
         scope: true,

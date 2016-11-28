@@ -5,7 +5,7 @@ dBService.$inject = ['$q', 'DATABASE'];
 function dBService($q, DATABASE) {
 
 	let db;
-
+	
 	if(!window.isphone) {
 		db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 	}
@@ -91,6 +91,12 @@ function dBService($q, DATABASE) {
 
 		return defer.promise;
 	}
+
+
+	/*-------------------------------------------------------------------------
+	  Reads the stops of each route and for EVERY stop reads the stop
+	  information from the STOPS table using the stop NUMBER.
+	---------------------------------------------------------------------------*/
 
 	function getStops(route) {
 

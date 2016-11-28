@@ -34,8 +34,7 @@ function stopsService ($http, config, dBService) {
         return $http.post(url, data, headers).then(handleRes, handleErr);
 
         function handleRes(response) {
-            // console.log(response);
-            alert(response.status);
+
             let result = response.data.GetRouteSummaryForStopResult;
 
             if(result.Error !== '') {

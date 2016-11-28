@@ -71,14 +71,17 @@ function aeRoute(dBService) {
 function aeRouteDetails($location, $route, dBService) {
 
     let aeRouteDetails = {
-        template:  '<ae-tall-menu-bar icon="arrow_back" title={{route.title}} search=route.search></ae-tall-menu-bar>' +
-                  '<ae-stop ng-repeat="stop in route.routeDetails.stops | filter: {number: route.search}" ' +
-                    'data-stop="stop"></ae-stop>',
+        template:
+                '<ae-tall-menu-bar icon="arrow_back" title-heading="{{route.routeDetails.number}}" title={{route.routeDetails.name}} search=route.search>' +
+                '</ae-tall-menu-bar>' +
+                '<ae-stop ng-repeat="stop in route.routeDetails.stops | filter: {number: route.search}" data-stop="stop">' +
+                '</ae-stop>',
+                
         scope: {},
         bindToController: true,
         controller: controller,
         controllerAs: 'route',
-        link: link
+        // link: link
     };
 
     return aeRouteDetails;
@@ -91,16 +94,12 @@ function aeRouteDetails($location, $route, dBService) {
         let id = $route.current.params.id;
 
         // Get route details from database
-        dBService.getStops({id: id}).then((details) => {
-
-            vm.routeDetails = details;
-            vm.title = details.name;
-        });
+        dBService.getStops({id: id}).then((details) => vm.routeDetails = details);
     }
 
-    function link(scope, element, attrs) {
-
-    }
+    // function link(scope, element, attrs) {
+    //
+    // }
 }
 
 function aeRouteTripsCard(dBService) {
