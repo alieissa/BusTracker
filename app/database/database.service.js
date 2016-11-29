@@ -5,7 +5,7 @@ dBService.$inject = ['$q', 'DATABASE'];
 function dBService($q, DATABASE) {
 
 	let db;
-	
+
 	if(!window.isphone) {
 		db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 	}
@@ -113,9 +113,16 @@ function dBService($q, DATABASE) {
 			let stops = [];
             let _stops = data.stops.split('\t');
 
-            // stops number and name are both in a long space separated string
-            _stops.forEach((stop) => {
-				let number =  stop.split(' ')[0];
+			// Get stop number from each stop name stop number string.
+			// No duplicate values
+			// TODO. Fix this in source data
+			let uniqueStopNumbers = new Set(_stops.map(stop => parseInt(stop.split(' ')[0])));
+
+			// Must convert to array in order to sort
+			let orderedStopNumbers = [...uniqueStopNumbers].sort();
+
+            // Get stop data fro every stop
+            orderedStopNumbers.forEach((number) => {
 				get('stops', {number: number}).then((result) => stops.push(result[0]));
             });
 

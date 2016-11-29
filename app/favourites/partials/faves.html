@@ -11,9 +11,9 @@
     </ul>
 </div>
 
-<div id='routes-tab-content' >
+<div id='routes-tab-content' class="ae-tabs-content">
     <ae-route  ng-repeat="route in faves.routes" data-route="route" ng-show="route.favourite"></ae-route>
 </div>
-<div id='stops-tab-content' style="display: none">
+<div id='stops-tab-content' class="ae-tabs-content" style="display: none">
     <ae-stop ng-repeat="stop in faves.stops" data-stop="stop" ng-show="stop.favourite"></ae-stop>
 </div>

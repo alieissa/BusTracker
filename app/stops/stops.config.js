@@ -9,9 +9,9 @@ function stopsConfig($routeProvider) {
         .when('/stops', {
             template: '<ae-stops></ae-stops>',
         })
-        
+
         // Show next 3 next trips for all routes serving stop number 'stopNo'
-        .when('/stops/:stopNo', {
+        .when('/stops/:code', {
             template: '<ae-stop-next-trips></ae-stop-next-trips>'
         });
 }

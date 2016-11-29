@@ -2,7 +2,7 @@
 
 aeStop.inject = ['dBService'];
 aeStops.inject = ['dBService'];
-aeStopNextTrips.inject = ['$route', 'dBService', 'stopsService'];
+aeStopNextTrips.inject = ['$route', 'dBService', 'OCService '];
 
 function aeStops(dBService) {
 
@@ -80,7 +80,7 @@ function aeStop(dBService) {
         function handleStarTouch() {
 
             let _favourite = scope.stop.favourite === 0 ? 1 : 0;
-            dBService.set('stops', {favourite:_favourite}, {number: scope.stop.number}).then(updateStop);
+            dBService.set('stops', {favourite:_favourite}, {code: scope.stop.code}).then(updateStop);
         }
 
         function updateStop(result) {
@@ -95,7 +95,7 @@ function aeStop(dBService) {
     }
 }
 
-function aeStopNextTrips($route, dBService, stopsService) {
+function aeStopNextTrips($location, $route, dBService, OCService ) {
 
     let aeStopNextTrips = {
         template:
@@ -115,13 +115,16 @@ function aeStopNextTrips($route, dBService, stopsService) {
         let vm = this;
 
         // stop number from the URL
-        let stopNo = $route.current.params.stopNo;
+        let code = $route.current.params.code;
+        let number = ($location.search()).number
+        console.log(code)
+        console.log($location.search());
 
         // Get stop information from database in an array
-        dBService.get('stops', {number: stopNo}).then((stop) => vm.stop = stop[0]);
+        dBService.get('stops', {code: code}).then((stop) => vm.stop = stop[0]);
 
         // Get next 3 trips for routes serving stop
-        stopsService.getNextTrips(stopNo).then((result) => {
+        OCService.getNextTrips(number).then((result) => {
 
             // An error field is always present in trip information
             vm.error = result.error;

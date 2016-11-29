@@ -18,6 +18,10 @@ export class Parser {
 
     };
 
+    if(!Array.isArray(parseData.Routes)) {
+        parseData.Routes = [parseData.Routes]
+    }
+    
     parseData.Routes.forEach((route, index, self) => {
       if(Array.isArray(route.Trips)) {
         return;
