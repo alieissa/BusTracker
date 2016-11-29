@@ -17,11 +17,15 @@ export class Parser {
       "StopNo": data.StopNo
 
     };
+    
+    if(typeof parseData.Routes === 'undefined') {
+        return [];
+    }
 
     if(!Array.isArray(parseData.Routes)) {
         parseData.Routes = [parseData.Routes]
     }
-    
+
     parseData.Routes.forEach((route, index, self) => {
       if(Array.isArray(route.Trips)) {
         return;

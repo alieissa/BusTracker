@@ -99,8 +99,11 @@ function aeStopNextTrips($location, $route, dBService, OCService ) {
 
     let aeStopNextTrips = {
         template:
-            '<ae-tall-menu-bar title-heading="{{stopNextTrips.stop.number}}" title={{stopNextTrips.stop.name}} icon="arrow_back"></ae-tall-menu-bar>' +
-            '<ae-route-trips-card ng-repeat="route in stopNextTrips.routes" data-route="route" trips="route.Trips"></ae-route-trips-card>',
+            '<ae-tall-menu-bar title-heading="{{stopNextTrips.stop.number}}" title={{stopNextTrips.stop.name}} icon="arrow_back">' +
+            '</ae-tall-menu-bar>' +
+            '<ae-route-trips-card ng-repeat="route in stopNextTrips.routes" data-route="route" trips="route.Trips">' +
+            '</ae-route-trips-card>' +
+            '<div ng-show="stopNextTrips.routes.length === 0"> No trips scheduled for this stop</div>',
 
         scope: {},
         controller: controller,

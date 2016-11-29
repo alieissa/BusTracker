@@ -38,7 +38,6 @@ function OCService ($http, config) {
 
             // Deep clone result
             let result = JSON.parse(JSON.stringify(getRouteSummaryForStopResult));
-            console.log(result);
             if(result.Error !== '') {
                 return result;
             }
