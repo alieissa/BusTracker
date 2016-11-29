@@ -1,4 +1,4 @@
-export class OCData {
+export class Parser {
 
   static readable(duration) {
     let hour = Math.floor(duration / 60);
@@ -30,9 +30,9 @@ export class OCData {
       }
     });
 
-    parseData.Routes = OCData.sortRoutesByTrips(parseData.Routes);
+    parseData.Routes = Parser.sortRoutesByTrips(parseData.Routes);
 
-    return parseData;
+    return parseData.Routes;
   }
 
   static sortRoutesByTrips(routes) {

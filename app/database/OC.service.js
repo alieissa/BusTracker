@@ -8,18 +8,17 @@
  * Factory in the busTrackerApp.
  */
 
-// import {OCData} from '../../util/OCData.js';
+import {Parser} from './Parser.js';
 
-stopsService.$inject = ['$http', 'config', 'dBService'];
+OCService.$inject = ['$http', 'config'];
 
-function stopsService ($http, config, dBService) {
+function OCService ($http, config) {
 
-
-    let Stops = {
+    let OC = {
         getNextTrips: getNextTrips
     }
 
-    return Stops;
+    return OC;
 
     /*-------------------Factory function definitions-------------------------*/
 
@@ -30,22 +29,21 @@ function stopsService ($http, config, dBService) {
         const headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}}; // Content-Type must be x-www-form-urlencoded.
         const url = `${baseUrl}/GetNextTripsForStopAllRoutes`;
         const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
-        console.log(url + "?" +data)
+
         return $http.post(url, data, headers).then(handleRes, handleErr);
 
         function handleRes(response) {
 
-            let result = response.data.GetRouteSummaryForStopResult;
+            let getRouteSummaryForStopResult = response.data.GetRouteSummaryForStopResult;
 
+            // Deep clone result
+            let result = JSON.parse(JSON.stringify(getRouteSummaryForStopResult));
+            console.log(result);
             if(result.Error !== '') {
                 return result;
             }
 
-            let _routes = parseRoutes(result.Routes);
-            _routes.forEach((route) => {
-                route.Trips = parseTrips(route.Trips);
-            });
-
+            let _routes = Parser.parseRoutes(result);
             return {'error': result.Error, 'routes': _routes};
         }
     }
@@ -55,34 +53,4 @@ function stopsService ($http, config, dBService) {
     }
 }
 
-function parseTrips(trips) {
-
-    let _trips;
-    if(typeof trips === 'undefined') {
-        _trips = [];
-    }
-    else if(typeof trips.Trip !== 'undefined') {
-        _trips = [trips.Trips];
-    }
-    else {
-        _trips = trips;
-    }
-
-    return _trips;
-}
-
-function parseRoutes(routes) {
-
-    let _routes;
-    if(typeof routes.Route !== 'undefined') {
-
-        // if route.Route is not an array return it as an array, else return as is
-        _routes = Array.isArray(routes.Route) ? routes.Route : [routes.Route];
-    }
-    else {
-        _routes = routes;
-    }
-
-    return _routes;
-}
-export {stopsService};
+export {OCService};
