@@ -28,7 +28,18 @@ angular.module('busTrackerApp', [
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
     .controller('MainCtrl', MainCtrl);
 
-function config($routeProvider, $httpProvider) {
+function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvider) {
+
+    dBServiceProvider.setDB(window.db);
+
+    OCServiceProvider.setHttpOptions({
+        url: window.url,
+        appId: window._env.OC.APP_ID,
+        apiKey: window._env.OC.API_KEY,
+        httpConfig: {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded'}
+        }
+    });
 
     $routeProvider
         .when('/', {
@@ -43,14 +54,19 @@ function config($routeProvider, $httpProvider) {
                 '</ul>',
 
             controller: 'MainCtrl',
-            controllerAs: 'main'
+            controllerAs: 'main',
+            resolve: {
+                routes: (dBService) => dBService.get('routes'),
+                stops: (dBService) => dBService.get('stops')
+            }
         })
         // .otherwise({
         //     redirectTo: '/'
         // });
 }
 
-function MainCtrl($rootScope) {
+MainCtrl.inject = ['$rootScope', 'stops', 'routes']
+function MainCtrl($rootScope, routes, stops) {
 
     $rootScope.$on('$routeChangeError', (event, prev, next) => {
         console.log(`Unable to reach ${next}`);
