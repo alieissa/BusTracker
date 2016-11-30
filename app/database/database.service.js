@@ -1,65 +1,44 @@
 'use strict';
 
-dBService.$inject = ['$q', 'DATABASE'];
-
-function dBService($q, DATABASE) {
+function dBService() {
 
 	let db;
+	let $q;
 
-	if(!window.isphone) {
-		db = openDatabase(DATABASE, '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
-	}
-	else {
-		let handleDb = (dbb) => {
-			alert('Opened db using sqlite plugin');
-		}
+	let setDB = db_ => db = db_;
 
-		let handleErr = (err) => {
-			alert("Sqlite plugin can't open db " + JSON.stringify(err));
-		}
+	let $get = (_$q_) => {
+		$q = _$q_;
+		return {get, set, getStops}
+	};
 
-		let options = {name: "octranspo.db", location: 0};
-		db = window.sqlitePlugin.openDatabase(options, handleDb, handleErr);
-	}
-
-	let DB = { get, set, getStops };
-	return DB;
+	return {$get, setDB};
 
 	/*-------------------Factory function definitions-------------------------*/
 
 	function get(table, filter) {
 
 		let defer = $q.defer();
-		db.transaction(handleTx, handleErr);
 
-		/*-------------------------------------------------------
-			Note: Can not insert table name using ? replacement.
-			This is true for most SQL
-		----------------------------------------------------------*/
+		db.transaction(handleTx, _handleErr);
 
 		function handleTx(tx) {
 
 			if(typeof filter === 'undefined') {
-				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, handleErr);
+				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, _handleErr);
 			}
 			else {
 
 				let [key] = Object.keys(filter);
 				let value = filter[key];
 
-				tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes, handleErr);
+				tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes, _handleErr);
 			}
 		}
 
 		function handleRes(tx, result) {
 			return defer.resolve(parseRes(result));
 		}
-
-		function handleErr(tx, err) {
-			console.log(err);
-			return defer.reject(err);
-		}
-
 		return defer.promise;
 	}
 
@@ -74,19 +53,14 @@ function dBService($q, DATABASE) {
 
 		let defer = $q.defer();
 
-		db.transaction(handleTx, handleErr);
+		db.transaction(handleTx, _handleErr);
 
 		function handleTx(tx, result) {
-			tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`, [setValue, filterValue], handleRes, handleErr);
+			tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`, [setValue, filterValue], handleRes, _handleErr);
 		}
 
 		function handleRes(tx, result) {
 			return	defer.resolve(result.rows);
-		}
-
-		function handleErr(tx, err) {
-			console.log(err);
-			 return defer.reject(err);
 		}
 
 		return defer.promise;
@@ -101,10 +75,10 @@ function dBService($q, DATABASE) {
 	function getStops(route) {
 
         let defer = $q.defer();
-        db.transaction(handleTx, handleErr);
+        db.transaction(handleTx, _handleErr);
 
         function handleTx(tx) {
-          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, handleErr);
+          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, _handleErr);
         }
 
         function handleRes(tx, result) {
@@ -131,13 +105,12 @@ function dBService($q, DATABASE) {
             return defer.resolve(data);
         }
 
-        function handleErr(tx, error) {
-          console.log(error);
-          return defer.reject(error);
-        }
-
         return defer.promise;
     }
+}
+
+function _handleErr(tx, err) {
+	 return defer.reject(err);
 }
 
 function parseRes(result) {
