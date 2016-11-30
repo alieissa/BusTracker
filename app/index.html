@@ -33,58 +33,56 @@
         <script src="env.js"></script>
         <script src="app.js"></script>
         <script type="text/javascript">
+            var options = {}
 
 			var _handleSuccess = function() {
-				bootstrapApp();
+                options = {name: "octranspo.db", location: 0};
+                window.db = window.sqlitePlugin.openDatabase(options, bootstrapApp, (err) => alert(JSON.stringify(err)));
                 return;
 			}
 
 			var _handleErr = function (err) {
-
                 alert("Error Code = "+ JSON.stringify(err));
-
 				//db already exists or problem in copying the db file. Check the Log.
-				if(err.code === 516) {
-					bootstrapApp();
-				}
+				if(err.code === 516) _handleSuccess();
 				return;
-			}
-
-	        function bootstrapApp() {
-	        	var element = document.getElementsByTagName('body')[0];
-	           	angular.bootstrap(element, ["busTrackerApp"]);
-
-                return;
-	        }
-
-	        function copyDb() {
-
-	        	window.plugins.sqlDB.remove("octranspo.db", 0, function() {
-	        		window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
-			      },function(err) {
-			      	alert("Error when trying to remove db " + JSON.stringify(err));
-			      	window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
-			      });
-
-                  return;
 			}
 
 			$('document').ready(function() {
 
-				window.isphone = false;
-			    if(document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
-			        window.isphone = true;
-			    }
+				isphone = document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1;
+				// window.isphone = false;
+			    if(isphone) {
+                    window.url =  'https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes';
+                    document.addEventListener("deviceready", copyDb, false);
 
-	            if(window.isphone) {
-	            	 document.addEventListener("deviceready", copyDb, false);
-	            }
+			    }
 	            else {
+                    window.url =  'http://localhost:3000/v1.2/GetNextTripsForStopAllRoutes';
+                    window.db = openDatabase('octranspo', '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
 	                bootstrapApp();
 	            }
 
                 return;
 		    });
+
+            function bootstrapApp() {
+                var element = document.getElementsByTagName('body')[0];
+                angular.bootstrap(element, ["busTrackerApp"]);
+                return;
+            }
+
+            function copyDb() {
+
+                window.plugins.sqlDB.remove("octranspo.db", 0, function() {
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  },function(err) {
+                    alert("Error when trying to remove db " + JSON.stringify(err));
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  });
+
+                  return;
+            }
         </script>
     </body>
 </html>
