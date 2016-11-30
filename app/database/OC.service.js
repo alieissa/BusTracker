@@ -10,45 +10,47 @@
 
 import {Parser} from './Parser.js';
 
-OCService.$inject = ['$http', 'config'];
+// OCService.$inject = [];
 
-function OCService ($http, config) {
+function OCService () {
 
-    let OC = {
-        getNextTrips: getNextTrips
-    }
+    //Injections
+    let $http;
 
-    return OC;
+    // settings
+    let url, data, appId, apiKey;
+    let httpConfig  = {}
 
+    let setHttpOptions = (options) => {
+        ({url, appId, apiKey, httpConfig} = options )
+    };
+
+    let get = (_$http_, _config_) => {
+       $http = _$http_;
+       return {getNextTrips};
+    };
+
+    return {setHttpOptions: setHttpOptions, $get: get}
     /*-------------------Factory function definitions-------------------------*/
+    // let $get = ['$http', 'config', function($http, config) {return {getNextTrips: getNextTrips}}];
 
     function getNextTrips(stopNo) {
 
-        const baseUrl = window.isphone ? 'https://api.octranspo1.com/v1.2': 'http://localhost:3000/v1.2'
-        const OCCONFIG = window._env.OC;
-        const headers = {headers: { 'Content-Type': 'application/x-www-form-urlencoded'}}; // Content-Type must be x-www-form-urlencoded.
-        const url = `${baseUrl}/GetNextTripsForStopAllRoutes`;
-        const data = `appID=${OCCONFIG.APP_ID}&apiKey=${OCCONFIG.API_KEY}&stopNo=${stopNo}&format=json`;
+        data = `appID=${appId}&apiKey=${apiKey}&stopNo=${stopNo}&format=json`;
 
-        return $http.post(url, data, headers).then(handleRes, handleErr);
+        return $http.post(url, data, httpConfig)
+            .then(handleRes, (err) => alert(`Unable to call ${url}`));
 
         function handleRes(response) {
 
             let getRouteSummaryForStopResult = response.data.GetRouteSummaryForStopResult;
-
-            // Deep clone result
             let result = JSON.parse(JSON.stringify(getRouteSummaryForStopResult));
             if(result.Error !== '') {
                 return result;
             }
-
             let _routes = Parser.parseRoutes(result);
             return {'error': result.Error, 'routes': _routes};
         }
-    }
-
-    function handleErr() {
-        alert('Unable to call ' + url);
     }
 }
 
