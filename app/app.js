@@ -65,8 +65,11 @@ function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvi
         // });
 }
 
-MainCtrl.inject = ['$rootScope', 'stops', 'routes']
-function MainCtrl($rootScope, routes, stops) {
+MainCtrl.inject = ['$rootScope', 'dataService', 'stops', 'routes']
+function MainCtrl($rootScope, dataService, routes, stops) {
+
+    dataService.setStopsDataset(stops);
+    dataService.setRoutesDataset(routes);
 
     $rootScope.$on('$routeChangeError', (event, prev, next) => {
         console.log(`Unable to reach ${next}`);
