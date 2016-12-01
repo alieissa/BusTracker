@@ -10,6 +10,8 @@ export class Parser {
 
   static parseRoutes(data) {
 
+    // {Error_, Routes, StopDescription, StopNo} = data;
+
     let parseData = {
       "Error":data.Error,
       "Routes": data.Routes.Route,
@@ -17,7 +19,11 @@ export class Parser {
       "StopNo": data.StopNo
 
     };
-    
+
+    if(data.Error !== '') {
+        return data;
+    }
+
     if(typeof parseData.Routes === 'undefined') {
         return [];
     }
