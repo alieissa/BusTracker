@@ -1,5 +1,3 @@
-// Karma configuration
-// Generated on 2016-09-26
 
 module.exports = function(config) {
   'use strict';
@@ -7,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    // autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
     basePath: '../',
@@ -21,7 +19,6 @@ module.exports = function(config) {
     // Order of file loading is important
     files: [
 
-      // Libraries
       'assets/lib/jquery/dist/jquery.js',
       'assets/lib/angular/angular.js',
       'assets/lib/angular-route/angular-route.js',
@@ -30,37 +27,21 @@ module.exports = function(config) {
       // My Code
       'dist/app.js',
       'test/constants.js',
-      'test/spec/database/*.js',
-      'test/spec/favourites/*.js',
-      'test/spec/routes/routes.directives.js',
-      'test/spec/stops/stops.directives.js',
 
-        // Templates
+      'test/spec/routes/aeRoutes.directive.spec.js',
+      'test/spec/routes/aeRoute.directive.spec.js',
+      'test/spec/routes/aeRouteDetails.directive.spec.js',
+      'test/spec/routes/aeRouteTripsCard.directive.spec.js',
+    //   'test/spec/stops/stops.directives.js',
+
         'dist/**/*.html',
     ],
-
     // generate js files from html templates
-    preprocessors: {
-        'dist/views/*.html': 'ng-html2js'
-    },
-
-    ngHtml2JsPreprocessor: {
-      // strip this from the file path
-      stripPrefix: 'dist/',
-      stripSuffix: '.ext'
-    },
-
-    // list of files / patterns to exclude
-    exclude: [
-    ],
-
+    preprocessors: { 'dist/partials/*.html': 'ng-html2js'},
+    ngHtml2JsPreprocessor: { stripPrefix: 'dist/', stripSuffix: '.ext'},
+    exclude: [],
     port: 8080,
-    browsers: [
-
-        'Chrome',
-        // 'PhantomJS'
-    ],
-
+    browsers: ['Chrome'],
     plugins: [
       'karma-jasmine',
       'karma-mocha-reporter',
@@ -68,7 +49,6 @@ module.exports = function(config) {
       'karma-chrome-launcher',
       'karma-ng-html2js-preprocessor'
     ],
-
 
     // Continuous Integration mode
     singleRun: false,

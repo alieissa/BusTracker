@@ -47,10 +47,10 @@ function dist(done) {
 			cpDirFiles(path.join(__dirname, 'env.js'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
 			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/favourites/partials/*'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/util/views/*'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/stops/views/*'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/routes/views/*'), path.join(__dirname, 'dist/views'));
+			cpDirFiles(path.join(__dirname, 'app/favourites/partials/*'), path.join(__dirname, 'dist/partials'));
+			cpDirFiles(path.join(__dirname, 'app/util/partials/*'), path.join(__dirname, 'dist/partials'));
+			cpDirFiles(path.join(__dirname, 'app/stops/partials/*'), path.join(__dirname, 'dist/partials'));
+			cpDirFiles(path.join(__dirname, 'app/routes/partials/*'), path.join(__dirname, 'dist/partials'));
 			cpDirFiles(path.join(__dirname, 'app/database/*.db'), path.join(__dirname, 'dist/database'));
 			cpDirFiles(path.join(__dirname, 'assets/css/*'), path.join(__dirname, 'dist/assets/css'));
 

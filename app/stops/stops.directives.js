@@ -134,6 +134,7 @@ function aeStopNextTrips($location, $route, dBService, OCService ) {
 
             // Array of routes with each route containing array of 3 trips
             vm.routes = result.routes;
+            console.log(vm.routes);
         })
     }
 

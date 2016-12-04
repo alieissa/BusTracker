@@ -26,16 +26,20 @@ angular.module('busTrackerApp', [
     ])
     .config(config)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
+    .constant("OC", {
+        APP_ID: "c618159f",
+        API_KEY: "77207661c5c94208c33fb2357efc7012"
+    })
     .controller('MainCtrl', MainCtrl);
 
-function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvider) {
+function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvider, OC) {
 
     dBServiceProvider.setDB(window.db);
 
     OCServiceProvider.setHttpOptions({
         url: window.url,
-        appId: window._env.OC.APP_ID,
-        apiKey: window._env.OC.API_KEY,
+        appId: OC.APP_ID,
+        apiKey: OC.API_KEY,
         httpConfig: {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded'}
         }
