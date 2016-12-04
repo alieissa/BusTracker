@@ -16,7 +16,10 @@ function dataService(dBService) {
     };
 
     function getRoutes(fields = routeFields, selector = route => true) {
-        return routes.filter(selector).map(route => getFields(fields, route));
+
+        return dBService.get('routes').then(routes => {
+            return routes.filter(selector).map(route => getFields(fields, route));
+        });
     }
 
     function getStops(fields = stopFields, selector = stop => true) {
@@ -45,9 +48,10 @@ function dataService(dBService) {
 
         return stops_;
     }
+    let data = {getStops,  getStops, getRoutes, setRoutes,
+        setStopsDataset, setRoutesDataset, stops, routes}
 
-    return { getStops,  getStops, getRoutes, setRoutes,
-        setStopsDataset, setRoutesDataset };
+    return data;
 
 }
 
