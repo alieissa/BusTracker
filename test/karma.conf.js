@@ -32,9 +32,10 @@ module.exports = function(config) {
       'test/spec/routes/aeRoute.directive.spec.js',
       'test/spec/routes/aeRouteDetails.directive.spec.js',
       'test/spec/routes/aeRouteTripsCard.directive.spec.js',
-    //   'test/spec/stops/stops.directives.js',
+      'test/spec/stops/aeStop.directive.spec.js',
+      'test/spec/stops/aeStops.directive.spec.js',
 
-        'dist/**/*.html',
+        'dist/**/*.html'
     ],
     // generate js files from html templates
     preprocessors: { 'dist/partials/*.html': 'ng-html2js'},
