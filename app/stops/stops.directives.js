@@ -1,101 +1,8 @@
 'use strict';
 
-aeStop.inject = ['dBService'];
-aeStops.inject = ['dBService'];
-aeStopNextTrips.inject = ['$route', 'dBService', 'OCService '];
+aeStopNextTrips.$inject = ['$location', '$route', 'dBService', 'OCService'];
 
-function aeStops(dBService) {
-
-    let aeStops = {
-        template:
-            '<ae-menu-bar icon="menu" title="Stops" search="stops.search"></ae-menu-bar>' +
-            '<ae-stop ng-repeat="stop in stops.stops  | limitTo: stops.displayLimit | filter: {number: stops.search}" track by stop.number ' +
-            'data-stop="stop"></ae-stop>',
-
-        scope: {},
-        controller: controller,
-        bindToController: true,
-        controllerAs: 'stops',
-        link: link
-    };
-
-    return aeStops;
-
-    function controller($scope, $window) {
-
-        let vm = this;
-
-        // Number of stops to display
-        vm.displayLimit = 90;
-
-        // Get all stops
-        dBService.get('stops').then((stops) => vm.stops = stops);
-
-        // Look for user scrolling
-        angular.element($window).scroll(handleScroll);
-
-        // When user scrolls increase displayed stops by 10
-        function handleScroll() {
-
-            if(vm.displayLimit > vm.stops.length) {
-                return;
-            }
-            vm.displayLimit = vm.displayLimit + 10;
-            // I know, tried very hard to get rid of $scope
-            $scope.$apply();
-        }
-    }
-
-    function link(scope, element, attrs) {
-        // angular.element(window).scroll(() => {
-        //     scope.stops.limit = scope.stops.limit + 50;
-        //     console.log(scope.stops.limit);
-        //     console.log('Scrolling');
-        // });
-    }
-}
-
-function aeStop(dBService) {
-
-    let aeStop = {
-        templateUrl: 'partials/stop.directive.html',
-        scope: {
-            stop: '='
-        },
-        // controller: controller,
-        controllerAs: 'stop',
-        link: link
-    }
-
-    return aeStop;
-
-    // function controller() {}
-
-    function link(scope, element, attrs) {
-
-        let star = element.find('i.star');
-
-        star.on('click', handleStarTouch);
-
-        function handleStarTouch() {
-
-            let _favourite = scope.stop.favourite === 0 ? 1 : 0;
-            dBService.set('stops', {favourite:_favourite}, {code: scope.stop.code}).then(updateStop);
-        }
-
-        function updateStop(result) {
-
-            // toggle favourite status
-            scope.stop.favourite = scope.stop.favourite === 0 ? 1 : 0;
-
-            // Set the favourite status indicator
-            let starType = scope.stop.favourite === 0 ? 'star_border' : 'star';
-            star.text(starType);
-        }
-    }
-}
-
-function aeStopNextTrips($location, $route, dBService, OCService ) {
+function aeStopNextTrips() {
 
     let aeStopNextTrips = {
         template:
@@ -113,7 +20,7 @@ function aeStopNextTrips($location, $route, dBService, OCService ) {
 
     return aeStopNextTrips;
 
-    function controller() {
+    function controller($location, $route, dBService, OCService) {
 
         let vm = this;
 
@@ -150,4 +57,4 @@ function nextTripsError() {
     return nextTripsError;
 }
 
-export {aeStop, aeStops, aeStopNextTrips, nextTripsError};
+export {aeStopNextTrips, nextTripsError};

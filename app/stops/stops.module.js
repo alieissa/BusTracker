@@ -2,7 +2,9 @@
 
 import {stopsConfig} from './stops.config.js';
 import {nextTrips} from './stops.directives.js';
-import {aeStop, aeStops, aeStopNextTrips, nextTripsError} from './stops.directives.js';
+import {aeStopNextTrips, nextTripsError} from './stops.directives.js';
+import {aeStop} from './aeStop.directive.js';
+import {aeStops} from './aeStops.directive.js';
 
 angular.module('stopsMod', [])
     .config(stopsConfig)
