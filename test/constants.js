@@ -4,6 +4,30 @@ var STOPS_LIST = [{ "name":"Jockvale & Abetti","number":274,"code":"WA874",
    {"name":"Marconi & Shirley's Brook","number":275,"code":"WM527",
        "lat":45.356106,"lon":-75.922829,"type":0,"favourite":0
 }];
+var ROUTE_TRIPS = [
+    {
+        "RouteNo":107,
+        "DirectionID":1,
+        "Direction":"Southbound",
+        "RouteHeading":"South Keys",
+        "Trips":[
+            {   "TripDestination":"South Keys",
+                "TripStartTime":"07:30",
+                "AdjustedScheduleTime":"223",
+                "AdjustmentAge":"-1",
+                "LastTripOfSchedule":false,
+                "BusType":"","Latitude":"",
+                "Longitude":"","GPSSpeed":""
+            }
+        ]
+    },
+    {   "RouteNo":104,
+        "DirectionID":0,
+        "Direction":"Eastbound",
+        "RouteHeading":"Place d'Orléans",
+        "Trips":[]
+    }
+];
 
 var ROUTES_LIST = [{
     "name":"Ottawa-Rockcliffe",

@@ -1,41 +1,73 @@
-describe('Directive: <ae-route></ae-route>', function() {
+'use strict';
 
-    let $compile, $scope;
-    let aeRoute, anchor, icon;
+describe('Directive: <ae-route-trips-card></ae-route-trips-card>', function() {
 
-    let _inject = (_$compile_,  _$q_, _$rootScope_, _dBService_) => {
+    let $scope;
+    let aeRouteTripsCard, tripTimes, listItems, RouteHeading, icons;
+
+    let _inject = (_$compile_, _$rootScope_, _dBService_) => {
 
         $scope = _$rootScope_.$new();
-        $scope.route = {name: "Ottawa-Rockliffe", number: "1", id: 4, favourite: 1};
+        $scope.trips = ROUTE_TRIPS[0].Trips;
+        $scope.route = {
+            "RouteNo":107,
+            "DirectionID":1,
+            "Direction":"Southbound",
+            "RouteHeading":"South Keys"
+        }
 
-        aeRoute = _$compile_(angular.element('<ae-route-trips-card data-route="route"></ae-route-trips-card>'))($scope);
+        let template = angular.element('<ae-route-trips-card route="route" trips="trips"></ae-route-trips-card>');
+        aeRouteTripsCard = _$compile_(template)($scope);
         $scope.$digest();
 
-        anchor = angular.element(aeRoute).find('a');
-        icon = angular.element(aeRoute).find('i');
+        listItems = angular.element(aeRouteTripsCard).find('li');
+        icons = angular.element(aeRouteTripsCard).find('i');
     };
 
     beforeEach(module('busTrackerApp'));
     beforeEach(module('partials/route-trips-card.html'));
     beforeEach(inject(_inject));
 
-    it('$scope.route.favourite = 1 should set icon text to  star', () => {
-        expect(icon.text()).toEqual('star')
+    it('Should create 3 icons', () => {
+        expect(icons.length).toEqual(3);
     });
 
-    it('$scope.route.favourite = 0 should re-set icon text to star_border', () => {
+    it('Should create 3 trip time li elements', () => {
 
-        $scope.route.favourite = 0;
-        $scope.$apply();
+        let triplistItemsLength = 0;
+        listItems.each(function() {
+            if($(this).hasClass('trip')) {
+                triplistItemsLength += 1;
+            }
+        });
 
-        expect(icon.text()).toEqual('star_border');
+        expect(triplistItemsLength).toEqual(3)
     });
 
-    it('Should set anchor text to "route.number route.name"', () => {
-        expect(anchor.text()).toEqual(`${$scope.route.number} ${$scope.route.name}`);
+
+    it('Should set trip card text block to "route.number route.name"', () => {
+
+        listItems.each(function() {
+            if($(this).hasClass('route-heading')) {
+                expect($(this).text()).toEqual(`${$scope.route.RouteNo} ${$scope.route.RouteHeading}`);
+            }
+        });
     });
 
-    it('Should set route detail link to /routes/4?name="Ottawa-Rockliffe"', () => {
-        expect(anchor.attr('href')).toEqual(`#/routes/${$scope.route.id}?name=${$scope.route.name}`);
+    it('Should no show any times for when no trips scheduled', () => {
+
+        let hiddenTripTimesLiength = 0;
+
+        $scope.route = ROUTE_TRIPS[1];
+        $scope.trips = [];
+        $scope.$digest();
+
+        listItems.each(function() {
+            if($(this).hasClass('ng-hide') && $(this).hasClass('trip')) {
+                hiddenTripTimesLiength += 1;
+            }
+        });
+
+        expect(hiddenTripTimesLiength).toEqual(3);
     });
 })
