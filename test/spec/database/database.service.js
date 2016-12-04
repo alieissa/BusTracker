@@ -22,24 +22,24 @@ describe('Service: dBService', function() {
         expect(typeof dBService.getStops).toBe('function');
     });
 
-    describe('dBService.get', function() {
-
-        it('Should return all routes');
-        it('Should return all stops');
-        it('Should return all fave routes');
-        it('Should return all fave stops');
-        it('Should return specific route details');
-        it('Should return specific stop details');
-
-    });
-
-    describe('dBService.set', function() {
-
-        it('Should set route favourite status to new value');
-        it('Should set stop favourite status to new value');
-    });
-
-    describe('dBService.getStops', function() {
-        it('Should return all stops for specific route');
-    });
+    // describe('dBService.get', function() {
+    //
+    //     it('Should return all routes');
+    //     it('Should return all stops');
+    //     it('Should return all fave routes');
+    //     it('Should return all fave stops');
+    //     it('Should return specific route details');
+    //     it('Should return specific stop details');
+    //
+    // });
+    //
+    // describe('dBService.set', function() {
+    //
+    //     it('Should set route favourite status to new value');
+    //     it('Should set stop favourite status to new value');
+    // });
+    //
+    // describe('dBService.getStops', function() {
+    //     it('Should return all stops for specific route');
+    // });
 });
