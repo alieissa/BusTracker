@@ -20,19 +20,19 @@ function dBService() {
 
 		let defer = $q.defer();
 
-		db.transaction(handleTx, _handleErr);
+		db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err)});
 
 		function handleTx(tx) {
 
 			if(typeof filter === 'undefined') {
-				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes, _handleErr);
+				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes,(tx, err) => {console.log(err); defer.reject(err)});
 			}
 			else {
 
 				let [key] = Object.keys(filter);
 				let value = filter[key];
 
-				tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes, _handleErr);
+				tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes,(tx, err) => {console.log(err); defer.reject(err)});
 			}
 		}
 
@@ -53,10 +53,10 @@ function dBService() {
 
 		let defer = $q.defer();
 
-		db.transaction(handleTx, _handleErr);
+		db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err)});
 
 		function handleTx(tx, result) {
-			tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`, [setValue, filterValue], handleRes, _handleErr);
+			tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`, [setValue, filterValue], handleRes,(tx, err) => {console.log(err); defer.reject(err)});
 		}
 
 		function handleRes(tx, result) {
@@ -75,10 +75,10 @@ function dBService() {
 	function getStops(route) {
 
         let defer = $q.defer();
-        db.transaction(handleTx, _handleErr);
+        db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err)});
 
         function handleTx(tx) {
-          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, _handleErr);
+          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, (tx, err) => {console.log(err); defer.reject(err)});
         }
 
         function handleRes(tx, result) {
