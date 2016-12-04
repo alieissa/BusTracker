@@ -1,4 +1,4 @@
-aeRoute.inject = ['dBService'];
+aeRoute.$inject = ['dBService'];
 
 function aeRoute(dBService) {
 

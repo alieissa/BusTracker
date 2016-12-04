@@ -1,6 +1,6 @@
 'use strict';
 
-aeRouteTripsCard.inject = ['dBService'];
+aeRouteTripsCard.$inject = ['dBService'];
 
 function aeRouteTripsCard(dBService) {
 

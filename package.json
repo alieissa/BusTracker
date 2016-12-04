@@ -34,6 +34,7 @@
     "phantomjs": "^2.1.7",
     "request": "^2.78.0",
     "shelljs": "^0.7.5",
+    "sqlite": "^2.2.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

@@ -1,5 +1,5 @@
-aeRouteDetails.inject = ['$location', '$route', 'dBService'];
-aeRouteDetailsCtrl.inject = ['$routeParams', 'dBService'];
+aeRouteDetails.$inject = ['$location', '$route', 'dBService'];
+aeRouteDetailsCtrl.$inject = ['$routeParams', 'dBService'];
 
 function aeRouteDetails($location, $route, dBService) {
 
