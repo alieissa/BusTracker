@@ -8,7 +8,7 @@ describe('Directive: <ae-route></ae-route>', function() {
         $scope = _$rootScope_.$new();
         $scope.route = {name: "Ottawa-Rockliffe", number: "1", id: 4, favourite: 1};
 
-        aeRoute = _$compile_(angular.element('<ae-route data-route="route"></ae-route>'))($scope);
+        aeRoute = _$compile_(angular.element('<ae-route-trips-card data-route="route"></ae-route-trips-card>'))($scope);
         $scope.$digest();
 
         anchor = angular.element(aeRoute).find('a');
