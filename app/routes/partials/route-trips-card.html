@@ -2,15 +2,14 @@
     <div class="trip-card-info" style="overflow: auto;  padding: 16px; padding-bottom: 0">
         <div class="" style="float: left">
             <ul style="list-style:none; color: white; margin-top: 25px">
-                <!-- <li style="font-size: 20px">1</li>{{route.RouteNo}} {{route.RouteHeading}} -->
-                <li>  {{route.RouteNo}} {{route.RouteHeading}} </li>
+                <li class="route-heading">{{route.RouteNo}} {{route.RouteHeading}}</li>
             </ul>
         </div>
-        <div class="" style="float:right">
+        <div class="ae-trip-list" style="float:right">
             <ul style="list-style:none; color: white">
-                <li  style="font-size: 20px; line-height: 1" ng-show="trips.length > 0"> {{trips[0].AdjustedScheduleTime}} min</li>
-                <li class="trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 1"> {{trips[1].AdjustedScheduleTime}} min</li>
-                <li class="trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 2"> {{trips[2].AdjustedScheduleTime}} min</li>
+                <li  class="trip" style="font-size: 20px; line-height: 1" ng-show="trips.length > 0"> {{trips[0].AdjustedScheduleTime}} min</li>
+                <li class="trip trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 1"> {{trips[1].AdjustedScheduleTime}} min</li>
+                <li class="trip trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 2"> {{trips[2].AdjustedScheduleTime}} min</li>
             </ul>
         </div>
     </div>
