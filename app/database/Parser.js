@@ -33,15 +33,17 @@ export class Parser {
     }
 
     parseData.Routes.forEach((route, index, self) => {
-      if(Array.isArray(route.Trips)) {
-        return;
-      }
-      else if(typeof route.Trips === 'undefined') {
-        route.Trips = [];
-      }
-      else {
+
+        if(Array.isArray(route.Trips.Trip)) {
+            route.Trips = route.Trips.Trip;
+        }
+        else if(typeof route.Trips === 'undefined') {
+            route.Trips = [];
+        }
+        else {
           route.Trips = [route.Trips];
-      }
+        }
+        return;
     });
 
     parseData.Routes = Parser.sortRoutesByTrips(parseData.Routes);
