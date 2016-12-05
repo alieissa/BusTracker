@@ -34,18 +34,19 @@ export class Parser {
 
     parseData.Routes.forEach((route, index, self) => {
         // console.log(route.Trips);
-        if(Array.isArray(route.Trips)) {
-            return;
-        }
 
-        if(Array.isArray(route.Trips.Trip)) {
-            route.Trips = route.Trips.Trip;
+        try {
+            if(Array.isArray(route.Trips.Trip)) {
+                route.Trips = route.Trips.Trip;
+            }
         }
-        else if(typeof route.Trips === 'undefined') {
-            route.Trips = [];
-        }
-        else {
-          route.Trips = [route.Trips];
+        catch(TypeError) {
+            if(typeof route.Trips === 'undefined') {
+                route.Trips = [];
+            }
+            else if(!Array.isArray(route.Trips)) {
+                route.Trips = [route.Trips];
+            }
         }
         return;
     });
