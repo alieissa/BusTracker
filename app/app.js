@@ -14,6 +14,7 @@ import {routesMod} from './routes/routes.module.js';
 import {stopsMod} from './stops/stops.module.js';
 import {favesMod} from './favourites/favourites.module.js';
 import {appUtil} from './util/util.module.js';
+import {app_nearby} from './nearby/nearby.module.js'
 
 angular.module('busTrackerApp', [
         'ngRoute',
@@ -22,7 +23,8 @@ angular.module('busTrackerApp', [
         'favesMod',
         'routesMod',
         'stopsMod',
-        'appUtil'
+        'appUtil',
+        'app_nearby'
     ])
     .config(config)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
@@ -64,9 +66,9 @@ function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvi
                 stops: (dBService) => dBService.get('stops')
             }
         })
-        // .otherwise({
-        //     redirectTo: '/'
-        // });
+        .otherwise({
+            redirectTo: '/'
+        });
 }
 
 MainCtrl.inject = ['$rootScope', 'dataService', 'stops', 'routes']
