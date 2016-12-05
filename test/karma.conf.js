@@ -34,6 +34,7 @@ module.exports = function(config) {
       'test/spec/routes/aeRouteTripsCard.directive.spec.js',
       'test/spec/stops/aeStop.directive.spec.js',
       'test/spec/stops/aeStops.directive.spec.js',
+      'test/spec/stops/aeStopNextTrips.directive.spec.js',
 
         'dist/**/*.html'
     ],
