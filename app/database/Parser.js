@@ -33,6 +33,10 @@ export class Parser {
     }
 
     parseData.Routes.forEach((route, index, self) => {
+        // console.log(route.Trips);
+        if(Array.isArray(route.Trips)) {
+            return;
+        }
 
         if(Array.isArray(route.Trips.Trip)) {
             route.Trips = route.Trips.Trip;
