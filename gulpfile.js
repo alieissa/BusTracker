@@ -1,107 +1,78 @@
-const gulp = require('gulp');
-const jshint = require('gulp-jshint');
-const babelify = require('babelify');
-const browserify = require('browserify');
-const buffer = require('vinyl-buffer');
-const source = require('vinyl-source-stream');
-const path = require('path');
+const babelify 		= require('babelify');
+const browserify 	= require('browserify');
+const buffer 		= require('vinyl-buffer');
+const gulp 			= require('gulp');
+const jshint 		= require('gulp-jshint');
+const path 			= require('path');
+const shell 		= require('shelljs');
+const source 		= require('vinyl-source-stream');
 
-let flag = process.argv[3];
-let shell = require('shelljs');
-shell.config.fatal = true;
+// command line argument check
+const dest = process.argv[3] === '--development' ? 'dist' : 'www';
+const destRoot = path.join(__dirname, dest);
+const sourceRoot = path.join(__dirname, 'app');
 
+const assets = path.join(__dirname, 'assets/css/*');
+const modules = ['favourites', 'routes', 'stops', 'util'];
+
+const buildTasks = ['clean', 'lint', 'es6', 'dist'];
+
+//------------------------------------------------------------------------------
+// Task registrations
+//------------------------------------------------------------------------------
+
+gulp.task('clean', clean);
 gulp.task('lint', lint);
 gulp.task('es6', es6);
 gulp.task('dist', dist);
-gulp.task('clean', clean);
-gulp.task('build', gulp.series('es6', 'dist', (done) => {
-	gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series('es6', 'dist'))
+gulp.task('build', gulp.series(...buildTasks, build));
+gulp.task('default', gulp.series('build'));
+
+//------------------------------------------------------------------------------
+// Task functions
+//------------------------------------------------------------------------------
+
+function build(done) {
+	gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series(...buildTasks))
 	done()
-}));
-
-gulp.task('deploy', gulp.series('lint', 'es6', 'dist')); // build then dist
-
-gulp.task('default', gulp.series('lint', 'es6', (done) => {
-	gulp.watch(['app/**/*.js', '*.js', '/**/*.html'], gulp.series('lint', 'es6'));
-	done();
-}));
-
-function clean(flag) {
-
-
-	if(flag === 'development') {
-		shell.rm('-r', 'dist/');
-	}
 }
+
+function clean(done) {
+	shell.rm('-r', `${dest}/*`);
+	done();
+}
+
 function dist(done) {
 
+	shell.cp('-r', `env.js`, destRoot);
+	shell.cp('-r', `assets/css/*`, `${destRoot}/assets/css`);
+	shell.cp('-r', `${sourceRoot}/index.html`, destRoot);
 
-	switch(flag) {
-		case '--production':
-			// move to app.js, views/, assets/, config.xml, database/ to www
-
-			break;
-		case '--development':
-			// move to app.js, views/, assets/, config.xml, database/ to dist
-
-			cpDirFiles(path.join(__dirname, 'env.js'), path.join(__dirname, 'dist'));
-			cpDirFiles(path.join(__dirname, 'app/index.html'), path.join(__dirname, 'dist'));
-			cpDirFiles(path.join(__dirname, 'app/main.html'), path.join(__dirname, 'dist/views'));
-			cpDirFiles(path.join(__dirname, 'app/favourites/partials/*'), path.join(__dirname, 'dist/partials'));
-			cpDirFiles(path.join(__dirname, 'app/util/partials/*'), path.join(__dirname, 'dist/partials'));
-			cpDirFiles(path.join(__dirname, 'app/stops/partials/*'), path.join(__dirname, 'dist/partials'));
-			cpDirFiles(path.join(__dirname, 'app/routes/partials/*'), path.join(__dirname, 'dist/partials'));
-			cpDirFiles(path.join(__dirname, 'app/database/*.db'), path.join(__dirname, 'dist/database'));
-			cpDirFiles(path.join(__dirname, 'assets/css/*'), path.join(__dirname, 'dist/assets/css'));
-
-			break;
-		default:
-			// print usage
-			break;
-	}
-
+	modules.forEach(module => shell.cp('-r', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials`));
 	done();
-
-	function cpDirFiles(src, target) {
-
-		if(!shell.test('-d', target)) {
-			shell.mkdir(target);
-		}
-
-		shell.cp('-r', src, target);
-	}
 }
 
-// jshint fail on 10 error/warnings
+function es6(done) {
+
+	browserify('app/app.js')
+	.transform('babelify', { presets: ['es2015'] })
+	.bundle()
+	.on('error', function(err) {
+		this.emit("end");
+	})
+	.pipe(source('app.js'))
+	.pipe(buffer())
+	.pipe(gulp.dest(dest));
+	done();
+}
+
 function lint(done) {
 
     return gulp.src('app/**/*.js')
 		.on('error', function(err) {
-			console.log(err.toString());
 			this.emit("end");
 		})
         .pipe(jshint('.jshintrc'))
-        .pipe(jshint.reporter('jshint-stylish'))
-        // .pipe(jshint.reporter('fail'));
-
+        .pipe(jshint.reporter('jshint-stylish'));
     done();
-}
-
-// compile down to es5
-function es6(done) {
-
-	browserify('app/app.js')
-		.transform('babelify', {
-			presets: ['es2015']
-		})
-		.bundle()
-		.on('error', function(err) {
-            console.log(err.toString());
-            this.emit("end");
-        })
-		.pipe(source('app.js'))
-		.pipe(buffer())
-		.pipe(gulp.dest('dist/'));
-
-	done();
 }
