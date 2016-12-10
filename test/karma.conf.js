@@ -63,8 +63,6 @@ module.exports = function(config) {
       'karma-ng-html2js-preprocessor'
     ],
 
-    // Continuous Integration mode
-    singleRun: false,
     colors: true,
 
     // LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG

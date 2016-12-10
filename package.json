@@ -6,11 +6,11 @@
   "scripts": {
     "dev:build": "gulp build --development",
     "dev:start": "http-server dist/ -p 3000",
-    "dev:test": "karma start test/karma.conf.js --browsers Chrome",
+    "dev:test": "karma start test/karma.conf.js --no-single-run --browsers Chrome",
     "dev:deploy": "gulp deploy --development",
     "build": "gulp default && npm test",
     "deploy": "gulp deploy --production",
-    "test": "karma start test/karma.conf.js --browsers PhantomJS"
+    "test": "karma start test/karma.conf.js --single-run --browsers PhantomJS"
   },
   "author": "Ali Eissa",
   "license": "ISC",
