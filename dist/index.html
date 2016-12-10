@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <!-- <link rel="stylesheet" href="assets/css/normalize.css" media="screen" title="no title"> -->
+        <link rel="stylesheet" href="assets/css/milligram.css" media="screen" title="no title">
+        <link rel="stylesheet" href="assets/css/custom.css">
+
+        <title>BusTracker</title>
+    </head>
+    <body>
+        <div ng-view=""></div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="assets/lib/jquery/dist/jquery.min.js"></script>
+        <script src="assets/lib/angular/angular.min.js"></script>
+        <script src="assets/lib/angular-route/angular-route.min.js"></script>
+        <script src="env.js"></script>
+        <script src="app.js"></script>
+        <script type="text/javascript">
+            var options = {}
+
+			var _handleSuccess = function() {
+                options = {name: "octranspo.db", location: 0};
+                window.db = window.sqlitePlugin.openDatabase(options, bootstrapApp, (err) => alert(JSON.stringify(err)));
+                return;
+			}
+
+			var _handleErr = function (err) {
+                alert("Error Code = "+ JSON.stringify(err));
+				//db already exists or problem in copying the db file. Check the Log.
+				if(err.code === 516) _handleSuccess();
+				return;
+			}
+
+			$('document').ready(function() {
+
+				isphone = document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1;
+				// window.isphone = false;
+			    if(isphone) {
+                    window.url =  'https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes';
+                    document.addEventListener("deviceready", copyDb, false);
+
+			    }
+	            else {
+                    window.url =  'http://localhost:3000/v1.2/GetNextTripsForStopAllRoutes';
+                    window.db = openDatabase("octranspo", '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
+	                bootstrapApp();
+	            }
+
+                return;
+		    });
+
+            function bootstrapApp() {
+                var element = document.getElementsByTagName('body')[0];
+                angular.bootstrap(element, ["busTrackerApp"]);
+                return;
+            }
+
+            function copyDb() {
+
+                window.plugins.sqlDB.remove("octranspo.db", 0, function() {
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  },function(err) {
+                    alert("Error when trying to remove db " + JSON.stringify(err));
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  });
+
+                  return;
+            }
+        </script>
+    </body>
+</html>

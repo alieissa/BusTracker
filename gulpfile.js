@@ -38,17 +38,23 @@ function build(done) {
 }
 
 function clean(done) {
-	shell.rm('-r', `${dest}/*`);
+	shell.rm('-r', `${dest}/*.js`);
+	shell.rm('-r', `${dest}/*.html`);
+	shell.rm('-r', `${dest}/partials/*`);
 	done();
 }
 
 function dist(done) {
-console.log(dest)
 	shell.cp('-r', 'env.js', destRoot);
 	shell.cp('-r', 'assets/css/*', `${destRoot}/assets/css`);
 	shell.cp('-r', `${sourceRoot}/index.html`, destRoot);
 
-	modules.forEach(module => shell.cp('-r', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials`));
+	modules.forEach(module => {
+		console.log(`${sourceRoot}/${module}/partials/*`);
+		console.log(`${destRoot}/partials/`);
+
+		shell.cp('-Rf', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials/`)
+	});
 	done();
 }
 
