@@ -6,10 +6,11 @@
   "scripts": {
     "dev:build": "gulp build --development",
     "dev:start": "http-server dist/ -p 3000",
+    "dev:test": "karma start test/karma.conf.js --browsers Chrome",
     "dev:deploy": "gulp deploy --development",
     "build": "gulp default && npm test",
     "deploy": "gulp deploy --production",
-    "test": "karma start test/karma.conf.js"
+    "test": "karma start test/karma.conf.js --browsers PhantomJS"
   },
   "author": "Ali Eissa",
   "license": "ISC",
@@ -27,6 +28,7 @@
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "karma": "^1.3.0",
+    "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-mocha-reporter": "^2.2.0",
