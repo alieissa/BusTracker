@@ -1,12 +1,11 @@
 describe('Directive: <ae-route-details></ae-route-details>', function() {
 
     let $compile, $scope, $route, $controller;
-    let aeRoute, aeTallMenuBar, aeStops, aeRouteDetailsCtrl, dBService;
+    let aeRoute, aeRouteDetails, aeTallMenuBar, aeStops, aeRouteDetailsCtrl, dBService;
     let defer, routeDetails, vm;
 
     let _inject = (_$compile_,  _$q_, _$rootScope_, _$controller_, _dBService_) => {
 
-        $rootScope = _$rootScope_;
         $controller =_$controller_;
         dBService = _dBService_;
 
@@ -44,6 +43,7 @@ describe('Directive: <ae-route-details></ae-route-details>', function() {
     });
 
     describe('Controller: RouteDetailsCtrl', () => {
+
         it('Should call dBService.getStops({id: id})', () => {
             expect(dBService.getStops).toHaveBeenCalledWith({id: 1});
         });

@@ -6,14 +6,13 @@ describe('Directive: <ae-routes></ae-routes>', function() {
     let _inject = (_$compile_,  _$q_, _$rootScope_, _dBService_) => {
 
         $compile = _$compile_;
-        $rootScope = _$rootScope_;
         dBService = _dBService_;
         defer = _$q_.defer();
 
         //dBService.get return a promise
         spyOn(dBService, 'get').and.returnValue(defer.promise);
 
-        $scope = $rootScope.$new();
+        $scope = _$rootScope_.$new();
         aeRoutes = _$compile_(angular.element('<ae-routes></ae-routes>'))($scope);
 
         // resolve the table retrieval promise
@@ -50,6 +49,6 @@ describe('Directive: <ae-routes></ae-routes>', function() {
             expect(dBService.get).toHaveBeenCalledWith('routes');
         });
     })
-    
+
     it('Should show error message when no data from db');
 })

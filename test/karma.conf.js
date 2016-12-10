@@ -39,12 +39,23 @@ module.exports = function(config) {
         'dist/**/*.html'
     ],
     // generate js files from html templates
-    preprocessors: { 'dist/partials/*.html': 'ng-html2js'},
+    preprocessors: { 'dist/partials/*.html': 'ng-html2js', 'test/**/*.js': ['babel']},
     ngHtml2JsPreprocessor: { stripPrefix: 'dist/', stripSuffix: '.ext'},
+    babelPreprocessor: {
+      options: { presets: ['es2015'], sourceMap: 'inline'},
+      filename: function (file) {
+        return file.originalPath.replace(/\.js$/, '.es5.js');
+      },
+      sourceFileName: function (file) {
+        return file.originalPath;
+      }
+    },
+
     exclude: [],
     port: 8080,
-    browsers: ['Chrome'],
+    browsers: ['Chrome', 'PhantomJS'],
     plugins: [
+      'karma-babel-preprocessor',
       'karma-jasmine',
       'karma-mocha-reporter',
       'karma-phantomjs-launcher',
