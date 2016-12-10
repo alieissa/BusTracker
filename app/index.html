@@ -1,22 +1,5 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
     <head>
         <!--
@@ -34,20 +17,72 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <!-- <link rel="stylesheet" href="assets/css/normalize.css" media="screen" title="no title"> -->
+        <link rel="stylesheet" href="assets/css/milligram.css" media="screen" title="no title">
+        <link rel="stylesheet" href="assets/css/custom.css">
+
         <title>BusTracker</title>
     </head>
-    <body ng-app="busTrackerApp">
-        <!-- Always shows a header, even in smaller screens. -->
-
-        <div class="container">
-            <div ng-view=""></div>
-        </div>
+    <body>
+        <div ng-view=""></div>
 
         <script type="text/javascript" src="cordova.js"></script>
-        <script src="assets/lib/firebase/firebase.js"></script>
+        <script src="assets/lib/jquery/dist/jquery.min.js"></script>
         <script src="assets/lib/angular/angular.min.js"></script>
         <script src="assets/lib/angular-route/angular-route.min.js"></script>
-        <script src="assets/lib/angularfire/dist/angularfire.min.js"></script>
+        <script src="env.js"></script>
         <script src="app.js"></script>
+        <script type="text/javascript">
+            var options = {}
+
+			var _handleSuccess = function() {
+                options = {name: "octranspo.db", location: 0};
+                window.db = window.sqlitePlugin.openDatabase(options, bootstrapApp, (err) => alert(JSON.stringify(err)));
+                return;
+			}
+
+			var _handleErr = function (err) {
+                alert("Error Code = "+ JSON.stringify(err));
+				//db already exists or problem in copying the db file. Check the Log.
+				if(err.code === 516) _handleSuccess();
+				return;
+			}
+
+			$('document').ready(function() {
+
+				isphone = document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1;
+				// window.isphone = false;
+			    if(isphone) {
+                    window.url =  'https://api.octranspo1.com/v1.2/GetNextTripsForStopAllRoutes';
+                    document.addEventListener("deviceready", copyDb, false);
+
+			    }
+	            else {
+                    window.url =  'http://localhost:3000/v1.2/GetNextTripsForStopAllRoutes';
+                    window.db = openDatabase("octranspo", '1.0', 'OC Transpo DB', 2 * 1024 * 1024); // 2MB;
+	                bootstrapApp();
+	            }
+
+                return;
+		    });
+
+            function bootstrapApp() {
+                var element = document.getElementsByTagName('body')[0];
+                angular.bootstrap(element, ["busTrackerApp"]);
+                return;
+            }
+
+            function copyDb() {
+
+                window.plugins.sqlDB.remove("octranspo.db", 0, function() {
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  },function(err) {
+                    alert("Error when trying to remove db " + JSON.stringify(err));
+                    window.plugins.sqlDB.copy("octranspo.db", 0, _handleSuccess,_handleErr);
+                  });
+
+                  return;
+            }
+        </script>
     </body>
 </html>

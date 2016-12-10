@@ -1,3 +1,45 @@
+var STOPS_LIST = [{ "name":"Jockvale & Abetti","number":274,"code":"WA874",
+       "lat":45.25885,"lon":-75.730598,"type":0,"favourite":0
+   },
+   {"name":"Marconi & Shirley's Brook","number":275,"code":"WM527",
+       "lat":45.356106,"lon":-75.922829,"type":0,"favourite":0
+}];
+var ROUTE_TRIPS = [
+    {
+        "RouteNo":107,
+        "DirectionID":1,
+        "Direction":"Southbound",
+        "RouteHeading":"South Keys",
+        "Trips":[
+            {   "TripDestination":"South Keys",
+                "TripStartTime":"07:30",
+                "AdjustedScheduleTime":"223",
+                "AdjustmentAge":"-1",
+                "LastTripOfSchedule":false,
+                "BusType":"","Latitude":"",
+                "Longitude":"","GPSSpeed":""
+            }
+        ]
+    },
+    {   "RouteNo":104,
+        "DirectionID":0,
+        "Direction":"Eastbound",
+        "RouteHeading":"Place d'Orléans",
+        "Trips":[]
+    }
+];
+
+var ROUTES_LIST = [{
+    "name":"Ottawa-Rockcliffe",
+    "stops":"5726 BANK AND AD 2401\t6773 BANK AND AYLMER\t2414 BANK AND BELMONT\t8895 BANK AND CATHERINE SOUTH KEYS 1A",
+    "favourite":0,"number":1,"id":1
+},
+{
+    "name":"South Keys",
+    "stops":"8441 1145 HUNT CLUB\t5727 BANK AND AD 2380\t7666 BANK AND ARLINGTON\t6774 BANK AND AYLMER\t6845 BANK AND CHAMBERLAIN",
+    "favourite":0,"number":1,"id":2
+}];
+
 var OC_CONFIG_MOCK = {
   "APP_ID": "c618159f",
   "API_KEY": "77207661c5c94208c33fb2357efc7012"

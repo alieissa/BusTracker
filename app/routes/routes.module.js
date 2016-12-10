@@ -1,20 +1,23 @@
-import {SQLiteMod} from '../common/SQLite.module.js';
-import {RoutesCtrl} from './routes.controller.js';
-import {RouteCtrl} from './route-detail.controller.js';
-import {RouteStopDetailCtrl} from './route-stop-detail.controller.js';
-import {routes} from './routes.service.js';
+'use strict';
+
 import {routesConfig} from './routes.config.js';
 
-angular
-  .module('routesMod', [
-    'firebase',
-    'ngRoute',
-    'SQLiteMod'
-  ])
-  .config(routesConfig)
-  .controller('RoutesCtrl', RoutesCtrl)
-  .controller('RouteCtrl', RouteCtrl)
-  .controller('RouteStopDetailCtrl', RouteStopDetailCtrl)
-  .service('routes', routes);
+import {aeRoute} from './aeRoute.directive.js';
+import {aeRoutes} from './aeRoutes.directive.js';
+import {aeRouteTripsCard} from './aeRouteTripsCard.directive.js';
+import {aeRouteDetails, aeRouteDetailsCtrl} from './aeRouteDetails.directive.js';
+
+angular.module('routesMod', [])
+    .config(routesConfig)
+    .directive('aeRoute', aeRoute)
+    .directive('aeRouteTripsCard', aeRouteTripsCard)
+
+    // Ctrl outside of dir for testability
+    .directive('aeRoutes', aeRoutes)
+    // .controller('aeRoutesCtrl', aeRoutesCtrl)
+
+    // Ctrl outside of dir for testability
+    .directive('aeRouteDetails', aeRouteDetails)
+    .controller('aeRouteDetailsCtrl', aeRouteDetailsCtrl);
 
 export default angular.module('routesMod');

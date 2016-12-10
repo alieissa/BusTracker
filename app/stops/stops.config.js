@@ -1,32 +1,19 @@
 'use strict';
 
-stopsConfig.$inject = ['$routeProvider', '$firebaseRefProvider'];
+stopsConfig.$inject = ['$routeProvider'];
 
-function stopsConfig($routeProvider, $firebaseRefProvider) {
-  $routeProvider
-    .when('/stops', {
-      templateUrl: 'views/stops.html',
-      controller: 'StopsCtrl',
-      controllerAs: 'stops',
-      resolve: {
-        stopsList: function(stops, dataService) {
-          dataService.getAllStops();
-          // return stops.getAll().$loaded();
-        }
-      }
-    })
-    .when('/stops/:stopNo', {
-      templateUrl: 'views/stop.html',
-      controller: 'StopCtrl',
-      controllerAs: 'stop',
-      resolve: {
-        stopRouteSummary: function (stops, $route) {
-          let stopNo = $route.current.params.stopNo;
-          return stops.getRouteSummary(stopNo);
-        }
-      }
-    });
+function stopsConfig($routeProvider) {
 
+    $routeProvider
+        // Get all stops
+        .when('/stops', {
+            template: '<ae-stops></ae-stops>',
+        })
+
+        // Show next 3 next trips for all routes serving stop number 'stopNo'
+        .when('/stops/:code', {
+            template: '<ae-stop-next-trips></ae-stop-next-trips>'
+        });
 }
 
 export {stopsConfig};

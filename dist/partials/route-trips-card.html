@@ -1,0 +1,24 @@
+<div class="trip-card" style="overflow: auto; background-color: grey;">
+    <div class="trip-card-info" style="overflow: auto;  padding: 16px; padding-bottom: 0">
+        <div class="" style="float: left">
+            <ul style="list-style:none; color: white; margin-top: 25px">
+                <li class="route-heading">{{route.RouteNo}} {{route.RouteHeading}}</li>
+            </ul>
+        </div>
+        <div class="ae-trip-list" style="float:right">
+            <ul style="list-style:none; color: white">
+                <li  class="trip" style="font-size: 20px; line-height: 1" ng-show="trips.length > 0"> {{trips[0].AdjustedScheduleTime}} min</li>
+                <li class="trip trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 1"> {{trips[1].AdjustedScheduleTime}} min</li>
+                <li class="trip trip-second" style="font-size: 12px; line-height: 1" ng-show="trips.length > 2"> {{trips[2].AdjustedScheduleTime}} min</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="trip-card-action" style="padding: 8px; width: 100%; background-color: grey; overflow: auto">
+        <ul style="list-style: none; float: right; margin-bottom: 0">
+            <li><i class="material-icons" style="color:white">info</i></li>
+            <li><i class="material-icons" style="color:white">star_border</i></li>
+            <li><i class="material-icons" style="color:white">map</i></li>
+        </ul>
+    </div>
+</div>

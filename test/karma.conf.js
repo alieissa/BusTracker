@@ -1,86 +1,72 @@
-// Karma configuration
-// Generated on 2016-09-26
 
 module.exports = function(config) {
   'use strict';
 
   config.set({
+
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    // autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
     basePath: '../',
 
     // testing framework to use (jasmine/mocha/qunit/...)
-    // as well as any additional frameworks (requirejs/chai/sinon/...)
-    frameworks: [
-      'jasmine'
-    ],
+    frameworks: ['jasmine'],
 
     // reporters configuration
     reporters: ['mocha'],
 
-    // list of files / patterns to load in the browser
+    // Order of file loading is important
     files: [
-      // bower:js
-      'assets/lib//jquery/dist/jquery.js',
-      'assets/lib//angular/angular.js',
-      'assets/lib//angular-route/angular-route.js',
-      'assets/lib//firebase/firebase.js',
-      'assets/lib//angularfire/dist/angularfire.js',
-      // endbower
 
-      'dist/*.js',
+      'assets/lib/jquery/dist/jquery.js',
+      'assets/lib/angular/angular.js',
+      'assets/lib/angular-route/angular-route.js',
+      'assets/lib/angular-mocks/angular-mocks.js',
+
+      // My Code
+      'dist/app.js',
       'test/constants.js',
-      'test/spec/routes/*.js',
-      'test/spec/stops/*.js',
-    ],
 
-    // list of files / patterns to exclude
-    exclude: [
-    ],
+      'test/spec/routes/aeRoutes.directive.spec.js',
+      'test/spec/routes/aeRoute.directive.spec.js',
+      'test/spec/routes/aeRouteDetails.directive.spec.js',
+      'test/spec/routes/aeRouteTripsCard.directive.spec.js',
+      'test/spec/stops/aeStop.directive.spec.js',
+      'test/spec/stops/aeStops.directive.spec.js',
+      'test/spec/stops/aeStopNextTrips.directive.spec.js',
 
-    // web server port
+        'dist/**/*.html'
+    ],
+    // generate js files from html templates
+    preprocessors: { 'dist/partials/*.html': 'ng-html2js', 'test/**/*.js': ['babel']},
+    ngHtml2JsPreprocessor: { stripPrefix: 'dist/', stripSuffix: '.ext'},
+    babelPreprocessor: {
+      options: { presets: ['es2015'], sourceMap: 'inline'},
+      filename: function (file) {
+        return file.originalPath.replace(/\.js$/, '.es5.js');
+      },
+      sourceFileName: function (file) {
+        return file.originalPath;
+      }
+    },
+
+    exclude: [],
     port: 8080,
-
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
-    browsers: [
-        
-        //'Chrome',
-        'PhantomJS'
+    browsers: ['Chrome', 'PhantomJS'],
+    plugins: [
+      'karma-babel-preprocessor',
+      'karma-jasmine',
+      'karma-mocha-reporter',
+      'karma-phantomjs-launcher',
+      'karma-chrome-launcher',
+      'karma-ng-html2js-preprocessor'
     ],
-
-    // plugins: [
-    //   'karma-jasmine'
-    // ],
-    // // Which plugins to enable
-    // plugins: [
-    //   'karma-phantomjs-launcher',
-    //   'karma-jasmine'
-    // ],
-
-    // Continuous Integration mode
-    // if true, it capture browsers, run tests and exit
-    singleRun: false,
 
     colors: true,
 
-    // level of logging
-    // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
+    // LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // Uncomment the following lines if you are using grunt's server to run the tests
-    // proxies: {
-    //   '/': 'http://localhost:9000/'
-    // },
-    // URL root prevent conflicts with the site root
-    // urlRoot: '_karma_'
   });
 };

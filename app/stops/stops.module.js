@@ -1,17 +1,19 @@
-import {SQLiteMod} from '../common/SQLite.module.js';
-import {StopsCtrl} from './stops.controller.js';
-import {StopCtrl} from './stop-detail.controller.js';
-import {stops} from './stops.service.js';
-import {stopsConfig} from './stops.config.js';
+'use strict';
 
-angular.module('stopsMod', [
-  'ngRoute',
-  'firebase',
-  'SQLiteMod'
-])
-.config(stopsConfig)
-.controller('StopsCtrl', StopsCtrl)
-.controller('StopCtrl', StopCtrl)
-.service('stops', stops);
+import {stopsConfig} from './stops.config.js';
+// import {nextTrips} from './stops.directives.js';
+import {aeStopNextTrips, stopNextTripsCtrl, nextTripsError} from './aeStopNextTrips.directive.js';
+import {aeStop} from './aeStop.directive.js';
+import {aeStops} from './aeStops.directive.js';
+
+angular.module('stopsMod', [])
+    .config(stopsConfig)
+    .directive('nextTripsError', nextTripsError)
+    .directive('aeStop', aeStop)
+    .directive('aeStops', aeStops)
+
+    // Ctrl outside of dir for testability
+    .controller('stopNextTripsCtrl', stopNextTripsCtrl)
+    .directive('aeStopNextTrips', aeStopNextTrips);
 
 export default angular.module('stopsMod');
