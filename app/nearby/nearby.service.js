@@ -1,7 +1,8 @@
+'use strict';
 
 function nearbyService() {
 
-    return {isNearby}
+    return {isNearby};
 }
 
 function isNearby(location, stop) {
@@ -15,11 +16,11 @@ function isNearby(location, stop) {
     let dlat = (location.lat - stop.lat)* Math.PI /180;
 
     // haversine formula
-    let hav = Math.pow(Math.sin(dlat/2), 2) + Math.cos(locationLat) * Math.cos(stopLat) * Math.pow(Math.sin(dlon/2), 2)
-    let angle = 2 * Math.atan2( Math.sqrt(hav), Math.sqrt(1-hav) )
+    let hav = Math.pow(Math.sin(dlat/2), 2) + Math.cos(locationLat) * Math.cos(stopLat) * Math.pow(Math.sin(dlon/2), 2);
+    let angle = 2 * Math.atan2( Math.sqrt(hav), Math.sqrt(1-hav) );
     let dis = R * angle;
 
     // distance between location and stop is less 500 m
-    return dis <= 0.5
+    return dis <= 0.5;
 }
-export {nearbyService}
+export {nearbyService};

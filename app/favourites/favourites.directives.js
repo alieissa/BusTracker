@@ -8,7 +8,7 @@ function aeFaves(dBService) {
         controllerAs: 'faves',
         scope: true,
         link: link
-    }
+    };
 
     return aeFaves;
 
@@ -19,13 +19,13 @@ function aeFaves(dBService) {
         vm.routes = [];
         vm.stops = [];
 
-        dBService.get('routes', {'favourite': 1}).then((routes) => {vm.routes = routes});
-        dBService.get('stops', {'favourite': 1}).then((stops) => {vm.stops = stops});
+        dBService.get('routes', {'favourite': 1}).then(routes => vm.routes = routes);
+        dBService.get('stops', {'favourite': 1}).then(stops => vm.stops = stops);
 
     }
 
     function link(scope, element, attrs) {
-        
+
         angular.element('.tab-item').on('click', function() {
 
             // Target is already the active tab
@@ -35,7 +35,7 @@ function aeFaves(dBService) {
 
         	let targetTab = angular.element(this).attr('id');
         	let targetTabContent = `${targetTab}-content`;
-        	let otherTab = targetTab === 'stops-tab' ? 'routes-tab' : 'stops-tab'
+        	let otherTab = targetTab === 'stops-tab' ? 'routes-tab' : 'stops-tab';
             let otherTabContent = `${otherTab}-content`;
 
             // Show clicked tab content
@@ -44,11 +44,11 @@ function aeFaves(dBService) {
 
             // Hide other content
         	angular.element(`#${otherTabContent}`).css('display', 'none');
-            angular.element(`#${otherTab}`).removeClass('tab-active')
+            angular.element(`#${otherTab}`).removeClass('tab-active');
         });
     }
 
     return;
 }
 
-export {aeFaves}
+export {aeFaves};

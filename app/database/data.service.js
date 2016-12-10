@@ -1,3 +1,4 @@
+'use strict';
 
 dataService.$inject = ['dBService'];
 
@@ -52,8 +53,8 @@ function dataService(dBService) {
         return stops_;
     }
 
-    let data = {getStops,  getStops, getRoutes, setRoutes,
-        setStopsDataset, setRoutesDataset, stops, routes}
+    let data = {getStops, getRoutes, setRoutes,
+        setStopsDataset, setRoutesDataset, stops, routes};
 
     return data;
 }

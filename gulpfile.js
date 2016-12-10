@@ -43,9 +43,9 @@ function clean(done) {
 }
 
 function dist(done) {
-
-	shell.cp('-r', `env.js`, destRoot);
-	shell.cp('-r', `assets/css/*`, `${destRoot}/assets/css`);
+console.log(dest)
+	shell.cp('-r', 'env.js', destRoot);
+	shell.cp('-r', 'assets/css/*', `${destRoot}/assets/css`);
 	shell.cp('-r', `${sourceRoot}/index.html`, destRoot);
 
 	modules.forEach(module => shell.cp('-r', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials`));

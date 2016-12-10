@@ -4,6 +4,6 @@ import {favesConfig} from './favourites.config.js';
 
 angular.module('favesMod', [])
     .config(favesConfig)
-    .directive('aeFaves', aeFaves)
+    .directive('aeFaves', aeFaves);
 
-export default angular.module('favesMod')
+export default angular.module('favesMod');

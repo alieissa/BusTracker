@@ -1,3 +1,5 @@
+'use strict';
+
 aeRouteDetails.$inject = ['$location', '$route', 'dBService'];
 aeRouteDetailsCtrl.$inject = ['$routeParams', 'dBService'];
 

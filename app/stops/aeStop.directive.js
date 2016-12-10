@@ -1,3 +1,5 @@
+'use strict';
+
 aeStop.$inject = ['dBService'];
 
 function aeStop(dBService) {
@@ -10,7 +12,7 @@ function aeStop(dBService) {
         // controller: controller,
         controllerAs: 'stop',
         link: link
-    }
+    };
 
     return aeStop;
 

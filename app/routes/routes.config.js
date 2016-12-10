@@ -13,7 +13,7 @@ function routesConfig($routeProvider) {
         // Get all stops for bus number 'number'
         .when('/routes/:id', {
             template: '<ae-route-details></ae-route-details>',
-        })
+        });
 }
 
 export {routesConfig};

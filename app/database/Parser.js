@@ -13,7 +13,7 @@ export class Parser {
     // {Error_, Routes, StopDescription, StopNo} = data;
 
     let parseData = {
-      "Error":data.Error,
+      "Error": data.Error,
       "Routes": data.Routes.Route,
       "StopDescription": data.StopDescription,
       "StopNo": data.StopNo
@@ -29,7 +29,7 @@ export class Parser {
     }
 
     if(!Array.isArray(parseData.Routes)) {
-        parseData.Routes = [parseData.Routes]
+        parseData.Routes = [parseData.Routes];
     }
 
     parseData.Routes.forEach((route, index, self) => {
@@ -63,11 +63,15 @@ export class Parser {
     let _sortedRoutes = [];
 
     routes.forEach((route, index, self) => {
-      if(route.Trips.length == 0) _routesUnscheduled.push(route);
-      else {_routesSchdeuled.push(route);}
-    })
+        if(route.Trips.length === 0) {
+          _routesUnscheduled.push(route);
+        }
+        else {
+            _routesSchdeuled.push(route);
+        }
+    });
 
     _sortedRoutes = _routesSchdeuled.concat(_routesUnscheduled);
-    return _sortedRoutes
+    return _sortedRoutes;
   }
 }

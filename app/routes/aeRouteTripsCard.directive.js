@@ -12,7 +12,7 @@ function aeRouteTripsCard(dBService) {
         },
         // controller: controller,
         link: link
-    }
+    };
 
     return aeRouteTripsCard;
 

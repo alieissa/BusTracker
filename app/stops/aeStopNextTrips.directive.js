@@ -20,7 +20,7 @@ function aeStopNextTrips() {
     };
 
     return aeStopNextTrips;
-    
+
     // function link() {}
  }
 
@@ -29,7 +29,7 @@ function stopNextTripsCtrl($routeParams, $location, dBService, OCService) {
 
     // stop number from the URL
     let code = $routeParams.code;
-    let number = ($location.search()).number
+    let number = ($location.search()).number;
 
     // Get stop information from database in an array
     dBService.get('stops', {code: code}).then((stop) => vm.stop = stop[0]);
@@ -50,7 +50,7 @@ function nextTripsError() {
 
     let nextTripsError = {
         templateUrl: 'partials/next-trips-error.html',
-    }
+    };
 
     return nextTripsError;
 }

@@ -10,4 +10,4 @@ angular.module('dBMod', [])
 	.provider('dBService', dBService)
 	.factory('dataService', dataService);
 
-export default angular.module('dBMod')
+export default angular.module('dBMod');

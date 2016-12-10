@@ -1,3 +1,5 @@
+'use strict';
+
 aeRoutes.$inject = ['dataService', 'dBService'];
 
 function aeRoutes(dataService, dBService) {

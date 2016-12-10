@@ -9,7 +9,7 @@ function dBService() {
 
 	let $get = (_$q_) => {
 		$q = _$q_;
-		return {get, set, getStops}
+		return {get, set, getStops};
 	};
 
 	return {$get, setDB};
@@ -20,12 +20,12 @@ function dBService() {
 
 		let defer = $q.defer();
 
-		db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err)});
+		db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err);});
 
 		function handleTx(tx) {
 
 			if(typeof filter === 'undefined') {
-				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes,(tx, err) => {console.log(err); defer.reject(err)});
+				tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes,(tx, err) => {console.log(err); defer.reject(err);});
 			}
 			else {
 

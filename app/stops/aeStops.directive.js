@@ -1,3 +1,5 @@
+'use strict';
+
 aeStops.$inject = ['dBService'];
 function aeStops(dBService) {
 

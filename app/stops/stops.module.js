@@ -14,6 +14,6 @@ angular.module('stopsMod', [])
 
     // Ctrl outside of dir for testability
     .controller('stopNextTripsCtrl', stopNextTripsCtrl)
-    .directive('aeStopNextTrips', aeStopNextTrips)
+    .directive('aeStopNextTrips', aeStopNextTrips);
 
 export default angular.module('stopsMod');
