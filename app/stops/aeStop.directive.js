@@ -4,42 +4,34 @@ aeStop.$inject = ['dBService'];
 
 function aeStop(dBService) {
 
-    let aeStop = {
+    let aeStop_ = {
         templateUrl: 'partials/stop.directive.html',
-        scope: {
-            stop: '='
-        },
-        // controller: controller,
-        controllerAs: 'stop',
-        link: link
+        scope: { stop: '=' },
+        link: linkFn
     };
-
-    return aeStop;
-
-    // function controller() {}
-
-    function link(scope, element, attrs) {
-
-        let star = element.find('i.star');
-
-        star.on('click', handleStarTouch);
-
-        function handleStarTouch() {
-
-            let _favourite = scope.stop.favourite === 0 ? 1 : 0;
-            dBService.set('stops', {favourite:_favourite}, {code: scope.stop.code}).then(updateStop);
-        }
-
-        function updateStop(result) {
-
-            // toggle favourite status
-            scope.stop.favourite = scope.stop.favourite === 0 ? 1 : 0;
-
-            // Set the favourite status indicator
-            let starType = scope.stop.favourite === 0 ? 'star_border' : 'star';
-            star.text(starType);
-        }
-    }
+    return aeStop_;
 }
 
 export {aeStop};
+
+
+
+function linkFn(scope, element, attrs) {
+
+    let _code = scope.stop.code;
+    let _favourite = scope.stop.favourite;
+    let star = element.find('i.star');
+
+    element.find('i.star').on('click', handleStarTouch);
+
+    function handleStarTouch() {
+
+        _favourite = _favourite === 0 ? 1 : 0;
+
+        dBService.set('stops', {favourite:_favourite}, {code: _code}).then((result) => {
+          let _starType = _favourite === 0 ? 'star_border' : 'star';
+          scope.stop.favourite = _favourite;
+          star.text(_starType);
+        });
+    }
+}

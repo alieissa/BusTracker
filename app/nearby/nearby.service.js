@@ -23,4 +23,5 @@ function isNearby(location, stop) {
     // distance between location and stop is less 500 m
     return dis <= 0.5;
 }
+
 export {nearbyService};

@@ -27,11 +27,11 @@ angular.module('busTrackerApp', ['ngRoute', 'dBMod', 'favesMod', 'routesMod', 's
     API_KEY: "77207661c5c94208c33fb2357efc7012"
 }).controller('MainCtrl', MainCtrl);
 
-function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvider, OC) {
+function config($routeProvider, $httpProvider, oCServiceProvider, dBServiceProvider, OC) {
 
     dBServiceProvider.setDB(window.db);
 
-    OCServiceProvider.setHttpOptions({
+    oCServiceProvider.setHttpOptions({
         url: window.url,
         appId: OC.APP_ID,
         apiKey: OC.API_KEY,
@@ -69,76 +69,7 @@ function MainCtrl($rootScope, dataService, routes, stops) {
     });
 }
 
-},{"./database/database.module.js":5,"./favourites/favourites.module.js":9,"./nearby/nearby.module.js":12,"./routes/routes.module.js":19,"./stops/stops.module.js":24,"./util/util.module.js":26}],2:[function(require,module,exports){
-'use strict';
-
-/**
- * @ngdoc service
- * @name busTrackerApp.stops
- * @description
- * # stops
- * Factory in the busTrackerApp.
- */
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.OCService = undefined;
-
-var _Parser = require('./Parser.js');
-
-// OCService.$inject = [];
-
-function OCService() {
-
-    //Injections
-    var $http = void 0;
-
-    // settings
-    var url = void 0,
-        data = void 0,
-        appId = void 0,
-        apiKey = void 0;
-    var httpConfig = {};
-
-    var setHttpOptions = function setHttpOptions(options) {
-        url = options.url;
-        appId = options.appId;
-        apiKey = options.apiKey;
-        httpConfig = options.httpConfig;
-    };
-
-    var get = function get(_$http_, _config_) {
-        $http = _$http_;
-        return { getNextTrips: getNextTrips };
-    };
-
-    return { setHttpOptions: setHttpOptions, $get: get };
-    /*-------------------Factory function definitions-------------------------*/
-    // let $get = ['$http', 'config', function($http, config) {return {getNextTrips: getNextTrips}}];
-
-    function getNextTrips(stopNo) {
-
-        data = 'appID=' + appId + '&apiKey=' + apiKey + '&stopNo=' + stopNo + '&format=json';
-
-        return $http.post(url, data, httpConfig).then(handleRes, function (err) {
-            return alert('Unable to call ' + url);
-        });
-
-        function handleRes(response) {
-
-            var getRouteSummaryForStopResult = response.data.GetRouteSummaryForStopResult;
-            var result = JSON.parse(JSON.stringify(getRouteSummaryForStopResult));
-            if (result.Error !== '') {
-                return result;
-            }
-            var _routes = _Parser.Parser.parseRoutes(result);
-            return { 'error': result.Error, 'routes': _routes };
-        }
-    }
-}exports.OCService = OCService;
-
-},{"./Parser.js":3}],3:[function(require,module,exports){
+},{"./database/database.module.js":4,"./favourites/favourites.module.js":9,"./nearby/nearby.module.js":12,"./routes/routes.module.js":19,"./stops/stops.module.js":24,"./util/util.module.js":26}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -234,7 +165,7 @@ var Parser = exports.Parser = function () {
     return Parser;
 }();
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -244,17 +175,13 @@ dataService.$inject = ['dBService'];
 
 function dataService(dBService) {
 
-    var stops = void 0,
-        routes = void 0;
+    var routes = void 0,
+        stops = void 0;
     var routeFields = ['name', 'stops', 'favourite', 'number', 'id'];
     var stopFields = ['name', 'number', 'code', 'lat', 'lon', 'type', 'favourite'];
 
-    var setStopsDataset = function setStopsDataset(stopsDataSet) {
-        return stops = stopsDataSet;
-    };
-    var setRoutesDataset = function setRoutesDataset(routesDataSet) {
-        return routes = routesDataSet;
-    };
+    // let setStopsDataset = stopsDataSet => stops = stopsDataSet;
+    // let setRoutesDataset = routesDataSet => routes = routesDataSet;
     var getFields = function getFields(fields, obj) {
         var obj_ = {};
         fields.forEach(function (field) {
@@ -307,6 +234,7 @@ function dataService(dBService) {
     function setStops(updates, selector) {
 
         var stops_ = [];
+
         // Assign updates to stops that meet selector condition
         dBService.set('stops', updates).then(function () {
             stops_ = routes.filter(selector).map(function (route) {
@@ -317,36 +245,33 @@ function dataService(dBService) {
         return stops_;
     }
 
-    var data = { getStops: getStops, getRoutes: getRoutes, setRoutes: setRoutes,
-        setStopsDataset: setStopsDataset, setRoutesDataset: setRoutesDataset, stops: stops, routes: routes };
-
-    return data;
+    return { getStops: getStops, getRoutes: getRoutes, setRoutes: setRoutes, stops: stops, routes: routes };
 }
 
 exports.dataService = dataService;
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
-
-var _databaseService = require('./database.service.js');
-
-var _OCService = require('./OC.service.js');
 
 var _dataService = require('./data.service.js');
 
-angular.module('dBMod', []).constant('DATABASE', 'octranspo').provider('OCService', _OCService.OCService).provider('dBService', _databaseService.dBService).factory('dataService', _dataService.dataService);
+var _databaseService = require('./database.service.js');
+
+var _oCService = require('./oC.service.js');
+
+angular.module('dBMod', []).constant('DATABASE', 'octranspo').factory('dataService', _dataService.dataService).provider('dBService', _databaseService.dBService).provider('oCService', _oCService.oCService);
 
 exports.default = angular.module('dBMod');
 
-},{"./OC.service.js":2,"./data.service.js":4,"./database.service.js":6}],6:[function(require,module,exports){
+},{"./data.service.js":3,"./database.service.js":5,"./oC.service.js":6}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -355,160 +280,223 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function dBService() {
 
-	var db = void 0;
-	var $q = void 0;
+    var db = void 0;
+    var $q = void 0;
 
-	var setDB = function setDB(db_) {
-		return db = db_;
-	};
+    var setDB = function setDB(db_) {
+        return db = db_;
+    };
 
-	var $get = function $get(_$q_) {
-		$q = _$q_;
-		return { get: get, set: set, getStops: getStops };
-	};
+    // let $get = (_$q_) => {
+    //     $q = _$q_;
+    //     return {get, set, getStops};
+    // };
+    return {
+        setDB: function setDB(db_) {
+            return db = db_;
+        },
+        $get: function $get(_$q_) {
+            $q = _$q_;
+            return { get: get, set: set, getStops: getStops };
+        }
+    };
 
-	return { $get: $get, setDB: setDB };
+    function get(table, filter) {
 
-	/*-------------------Factory function definitions-------------------------*/
+        var defer = $q.defer();
 
-	function get(table, filter) {
+        db.transaction(handleTx, function (tx, err) {
+            return defer.reject(err);
+        });
 
-		var defer = $q.defer();
+        function handleTx(tx) {
 
-		db.transaction(handleTx, function (tx, err) {
-			console.log(err);defer.reject(err);
-		});
+            if (typeof filter === 'undefined') {
+                tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, function (tx, err) {
+                    console.log(err);defer.reject(err);
+                });
+            } else {
+                var _Object$keys = Object.keys(filter),
+                    _Object$keys2 = _slicedToArray(_Object$keys, 1),
+                    key = _Object$keys2[0];
 
-		function handleTx(tx) {
+                var value = filter[key];
 
-			if (typeof filter === 'undefined') {
-				tx.executeSql('SELECT * FROM ' + table + ' ORDER BY number', [], handleRes, function (tx, err) {
-					console.log(err);defer.reject(err);
-				});
-			} else {
-				var _Object$keys = Object.keys(filter);
+                tx.executeSql('SELECT * FROM ' + table + ' WHERE ' + key + ' = ?', [value], handleRes, function (tx, err) {
+                    console.log(err);defer.reject(err);
+                });
+            }
+        }
 
-				var _Object$keys2 = _slicedToArray(_Object$keys, 1);
+        function handleRes(tx, result) {
+            return defer.resolve(parseRes(result));
+        }
+        return defer.promise;
+    }
 
-				var key = _Object$keys2[0];
+    function set(table, setting, filter) {
+        var _Object$keys3 = Object.keys(setting),
+            _Object$keys4 = _slicedToArray(_Object$keys3, 1),
+            setKey = _Object$keys4[0];
 
-				var value = filter[key];
+        var setValue = setting[setKey];
 
-				tx.executeSql('SELECT * FROM ' + table + ' WHERE ' + key + ' = ?', [value], handleRes, function (tx, err) {
-					console.log(err);defer.reject(err);
-				});
-			}
-		}
+        var _Object$keys5 = Object.keys(filter),
+            _Object$keys6 = _slicedToArray(_Object$keys5, 1),
+            filterKey = _Object$keys6[0];
 
-		function handleRes(tx, result) {
-			return defer.resolve(parseRes(result));
-		}
-		return defer.promise;
-	}
+        var filterValue = filter[filterKey];
 
-	function set(table, setting, filter) {
-		var _Object$keys3 = Object.keys(setting);
+        var defer = $q.defer();
 
-		var _Object$keys4 = _slicedToArray(_Object$keys3, 1);
+        var _handleRes = function _handleRes(tx, result) {
+            return defer.resolve(result.rows);
+        };
 
-		var setKey = _Object$keys4[0];
+        var _handleTx = function _handleTx(tx, result) {
+            tx.executeSql('UPDATE ' + table + ' SET ' + setKey + ' = ? WHERE ' + filterKey + ' = ?', [setValue, filterValue], _handleRes, function (tx, err) {
+                return defer.reject(err);
+            });
+        };
 
-		var setValue = setting[setKey];
+        db.transaction(_handleTx, function (tx, err) {
+            return defer.reject(err);
+        });
+        return defer.promise;
+    }
 
-		var _Object$keys5 = Object.keys(filter);
+    /*-------------------------------------------------------------------------
+      Reads the stops of each route and for EVERY stop reads the stop
+      information from the STOPS table using the stop NUMBER.
+    ---------------------------------------------------------------------------*/
 
-		var _Object$keys6 = _slicedToArray(_Object$keys5, 1);
+    function getStops(route) {
 
-		var filterKey = _Object$keys6[0];
+        var defer = $q.defer();
+        db.transaction(handleTx, function (tx, err) {
+            console.log(err);defer.reject(err);
+        });
 
-		var filterValue = filter[filterKey];
+        function handleTx(tx) {
+            tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, function (tx, err) {
+                console.log(err);defer.reject(err);
+            });
+        }
 
-		var defer = $q.defer();
+        function handleRes(tx, result) {
 
-		db.transaction(handleTx, function (tx, err) {
-			console.log(err);defer.reject(err);
-		});
+            var data = result.rows.item(0);
+            var stops = [];
+            // let _stops = data.stops.split('\t');
+            //
+            // // Get stop number from each stop name stop number string.
+            // // No duplicate values
+            // // TODO. Fix this in source data
+            // let uniqueStopNumbers = new Set(_stops.map(stop => parseInt(stop.split(' ')[0])));
+            //
+            // // Must convert to array in order to sort
+            // let orderedStopNumbers = [...uniqueStopNumbers].sort();
 
-		function handleTx(tx, result) {
-			tx.executeSql('UPDATE ' + table + ' SET ' + setKey + ' = ? WHERE ' + filterKey + ' = ?', [setValue, filterValue], handleRes, function (tx, err) {
-				console.log(err);defer.reject(err);
-			});
-		}
+            // Get stop data fro every stop
+            sortStops(stops).forEach(function (number) {
+                get('stops', { number: number }).then(function (result) {
+                    return stops.push(result[0]);
+                });
+            });
 
-		function handleRes(tx, result) {
-			return defer.resolve(result.rows);
-		}
-
-		return defer.promise;
-	}
-
-	/*-------------------------------------------------------------------------
-   Reads the stops of each route and for EVERY stop reads the stop
-   information from the STOPS table using the stop NUMBER.
- ---------------------------------------------------------------------------*/
-
-	function getStops(route) {
-
-		var defer = $q.defer();
-		db.transaction(handleTx, function (tx, err) {
-			console.log(err);defer.reject(err);
-		});
-
-		function handleTx(tx) {
-			tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, function (tx, err) {
-				console.log(err);defer.reject(err);
-			});
-		}
-
-		function handleRes(tx, result) {
-
-			var data = result.rows.item(0);
-			var stops = [];
-			var _stops = data.stops.split('\t');
-
-			// Get stop number from each stop name stop number string.
-			// No duplicate values
-			// TODO. Fix this in source data
-			var uniqueStopNumbers = new Set(_stops.map(function (stop) {
-				return parseInt(stop.split(' ')[0]);
-			}));
-
-			// Must convert to array in order to sort
-			var orderedStopNumbers = [].concat(_toConsumableArray(uniqueStopNumbers)).sort();
-
-			// Get stop data fro every stop
-			orderedStopNumbers.forEach(function (number) {
-				get('stops', { number: number }).then(function (result) {
-					return stops.push(result[0]);
-				});
-			});
-
-			data.stops = stops;
-			data.favourite = parseInt(data.favourite);
-			return defer.resolve(data);
-		}
-
-		return defer.promise;
-	}
+            data.stops = stops;
+            data.favourite = parseInt(data.favourite);
+            return defer.resolve(data);
+        }
+        return defer.promise;
+    }
 }
 
-function _handleErr(tx, err) {
-	return defer.reject(err);
+// TODO. Fix this in source data
+function sortStops(rawStops) {
+
+    // Get stop number from each stop name stop number string.
+    var _stops = rawStops.split('\t');
+    var uniqueStopNumbers = new Set(_stops.map(function (stop) {
+        return parseInt(stop.split(' ')[0]);
+    }));
+
+    // Must convert to array in order to sort
+    return [].concat(_toConsumableArray(uniqueStopNumbers)).sort();
 }
 
 function parseRes(result) {
 
-	var data = [];
-	for (var i = 0; i < result.rows.length; i++) {
-		data.push(result.rows.item(i));
-	}
-
-	return data;
+    var data = [];
+    for (var i = 0; i < result.rows.length; i++) {
+        data.push(result.rows.item(i));
+    }
+    return data;
 }
 
 exports.dBService = dBService;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.oCService = undefined;
+
+var _Parser = require('./Parser.js');
+
+function oCService() {
+
+    //Injections
+    var $http = void 0;
+
+    // Settings
+    var appId = void 0,
+        apiKey = void 0,
+        data = void 0,
+        url = void 0;
+    var httpConfig = {};
+
+    var setHttpOptions = function setHttpOptions(options) {
+        url = options.url;
+        appId = options.appId;
+        apiKey = options.apiKey;
+        httpConfig = options.httpConfig;
+    };
+
+    var $get = function $get(_$http_, _config_) {
+        $http = _$http_;
+        return { getNextTrips: getNextTrips };
+    };
+
+    return { setHttpOptions: setHttpOptions, $get: $get };
+}
+
+exports.oCService = oCService;
+
+
+function getNextTrips(stopNo) {
+
+    data = 'appID=' + appId + '&apiKey=' + apiKey + '&stopNo=' + stopNo + '&format=json';
+
+    return $http.post(url, data, httpConfig).then(handleRes, function (err) {
+        return alert('Unable to call ' + url);
+    });
+
+    function handleRes(response) {
+
+        var getRouteSummaryForStopResult = response.data.GetRouteSummaryForStopResult;
+        var result = JSON.parse(JSON.stringify(getRouteSummaryForStopResult));
+        if (result.Error !== '') {
+            return result;
+        }
+        var routes_ = _Parser.Parser.parseRoutes(result);
+        return { 'error': result.Error, 'routes': routes_ };
+    }
+}
+
+},{"./Parser.js":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -531,59 +519,56 @@ Object.defineProperty(exports, "__esModule", {
 });
 function aeFaves(dBService) {
 
-    var aeFaves = {
+    var aeFaves_ = {
         templateUrl: 'partials/faves.html',
-        controller: controller,
-        controllerAs: 'faves',
         scope: true,
-        link: link
+        controller: controllerFn,
+        controllerAs: 'faves',
+        link: linkFn
     };
-
-    return aeFaves;
-
-    function controller(dBService) {
-
-        var vm = this;
-
-        vm.routes = [];
-        vm.stops = [];
-
-        dBService.get('routes', { 'favourite': 1 }).then(function (routes) {
-            return vm.routes = routes;
-        });
-        dBService.get('stops', { 'favourite': 1 }).then(function (stops) {
-            return vm.stops = stops;
-        });
-    }
-
-    function link(scope, element, attrs) {
-
-        angular.element('.tab-item').on('click', function () {
-
-            // Target is already the active tab
-            if (angular.element(this).hasClass('tab-active')) {
-                return;
-            }
-
-            var targetTab = angular.element(this).attr('id');
-            var targetTabContent = targetTab + '-content';
-            var otherTab = targetTab === 'stops-tab' ? 'routes-tab' : 'stops-tab';
-            var otherTabContent = otherTab + '-content';
-
-            // Show clicked tab content
-            angular.element('#' + targetTabContent).css('display', 'block');
-            angular.element(this).addClass('tab-active');
-
-            // Hide other content
-            angular.element('#' + otherTabContent).css('display', 'none');
-            angular.element('#' + otherTab).removeClass('tab-active');
-        });
-    }
-
-    return;
+    return aeFaves_;
 }
 
 exports.aeFaves = aeFaves;
+
+
+function controllerFn(dBService) {
+
+    var vm = this;
+
+    vm.routes = [];
+    vm.stops = [];
+
+    dBService.get('routes', { 'favourite': 1 }).then(function (routes) {
+        return vm.routes = routes;
+    });
+    dBService.get('stops', { 'favourite': 1 }).then(function (stops) {
+        return vm.stops = stops;
+    });
+}
+
+function linkFn(scope, element, attrs) {
+
+    angular.element('.tab-item').on('click', function () {
+
+        // Target is already the active tab
+        if (angular.element(this).hasClass('tab-active')) {
+            return;
+        }
+
+        // Show clicked tab content
+        var _targetTab = angular.element(this).attr('id');
+        var _targetTabContent = _targetTab + '-content';
+        angular.element('#' + _targetTabContent).css('display', 'block');
+        angular.element(this).addClass('tab-active');
+
+        // Hide prev tab content
+        var _otherTab = _targetTab === 'stops-tab' ? 'routes-tab' : 'stops-tab';
+        var _otherTabContent = _otherTab + '-content';
+        angular.element('#' + _otherTabContent).css('display', 'none');
+        angular.element('#' + _otherTab).removeClass('tab-active');
+    });
+}
 
 },{}],9:[function(require,module,exports){
 'use strict';
@@ -606,12 +591,14 @@ exports.default = angular.module('favesMod');
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.config = config;
-function config($routeProvider) {
+function nearbyConfig($routeProvider) {
+
     $routeProvider.when('/nearby', {
         template: '<ae-nearby></ae-nearby>'
     });
 }
+
+exports.nearbyConfig = nearbyConfig;
 
 },{}],11:[function(require,module,exports){
 'use strict';
@@ -623,18 +610,19 @@ aeNearby.$inject = ['dataService', 'nearbyService'];
 
 function aeNearby() {
 
-    var Nearby = {
+    var aeNearby_ = {
         template: '<ae-menu-bar icon="menu" title="Nearby" search="nearby.search"> </ae-menu-bar>' + '<ae-stop ng-repeat="stop in nearby.stops | filter: {name: nearby.search}" stop="stop" ></ae-stop>',
-        scope: {
-            stops: '='
-        },
-        controller: NearbyCtrl,
+        scope: { stops: '=' },
+        controller: controllerFn,
         controllerAs: 'nearby'
     };
-    return Nearby;
+    return aeNearby_;
 }
 
-function NearbyCtrl(dataService, nearbyService) {
+exports.aeNearby = aeNearby;
+
+
+function controllerFn(dataService, nearbyService) {
 
     var vm = this;
     var location = { lat: 45.431566, lon: -75.684647 };
@@ -648,8 +636,6 @@ function NearbyCtrl(dataService, nearbyService) {
     });
 }
 
-exports.aeNearby = aeNearby;
-
 },{}],12:[function(require,module,exports){
 'use strict';
 
@@ -657,13 +643,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _nearbyService = require('./nearby.service.js');
-
 var _nearbyDirective = require('./nearby.directive.js');
+
+var _nearbyService = require('./nearby.service.js');
 
 var _nearbyConfig = require('./nearby.config.js');
 
-angular.module('app_nearby', []).config(_nearbyConfig.config).factory('nearbyService', _nearbyService.nearbyService).directive('aeNearby', _nearbyDirective.aeNearby);
+angular.module('app_nearby', []).config(_nearbyConfig.nearbyConfig).directive('aeNearby', _nearbyDirective.aeNearby).factory('nearbyService', _nearbyService.nearbyService);
 
 exports.default = angular.module('app_nearby');
 
@@ -696,6 +682,7 @@ function isNearby(location, stop) {
     // distance between location and stop is less 500 m
     return dis <= 0.5;
 }
+
 exports.nearbyService = nearbyService;
 
 },{}],14:[function(require,module,exports){
@@ -708,44 +695,33 @@ aeRoute.$inject = ['dBService'];
 
 function aeRoute(dBService) {
 
-    var aeRoute = {
+    var aeRoute_ = {
         templateUrl: 'partials/route.directive.html',
-        scope: {
-            route: '='
-        },
-        // controller: controller
-        link: link
+        scope: { route: '=' },
+        link: linkFn
     };
-
-    return aeRoute;
-
-    // function controller() {}
-
-    function link(scope, element, attrs) {
-
-        var star = element.find('i.star');
-
-        star.on('click', handleStarTouch);
-
-        function handleStarTouch() {
-
-            var _favourite = scope.route.favourite === 0 ? 1 : 0;
-            dBService.set('routes', { favourite: _favourite }, { name: scope.route.name }).then(updateRoute);
-        }
-
-        function updateRoute(result) {
-
-            // toggle favourite status
-            scope.route.favourite = scope.route.favourite === 0 ? 1 : 0;
-
-            // Set the favourite status indicator
-            var starType = scope.route.favourite === 0 ? 'star_border' : 'star';
-            star.text(starType);
-        }
-    }
+    return aeRoute_;
 }
 
 exports.aeRoute = aeRoute;
+
+
+function linkFn(scope, element, attrs) {
+
+    element.find('i.star').on('click', handleStarTouch);
+
+    function handleStarTouch() {
+
+        var _favourite = scope.route.favourite === 0 ? 1 : 0;
+        var _name = scope.route.name;
+
+        dBService.set('routes', { favourite: _favourite }, { name: _name }).then(function (result) {
+            scope.route.favourite = _favourite;
+            var _starType = _favourite === 0 ? 'star_border' : 'star';
+            element.find('i.star').text(_starType);
+        });
+    }
+}
 
 },{}],15:[function(require,module,exports){
 'use strict';
@@ -910,45 +886,36 @@ aeStop.$inject = ['dBService'];
 
 function aeStop(dBService) {
 
-    var aeStop = {
+    var aeStop_ = {
         templateUrl: 'partials/stop.directive.html',
-        scope: {
-            stop: '='
-        },
-        // controller: controller,
-        controllerAs: 'stop',
-        link: link
+        scope: { stop: '=' },
+        link: linkFn
     };
-
-    return aeStop;
-
-    // function controller() {}
-
-    function link(scope, element, attrs) {
-
-        var star = element.find('i.star');
-
-        star.on('click', handleStarTouch);
-
-        function handleStarTouch() {
-
-            var _favourite = scope.stop.favourite === 0 ? 1 : 0;
-            dBService.set('stops', { favourite: _favourite }, { code: scope.stop.code }).then(updateStop);
-        }
-
-        function updateStop(result) {
-
-            // toggle favourite status
-            scope.stop.favourite = scope.stop.favourite === 0 ? 1 : 0;
-
-            // Set the favourite status indicator
-            var starType = scope.stop.favourite === 0 ? 'star_border' : 'star';
-            star.text(starType);
-        }
-    }
+    return aeStop_;
 }
 
 exports.aeStop = aeStop;
+
+
+function linkFn(scope, element, attrs) {
+
+    var _code = scope.stop.code;
+    var _favourite = scope.stop.favourite;
+    var star = element.find('i.star');
+
+    element.find('i.star').on('click', handleStarTouch);
+
+    function handleStarTouch() {
+
+        _favourite = _favourite === 0 ? 1 : 0;
+
+        dBService.set('stops', { favourite: _favourite }, { code: _code }).then(function (result) {
+            var _starType = _favourite === 0 ? 'star_border' : 'star';
+            scope.stop.favourite = _favourite;
+            star.text(_starType);
+        });
+    }
+}
 
 },{}],21:[function(require,module,exports){
 'use strict';
@@ -956,8 +923,8 @@ exports.aeStop = aeStop;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-aeStopNextTrips.$inject = ['$location', '$route', 'dBService', 'OCService'];
-stopNextTripsCtrl.$inject = ['$routeParams', '$location', 'dBService', 'OCService'];
+aeStopNextTrips.$inject = ['$location', '$route', 'dBService', 'oCService'];
+stopNextTripsCtrl.$inject = ['$routeParams', '$location', 'dBService', 'oCService'];
 
 function aeStopNextTrips() {
 
@@ -974,7 +941,7 @@ function aeStopNextTrips() {
     // function link() {}
 }
 
-function stopNextTripsCtrl($routeParams, $location, dBService, OCService) {
+function stopNextTripsCtrl($routeParams, $location, dBService, oCService) {
     var vm = this;
 
     // stop number from the URL
@@ -987,7 +954,7 @@ function stopNextTripsCtrl($routeParams, $location, dBService, OCService) {
     });
 
     // Get next 3 trips for routes serving stop
-    OCService.getNextTrips(number).then(function (result) {
+    oCService.getNextTrips(number).then(function (result) {
 
         // An error field is always present in trip information
         vm.error = result.error;

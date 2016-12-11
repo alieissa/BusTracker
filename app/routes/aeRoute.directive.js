@@ -4,41 +4,30 @@ aeRoute.$inject = ['dBService'];
 
 function aeRoute(dBService) {
 
-    let aeRoute = {
+    let aeRoute_ = {
         templateUrl: 'partials/route.directive.html',
-        scope: {
-            route: '='
-        },
-        // controller: controller
-        link: link
+        scope: { route: '=' },
+        link: linkFn
     };
-
-    return aeRoute;
-
-    // function controller() {}
-
-    function link(scope, element, attrs) {
-
-        let star = element.find('i.star');
-
-        star.on('click', handleStarTouch);
-
-        function handleStarTouch() {
-
-            let _favourite = scope.route.favourite === 0 ? 1 : 0;
-            dBService.set('routes', {favourite:_favourite}, {name: scope.route.name}).then(updateRoute);
-        }
-
-        function updateRoute(result) {
-
-            // toggle favourite status
-            scope.route.favourite = scope.route.favourite === 0 ? 1 : 0;
-
-            // Set the favourite status indicator
-            let starType = scope.route.favourite === 0 ? 'star_border' : 'star';
-            star.text(starType);
-        }
-    }
+    return aeRoute_;
 }
 
 export {aeRoute};
+
+
+function linkFn(scope, element, attrs) {
+
+    element.find('i.star').on('click', handleStarTouch);
+
+    function handleStarTouch() {
+
+        let _favourite = scope.route.favourite === 0 ? 1 : 0;
+        let _name = scope.route.name;
+
+        dBService.set('routes', {favourite:_favourite}, {name: _name}).then(result => {
+            scope.route.favourite = _favourite;
+            let _starType = _favourite === 0 ? 'star_border' : 'star';
+            element.find('i.star').text(_starType);
+        });
+    }
+}

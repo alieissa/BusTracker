@@ -1,7 +1,10 @@
 'use strict';
 
-export function config($routeProvider) {
+function nearbyConfig($routeProvider) {
+
     $routeProvider.when('/nearby', {
         template: '<ae-nearby></ae-nearby>'
     });
 }
+
+export {nearbyConfig};

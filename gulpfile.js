@@ -1,11 +1,11 @@
-const babelify 		= require('babelify');
-const browserify 	= require('browserify');
-const buffer 		= require('vinyl-buffer');
-const gulp 			= require('gulp');
-const jshint 		= require('gulp-jshint');
-const path 			= require('path');
-const shell 		= require('shelljs');
-const source 		= require('vinyl-source-stream');
+const babelify      = require('babelify');
+const browserify    = require('browserify');
+const buffer        = require('vinyl-buffer');
+const gulp          = require('gulp');
+const jshint        = require('gulp-jshint');
+const path          = require('path');
+const shell         = require('shelljs');
+const source        = require('vinyl-source-stream');
 
 // command line argument check
 const dest = process.argv[3] === '--development' ? 'dist' : 'www';
@@ -33,51 +33,48 @@ gulp.task('default', gulp.series('build'));
 //------------------------------------------------------------------------------
 
 function build(done) {
-	gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series(...buildTasks))
-	done()
+    gulp.watch(['app/**/*', 'assets/css/*', '*.js'], gulp.series(...buildTasks));
+    done();
 }
 
 function clean(done) {
-	shell.rm('-r', `${dest}/*.js`);
-	shell.rm('-r', `${dest}/*.html`);
-	shell.rm('-r', `${dest}/partials/*`);
-	done();
+    shell.rm('-r', `${dest}/*.js`);
+    shell.rm('-r', `${dest}/*.html`);
+    shell.rm('-r', `${dest}/partials/*`);
+    done();
 }
 
 function dist(done) {
-	shell.cp('-r', 'env.js', destRoot);
-	shell.cp('-r', 'assets/css/*', `${destRoot}/assets/css`);
-	shell.cp('-r', `${sourceRoot}/index.html`, destRoot);
+    shell.cp('-r', 'env.js', destRoot);
+    shell.cp('-r', 'assets/css/*', `${destRoot}/assets/css`);
+    shell.cp('-r', `${sourceRoot}/index.html`, destRoot);
 
-	modules.forEach(module => {
-		console.log(`${sourceRoot}/${module}/partials/*`);
-		console.log(`${destRoot}/partials/`);
-
-		shell.cp('-Rf', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials/`)
-	});
-	done();
+    modules.forEach(module => {
+        shell.cp('-Rf', `${sourceRoot}/${module}/partials/*`, `${destRoot}/partials/`)
+    });
+    done();
 }
 
 function es6(done) {
 
-	browserify('app/app.js')
-	.transform('babelify', { presets: ['es2015'] })
-	.bundle()
-	.on('error', function(err) {
-		this.emit("end");
-	})
-	.pipe(source('app.js'))
-	.pipe(buffer())
-	.pipe(gulp.dest(dest));
-	done();
+    browserify('app/app.js')
+        .transform('babelify', { presets: ['es2015'] })
+        .bundle()
+        .on('error', function(err) {
+            this.emit("end");
+        })
+        .pipe(source('app.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest(dest));
+    done();
 }
 
 function lint(done) {
 
     return gulp.src('app/**/*.js')
-		.on('error', function(err) {
-			this.emit("end");
-		})
+        .on('error', function(err) {
+            this.emit("end");
+        })
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('jshint-stylish'));
     done();

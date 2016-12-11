@@ -1,7 +1,7 @@
 'use strict';
 
-aeStopNextTrips.$inject = ['$location', '$route', 'dBService', 'OCService'];
-stopNextTripsCtrl.$inject = ['$routeParams', '$location', 'dBService', 'OCService'];
+aeStopNextTrips.$inject = ['$location', '$route', 'dBService', 'oCService'];
+stopNextTripsCtrl.$inject = ['$routeParams', '$location', 'dBService', 'oCService'];
 
 function aeStopNextTrips() {
 
@@ -24,7 +24,7 @@ function aeStopNextTrips() {
     // function link() {}
  }
 
-function stopNextTripsCtrl($routeParams, $location, dBService, OCService) {
+function stopNextTripsCtrl($routeParams, $location, dBService, oCService) {
     let vm = this;
 
     // stop number from the URL
@@ -35,7 +35,7 @@ function stopNextTripsCtrl($routeParams, $location, dBService, OCService) {
     dBService.get('stops', {code: code}).then((stop) => vm.stop = stop[0]);
 
     // Get next 3 trips for routes serving stop
-    OCService.getNextTrips(number).then((result) => {
+    oCService.getNextTrips(number).then((result) => {
 
         // An error field is always present in trip information
         vm.error = result.error;

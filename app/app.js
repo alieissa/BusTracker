@@ -34,11 +34,11 @@ angular.module('busTrackerApp', [
     })
     .controller('MainCtrl', MainCtrl);
 
-function config($routeProvider, $httpProvider, OCServiceProvider, dBServiceProvider, OC) {
+function config($routeProvider, $httpProvider, oCServiceProvider, dBServiceProvider, OC) {
 
     dBServiceProvider.setDB(window.db);
 
-    OCServiceProvider.setHttpOptions({
+    oCServiceProvider.setHttpOptions({
         url: window.url,
         appId: OC.APP_ID,
         apiKey: OC.API_KEY,
