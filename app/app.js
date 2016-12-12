@@ -14,10 +14,7 @@ angular.module('busTrackerApp', _mods)
     .config(config)
     .controller('MainCtrl', MainCtrl)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
-    .constant("OC", {
-        APP_ID: "c618159f",
-        API_KEY: "77207661c5c94208c33fb2357efc7012"
-    })
+    .constant("OC", window._env.OC);
 
 function config($routeProvider, $httpProvider, oCServiceProvider, dBServiceProvider, OC) {
 
