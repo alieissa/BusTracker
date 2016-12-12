@@ -8,9 +8,7 @@ function dataService(dBService) {
     let routeFields = ['name','stops', 'favourite','number','id'];
     let stopFields = ['name','number','code','lat','lon','type','favourite'];
 
-    // let setStopsDataset = stopsDataSet => stops = stopsDataSet;
-    // let setRoutesDataset = routesDataSet => routes = routesDataSet;
-    let getFields = (fields, obj) => {
+    let _getFields = (fields, obj) => {
         let obj_ = {};
         fields.forEach(field => obj_[field] = obj[field]);
         return obj_;
@@ -19,39 +17,23 @@ function dataService(dBService) {
     function getRoutes(fields = routeFields, selector = route => true) {
 
         return dBService.get('routes').then(routes => {
-            return routes.filter(selector).map(route => getFields(fields, route));
+            return routes.filter(selector).map(route => _getFields(fields, route));
         });
     }
 
     function getStops(fields = stopFields, selector = stop => true) {
 
         return dBService.get('stops').then(stops => {
-            return stops.filter(selector).map(stop => getFields(fields, stop));
+            return stops.filter(selector).map(stop => _getFields(fields, stop));
         });
     }
 
     function setRoutes(updates, selector) {
-
-        let routes_ = [];
-        // Assign updates to routes that meet selector condition
-    	dBService.set('routes', updates).then(() => {
-    		routes_ = routes.filter(selector).map(route => Object.assign(route, updates));
-    	});
-
-        return routes_;
+        return dBService.set('routes', updates);
     }
 
-
     function setStops(updates, selector) {
-
-        let stops_ = [];
-        
-        // Assign updates to stops that meet selector condition
-        dBService.set('stops', updates).then(() => {
-            stops_ = routes.filter(selector).map(route => Object.assign(route, updates));
-        });
-
-        return stops_;
+        return dBService.set('stops', updates)
     }
 
     return {getStops, getRoutes, setRoutes, stops, routes};

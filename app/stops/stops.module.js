@@ -1,12 +1,12 @@
 'use strict';
 
 import {stopsConfig} from './stops.config.js';
-// import {nextTrips} from './stops.directives.js';
-import {aeStopNextTrips, stopNextTripsCtrl, nextTripsError} from './aeStopNextTrips.directive.js';
+
 import {aeStop} from './aeStop.directive.js';
 import {aeStops} from './aeStops.directive.js';
+import {aeStopNextTrips, stopNextTripsCtrl, nextTripsError} from './aeStopNextTrips.directive.js';
 
-angular.module('stopsMod', [])
+angular.module('app_stops', [])
     .config(stopsConfig)
     .directive('nextTripsError', nextTripsError)
     .directive('aeStop', aeStop)
@@ -16,4 +16,4 @@ angular.module('stopsMod', [])
     .controller('stopNextTripsCtrl', stopNextTripsCtrl)
     .directive('aeStopNextTrips', aeStopNextTrips);
 
-export default angular.module('stopsMod');
+export default angular.module('app_stops');

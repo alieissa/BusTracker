@@ -1,38 +1,23 @@
 'use strict';
 
-/**
- * @ngdoc overview
- * @name busTrackerApp
- * @description
- * # busTrackerApp
- *
- * Main module of the application.
- */
-
- import {dBMod} from './database/database.module.js';
-import {routesMod} from './routes/routes.module.js';
-import {stopsMod} from './stops/stops.module.js';
-import {favesMod} from './favourites/favourites.module.js';
-import {appUtil} from './util/util.module.js';
+import {app_database} from './database/database.module.js';
+import {app_faves} from './favourites/favourites.module.js';
 import {app_nearby} from './nearby/nearby.module.js'
+import {app_routes} from './routes/routes.module.js';
+import {app_stops} from './stops/stops.module.js';
+import {app_util} from './util/util.module.js';
 
-angular.module('busTrackerApp', [
-        'ngRoute',
+let _mods = ['ngRoute', 'app_database', 'app_faves', 'app_routes', 'app_stops',
+                'app_util', 'app_nearby' ];
 
-        'dBMod',
-        'favesMod',
-        'routesMod',
-        'stopsMod',
-        'appUtil',
-        'app_nearby'
-    ])
+angular.module('busTrackerApp', _mods)
     .config(config)
+    .controller('MainCtrl', MainCtrl)
     .constant('config', {OC_URL: 'http://localhost:3000/v1.2'})
     .constant("OC", {
         APP_ID: "c618159f",
         API_KEY: "77207661c5c94208c33fb2357efc7012"
     })
-    .controller('MainCtrl', MainCtrl);
 
 function config($routeProvider, $httpProvider, oCServiceProvider, dBServiceProvider, OC) {
 
@@ -49,33 +34,23 @@ function config($routeProvider, $httpProvider, oCServiceProvider, dBServiceProvi
 
     $routeProvider
         .when('/', {
-            template:
-                '<ul class="list-unstyled" style="list-style: none; background-color: grey; height: auto; margin-bottom: 0">' +
-                    '<span style="color: white">' +
-                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/routes">Routes</a></li> ' +
-                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/stops">Stops</a></li>' +
-                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/favourites">Favourites</a></li>' +
-                        '<li style="float: left; width: 25%; text-align: center"><a ng-href="#/nearby">Nearby</a></li>' +
-                    '</span>' +
-                '</ul>',
+                template: '<ul>' +
+                            '<li class="ae-menu-item"><a ng-href="#/routes">Routes</a></li> ' +
+                            '<li class="ae-menu-item"><a ng-href="#/stops">Stops</a></li>' +
+                            '<li class="ae-menu-item"><a ng-href="#/favourites">Favourites</a></li>' +
+                            '<li class="ae-menu-item"><a ng-href="#/nearby">Nearby</a></li>' +
+                        '</ul>',
 
             controller: 'MainCtrl',
-            controllerAs: 'main',
-            resolve: {
-                routes: (dBService) => dBService.get('routes'),
-                stops: (dBService) => dBService.get('stops')
-            }
+            controllerAs: 'main'
         })
         .otherwise({
             redirectTo: '/'
         });
 }
 
-MainCtrl.inject = ['$rootScope', 'dataService', 'stops', 'routes']
-function MainCtrl($rootScope, dataService, routes, stops) {
-
-    dataService.setStopsDataset(stops);
-    dataService.setRoutesDataset(routes);
+MainCtrl.$inject = ['$rootScope', 'dataService']
+function MainCtrl($rootScope, dataService) {
 
     $rootScope.$on('$routeChangeError', (event, prev, next) => {
         console.log(`Unable to reach ${next}`);

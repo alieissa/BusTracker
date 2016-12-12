@@ -2,6 +2,12 @@ body {
     margin: 0
 }
 
+ul {
+    list-style: none;
+}
+a {
+    color: grey;
+}
 input[type="text"] {
     height: 21px;
     font-size: 16px;
@@ -57,29 +63,41 @@ tr, td, th{
 }
 
 #nav-title-container {
+    margin-top: 4px;
+    float: left;
     padding: 13px 0;
     width: auto
 }
 
-.nav-list {
-    list-style:none
-}
-.nav-icon {
+.ae-nav-icon {
     position:absolute;
     color: white;
     top:16px
 }
-.nav-search {
-    height: 32px;
+
+.ae-nav-search {
+    height: 24px;
+    top:16px;
+    width: 210px;
+    right:38px
+    /*height: 32px;
     margin-bottom: 0px;
     margin-left:32px;
     padding-right:3px;
     top:16px;
-    right: 38px;
+    right: 38px;*/
 }
 #nav-container {
     height: 56px;
     background-color:grey;
+}
+.ae-tall-title-container {
+    color: white;
+    margin-left: 56px;
+    margin-top: 4px;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    width: auto;
 }
 .nav-search {
     height: 32px;
@@ -94,27 +112,60 @@ tr, td, th{
     padding: 0 0 0 16px;
 }
 
-.ae-route-name {
-    width: 296px
+.ae-dir-container {
+   height: 48px;
+   padding-left: 16px;
+   padding-right: 16px;
+   padding-bottom: 20px;
+   padding-top: 10px
+}
+.ae-name-container {
+    float: left;
+    width: 75%
+}
+
+.ae-icon-container {
+    float: left;
+    width: 25%;
+    position: relative
+}
+
+.ae-menu-item {
+    float: left;
+    width: 25%;
+    text-align: center;
+}
+.ae-icon-container > i {
+    float:right;
+    font-size: 18px
 }
 .ae-td {
     text-align: right;
     padding-right: 12px;
 }
+
+.ae-sidenav {
+    width: calc(100vw - 56px)
+}
 .ae-sidenav a {
-	color: white;
-	padding-left: 32px;
-	vertical-align: sub
+    color: white;
+    padding-left: 32px;
+    vertical-align: sub
 }
 .ae-sidenav i {
-	color: white;
-	vertical-align: middle
+    color: white;
+    vertical-align: middle
 }
 .ae-sidenav-item {
 	height: 48px;
 	margin-bottom: 0px;
 }
 
+ae-sidenav-container {
+    height: 100%;
+    padding-top: 16px;
+    padding-left: 16px
+}
 .trip-card {
     /*margin: 5px;*/
     border-bottom: 1px solid cornsilk
@@ -131,7 +182,10 @@ tr, td, th{
 .trip-card-action li i {
     font-size: 20px
 }
-
+.ae-tabs-content-container {
+    width: 100%;
+    float:left;
+}
 .tab-container {
     float:left;
     margin-bottom: 0;
@@ -173,22 +227,18 @@ tr, td, th{
 }*/
 
 .route-menu {
-	position: absolute;
-	list-style: none;
-	font-size: 14px;
-	border: 1px solid #f1eaea;
-	right: 15px;
-	top: 24px;
-	text-align: left;
-	margin-bottom: 0px
+    position: absolute;
+    list-style: none;
+    font-size: 14px;
+    border: 1px solid #f1eaea;
+    right: 15px;
+    top: 24px;
+    text-align: left;
+    margin-bottom: 0px
 }
 
 .route-menu-item {
-	height: 48px;
-	padding: 10px 16px 20px 16px;
-	margin-bottom: 0px;
-}
-
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
+    height: 48px;
+    padding: 10px 16px 20px 16px;
+    margin-bottom: 0px;
 }

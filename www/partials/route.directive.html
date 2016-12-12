@@ -1,0 +1,10 @@
+<!-- <h2>{{route.name}}</h2> -->
+
+<div class="ae-route-container">
+    <div class="ae-route-name" style="float: left; width: 75%" ng-cloak>
+        <a ng-href="#/routes/{{route.id}}?name={{route.name}}">{{route.number}} {{route.name}}</a>
+    </div>
+    <div style="float: left; width: 25%; position: relative">
+    	<i class="material-icons star" style="font-size: 18px; float:right"> {{route.favourite === 1 ? 'star' : 'star_border'}}</i>
+    </div>
+</div>

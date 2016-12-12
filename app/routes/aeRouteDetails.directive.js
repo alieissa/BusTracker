@@ -1,6 +1,5 @@
 'use strict';
 
-aeRouteDetails.$inject = ['$location', '$route', 'dBService'];
 aeRouteDetailsCtrl.$inject = ['$routeParams', 'dBService'];
 
 function aeRouteDetails($location, $route, dBService) {
@@ -15,8 +14,7 @@ function aeRouteDetails($location, $route, dBService) {
         scope: {},
         bindToController: true,
         controller: 'aeRouteDetailsCtrl',
-        controllerAs: 'route',
-        // link: link
+        controllerAs: 'route'
     };
 
     return aeRouteDetails;

@@ -1,0 +1,9 @@
+
+<div style="height: 48px; padding-left: 16px; padding-right: 16px; padding-bottom: 20px; padding-top: 10px">
+    <div class="ae-route-name" style="float: left; width: 75%">
+        <a ng-href="#/stops/{{stop.code}}?number={{stop.number}}">{{stop.number}} {{stop.name}}</a>
+    </div>
+    <div style="float: left; width: 25%; position: relative">
+    	<i class="material-icons star" style="font-size: 18px; float:right"> {{stop.favourite === 1? 'star': 'star_border'}}</i>
+    </div>
+</div>

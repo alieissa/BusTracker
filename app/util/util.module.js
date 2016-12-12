@@ -1,7 +1,9 @@
+'use strict';
+
 import {aeMenuBar, aeTallMenuBar} from './util.directives.js';
 
-angular.module('appUtil', [])
+angular.module('app_util', [])
     .directive('aeMenuBar', aeMenuBar)
     .directive('aeTallMenuBar', aeTallMenuBar);
 
-export default angular.module('appUtil');
+export default angular.module('app_util');

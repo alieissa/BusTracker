@@ -1,0 +1,42 @@
+<div id="nav-container" >
+    <ul class="nav-list">
+        <li style="float: left">
+            <i class="material-icons nav-icon" style="left:16px">{{icon}}</i>
+        </li>
+        <li style="margin-top: 4px; float: left" id='nav-title-container'>
+            <span class="nav-title">{{title}}</span>
+        </li>
+        <!-- <li style="float: right"></li> -->
+        <li>
+            <i class="material-icons nav-icon" style="right:16px">search</i>
+        </li>
+        <li>
+            <input class="nav-search" type="text" ng-model="search" style="height: 24px; top:16px; width: 210px; right:38px"/>
+        </li>
+    </ul>
+</div>
+<div id="sidenav-container" style="position: absolute; top: 0; left: 0; z-index: 1; height: 100%; background-color: grey; display: none">
+
+	<div style="background-color: black; height: 128px; border-bottom: 1px solid white">
+
+	</div>
+	<div style="padding-left: 16px; padding-top: 16px; height: 100%">
+		<ul class="ae-sidenav" style="list-style: none; width: calc(100vw - 56px)">
+    		<li class="ae-sidenav-item">
+    			<i class="material-icons">home</i><a ng-href="#/">Home</a>
+            </li>
+    		<li class="ae-sidenav-item">
+    			<i class="material-icons">directions_bus</i><a ng-href="#/routes">Routes</a>
+    		</li>
+    		<li class="ae-sidenav-item">
+    			<i class="material-icons">flag</i> <a ng-href="#/stops">Stops</a>
+    		</li>
+    		<li class="ae-sidenav-item">
+    			<i class="material-icons">star</i><a ng-href="#/favourites">Favourites</a>
+    		</li>
+    		<!-- <li class="ae-sidenav-item">
+    			<i class="material-icons">near_me</i><a ng-href="">Nearby</a>
+    		</li> -->
+	    </ul>
+	</div>
+</div>

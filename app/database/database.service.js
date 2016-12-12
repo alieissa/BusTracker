@@ -5,12 +5,6 @@ function dBService() {
     let db;
     let $q;
 
-    let setDB = db_ => db = db_;
-
-    // let $get = (_$q_) => {
-    //     $q = _$q_;
-    //     return {get, set, getStops};
-    // };
     return {
         setDB: db_ => db = db_,
         $get: _$q_ => {
@@ -22,28 +16,24 @@ function dBService() {
     function get(table, filter) {
 
         let defer = $q.defer();
+        let _key, _value;
+        let _handleRes = (tx, result) => defer.resolve(parseRes(result));
 
-        db.transaction(handleTx, (tx, err) => defer.reject(err));
+        let _handleTx = tx => {
 
-        function handleTx(tx) {
-
-            if(typeof filter === 'undefined') {
-                tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], handleRes,(tx, err) => {console.log(err); defer.reject(err);});
+            try {
+                [_key] = Object.keys(filter);
+                _value = filter[_key];
+                tx.executeSql(`SELECT * FROM ${table} WHERE ${_key} = ? ORDER BY number`, [_value], _handleRes,(tx, err) => defer.reject(err));
             }
-            else {
-                let [key] = Object.keys(filter);
-                let value = filter[key];
-
-                tx.executeSql(`SELECT * FROM ${table} WHERE ${key} = ?`, [value], handleRes,(tx, err) => {console.log(err); defer.reject(err)});
+            catch(TypeError) {
+                tx.executeSql(`SELECT * FROM ${table} ORDER BY number`, [], _handleRes,(tx, err) => defer.reject(err));
             }
-        }
+        };
 
-        function handleRes(tx, result) {
-            return defer.resolve(parseRes(result));
-        }
+        db.transaction(_handleTx, (tx, err) => defer.reject(err));
         return defer.promise;
     }
-
 
     function set(table, setting, filter) {
 
@@ -55,9 +45,7 @@ function dBService() {
 
         let defer = $q.defer();
 
-        let _handleRes = (tx, result) => {
-            return  defer.resolve(result.rows);
-        };
+        let _handleRes = (tx, result) => defer.resolve(result.rows);
 
         let _handleTx = (tx, result) => {
             tx.executeSql(`UPDATE ${table} SET ${setKey} = ? WHERE ${filterKey} = ?`,
@@ -77,35 +65,27 @@ function dBService() {
     function getStops(route) {
 
         let defer = $q.defer();
-        db.transaction(handleTx, (tx, err) => {console.log(err); defer.reject(err)});
 
-        function handleTx(tx) {
-          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], handleRes, (tx, err) => {console.log(err); defer.reject(err)});
-        }
-
-        function handleRes(tx, result) {
+        let _handleRes = (tx, result) => {
 
             let data = result.rows.item(0);
             let stops = [];
-            // let _stops = data.stops.split('\t');
-            //
-            // // Get stop number from each stop name stop number string.
-            // // No duplicate values
-            // // TODO. Fix this in source data
-            // let uniqueStopNumbers = new Set(_stops.map(stop => parseInt(stop.split(' ')[0])));
-            //
-            // // Must convert to array in order to sort
-            // let orderedStopNumbers = [...uniqueStopNumbers].sort();
 
             // Get stop data fro every stop
-            sortStops(stops).forEach((number) => {
-                get('stops', {number: number}).then((result) => stops.push(result[0]));
+            sortStops(data.stops).forEach(number => {
+                get('stops', {number: number}).then(result => stops.push(result[0]));
             });
 
             data.stops = stops;
             data.favourite = parseInt(data.favourite);
             return defer.resolve(data);
-        }
+        };
+
+        let _handleTx = tx => {
+          tx.executeSql('SELECT * FROM routes WHERE id = ?', [route.id], _handleRes, (tx, err) => defer.reject(err));
+      };
+
+        db.transaction(_handleTx, (tx, err) => defer.reject(err));
         return defer.promise;
     }
 }
